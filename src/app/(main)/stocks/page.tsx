@@ -176,12 +176,12 @@ const CryptoUI: React.FC = () => {
         <div className="mx-auto text-center  flex justify-center items-center flex-col  px-4 sm:px-6 py-[70px]">
           <div className="flex justify-center ">
             <p className="custom-3-text md:w-[70%]">
-              Supported Coins and Tokens
+              Supported Stocks 
             </p>
           </div>
 
           <p className="custom-4-text">
-            Tangem wallets support coins and tokens listed below.
+            Penta Stocks support Stocks and tokens listed below.
           </p>
 
           {/* Search Bar */}

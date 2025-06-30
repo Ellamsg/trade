@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import { FcGoogle } from 'react-icons/fc'
+import { signup ,login} from '../login/action'
 
-export default function RegisterPage() {
+export default function SigningUp() {
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -32,16 +33,16 @@ export default function RegisterPage() {
                 First Name
               </label>
               <input
-                id="firstName"
-                name="firstName"
+                id="name"
+                name="name"
                 type="text"
                 autoComplete="given-name"
                 required
                 className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                placeholder="John"
+                placeholder="Full Name"
               />
             </div>
-            <div>
+            {/* <div>
               <label htmlFor="lastName" className="block text-sm font-medium text-gray-300 mb-1">
                 Last Name
               </label>
@@ -54,7 +55,7 @@ export default function RegisterPage() {
                 className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                 placeholder="Doe"
               />
-            </div>
+            </div> */}
           </div>
 
           <div>
@@ -90,7 +91,7 @@ export default function RegisterPage() {
             </p>
           </div>
 
-          <div>
+          {/* <div>
             <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-1">
               Confirm Password
             </label>
@@ -103,10 +104,10 @@ export default function RegisterPage() {
               className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
               placeholder="••••••••"
             />
-          </div>
+          </div> */}
 
           <div className="flex items-start">
-            <div className="flex items-center h-5">
+            {/* <div className="flex items-center h-5">
               <input
                 id="terms"
                 name="terms"
@@ -114,7 +115,7 @@ export default function RegisterPage() {
                 required
                 className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-700 rounded bg-gray-800"
               />
-            </div>
+            </div> */}
             <div className="ml-3 text-sm">
               <label htmlFor="terms" className="text-gray-300">
                 I agree to the{' '}
@@ -131,6 +132,7 @@ export default function RegisterPage() {
 
           <button
             type="submit"
+            formAction={signup}
             className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 focus:ring-offset-gray-900 text-white font-medium rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
           >
             Create Account

@@ -9,7 +9,7 @@ const StackedCarousel = () => {
     {
       id: 1,
       title: "Privacy",
-      description: "No registration and KYC required to use the app. We don't track your data.",
+      description: "No  KYC required to use the app. We don't track your data.",
       icon: Shield,
       gradient: "from-purple-500 to-pink-500"
     },
@@ -23,7 +23,7 @@ const StackedCarousel = () => {
     {
       id: 3,
       title: "Convenient designs",
-      description: "Choose from a variety of elegant designs, including unique co-branded editions and our innovative ring-form factor wallet.",
+      description: "Choose from a variety of stocks.",
       icon: Palette,
       gradient: "from-green-500 to-emerald-500"
     },

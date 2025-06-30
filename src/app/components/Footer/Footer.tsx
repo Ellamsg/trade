@@ -15,9 +15,9 @@ import { FaTelegramPlane } from "react-icons/fa";
 export default function Footer() {
   return (
     <footer className="bg-[#151515] p-6 lg:p-[70px]">
-      <div className="grid md:grid-cols-4 md:justify-center justify-start md:gap-0 gap-9  ">
+      <div className="grid md:grid-cols-4 justify-items-center md:justify-items-start md:items-start items-center justify-center  md:gap-0 gap-9  ">
         <div>
-          <img src="" alt="logo" />
+        <img className="h-9" src="assets/pentalogo.png" alt='main-log'/>
         </div>
         <div className="space-y-6">
           <p>names </p>
@@ -32,7 +32,7 @@ export default function Footer() {
           <p>names </p>
         </div>
 
-        <div className="grid text-center grid-cols-6 justify-center ">
+        <div className="grid text-center gap-4 grid-cols-6 justify-center ">
           <FaFacebook className="footer-icons" />
           <IoLogoYoutube className="footer-icons" />
           <FaInstagram className="footer-icons" />
@@ -44,13 +44,13 @@ export default function Footer() {
 
       <div className="text-center my-[40px] md:py-[20px] md:pt-[90px] text-[13px] text-[#404040]">
         <p>
-          Reg. No CHE-390.112.525 Tangem AG provides only hardware wallets and
-          non-custodial software solutions for managing digital assets. Tangem
+          Reg. No CHE-390.112.525 Penta Stocks provides only hardware wallets and
+          non-custodial software solutions for managing digital assets. Penta Stocks
           is not regulated as a financial services provider or cryptocurrency
-          exchange. Tangem does not hold, custody, or control users' assets or
-          transactions. Crypto transaction services are provided by third-party
-          providers. Tangem provides no advice or recommendation on use of these
-          third-party services. Copyright © 2025 Tangem AG. All Rights Reserved
+          exchange. Penta Stocks does not hold, custody, or control users' assets or
+          transactions. Penta Stocks transaction services are provided by third-party
+          providers. Penta Stocks provides no advice or recommendation on use of these
+          third-party services. Copyright © 2025 Penta Stocks. All Rights Reserved
         </p>
       </div>
     </footer>

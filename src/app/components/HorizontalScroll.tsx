@@ -29,14 +29,14 @@ const panelData: PanelData[] = [
     title: "Design",
     description: "Perfect spacing and smooth transitions between each section",
     bgGradient: "from-teal-400 to-green-500",
-    image : "https://picsum.photos/200/300",
+    image : "https://picsum.photos/800/1200?grayscale&random=1",
   },
   {
     title: "Code",
     description: "Built with GSAP ScrollTrigger for buttery smooth performance",
     bgGradient: "from-cyan-200 to-pink-200",
     textColor: "text-gray-800",
-    image  : "https://picsum.photos/200/300",
+    image  : "https://picsum.photos/200/300?grayscale&&random=2",
   },
   {
     title: "Portfolio",
@@ -56,7 +56,7 @@ const panelData: PanelData[] = [
     description: "Perfect for image galleries or content showcases",
     bgGradient: "from-pink-300 to-purple-300",
     textColor: "text-gray-800",
-    image : "https://picsum.photos/200/300",
+    image : "https://picsum.photos/800/1200?grayscale&random=3",
   },
   {
     title: "Features",
@@ -77,7 +77,7 @@ const panelData: PanelData[] = [
     description: "End with a strong call-to-action or summary",
     bgGradient: "from-purple-200 to-pink-200",
     textColor: "text-gray-800",
-    image : "https://picsum.photos/200/300",
+    image : "https://picsum.photos/800/1200?grayscale&random=3",
   },
 ];
 
@@ -200,8 +200,8 @@ export default function HorizontalCarousel() {
       <div className="relative h-[100vh]  bg-gradient-to-br ">
        
           <div className=" custom-text-7 md:flex justify-between px-[6%] md:px-[10%] w-full absolute bottom-19">
-            <p className="md:w-[40%] w-[70%] md:leading-16">Want to explore Penta Stocks for Fuyture Crypto Experience </p>
-            <p className="custom-2-text">Introductin Penta Stocks And Future tRsding</p>
+            <p className="md:w-[40%] w-[70%] md:leading-16">Want to explore Penta Stocks for Future Trading Experience </p>
+            <p className="custom-2-text">Introductin Penta Stocks And Future trading</p>
           </div>
 
           <video

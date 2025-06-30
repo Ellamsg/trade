@@ -30,12 +30,10 @@ export default function Program() {
 
         <div className="md:w-full w-[70%]">
           <p className="custom-text-7 font-bold">
-            Three unique devices — one hardware wallet
+            Thousands of Stocks all in one Account
           </p>
           <p>
-            The set consists of one ring and two cards. The smart backup
-            technology and seed phrase option provide maximum protection for
-            your digital assets against loss or theft.
+          Penta Stocks offers secure, high-performance trading solutions with advanced encryption and multi-layer protection to safeguard your investments.
           </p>
         </div>
       </div>
@@ -66,7 +64,7 @@ export default function Program() {
 
         <div>
           <p className="custom-text-7 font-bold">
-            Three unique devices — one hardware wallet
+             unique exchanges — one accounts
           </p>
 
           <p className="custom-2-text">
