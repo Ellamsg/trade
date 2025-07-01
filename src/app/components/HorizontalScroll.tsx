@@ -19,65 +19,64 @@ interface PanelData {
 
 const panelData: PanelData[] = [
   {
-    title: "The ultimate fusion of safety and elegance",
-    description:
-      "Three cards visible at once, creating a beautiful carousel effect",
+    title: "Real-Time Market Insights at Your Fingertips",
+    description: "Track live price movements with an intuitive, dynamic interface",
     bgGradient: "from-red-400 to-orange-500",
-    image  : "/assets/xrp.jpg",
+    image: "/assets/trade1.webp",
   },
   {
-    title: "Design",
-    description: "Perfect spacing and smooth transitions between each section",
+    title: "Seamless Portfolio Visualization",
+    description: "Effortlessly analyze asset allocation with smooth transitions",
     bgGradient: "from-teal-400 to-green-500",
-    image : "https://picsum.photos/800/1200?grayscale&random=1",
+    image: "https://img.freepik.com/free-vector/abstract-red-light-lines-pipe-speed-zoom-black-background-technology_1142-8971.jpg",
   },
   {
-    title: "Code",
-    description: "Built with GSAP ScrollTrigger for buttery smooth performance",
+    title: "Precision Trading Analytics",
+    description: "Powered by real-time data feeds for ultra-responsive performance",
     bgGradient: "from-cyan-200 to-pink-200",
     textColor: "text-gray-800",
-    image  : "https://picsum.photos/200/300?grayscale&&random=2",
+    image: "/assets/trade2.jpeg",
   },
   {
-    title: "Portfolio",
-    description: "Showcase your work with this modern scrolling technique",
+    title: "Dynamic Stock Performance Dashboard",
+    description: "Monitor gains, losses, and trends in a sleek, interactive layout",
     bgGradient: "from-yellow-200 to-orange-200",
     textColor: "text-gray-800",
-    image  : "https://picsum.photos/200/300",
+    image: "https://www.investopedia.com/thmb/6KhgRu9qCjMWQnTneIGMdxzN3Z0=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/stock-market-crash-sell-off---trading-screen-in-red-104271845-565bca2f055c47558a2d17ec3563a4dd.jpg",
   },
   {
-    title: "Products",
-    description: "Display multiple products or services side by side",
+    title: "Multi-Asset Trading Platform",
+    description: "Stocks, crypto, forex—all in one unified workspace",
     bgGradient: "from-indigo-500 to-purple-600",
-    image : "https://picsum.photos/200/300",
+    image: "/assets/trade3.jpeg",
   },
   {
-    title: "Gallery",
-    description: "Perfect for image galleries or content showcases",
+    title: "Advanced Charting Tools",
+    description: "Candlesticks, moving averages, and technical indicators built-in",
     bgGradient: "from-pink-300 to-purple-300",
     textColor: "text-gray-800",
-    image : "https://picsum.photos/800/1200?grayscale&random=3",
+    image: "https://cdn.businessday.ng/2022/12/VV-47-1.png",
   },
   {
-    title: "Features",
-    description: "Highlight key features with visual impact",
+    title: "Risk Management Hub",
+    description: "Set stop-losses, take-profit levels, and volatility alerts",
     bgGradient: "from-blue-200 to-indigo-200",
     textColor: "text-gray-800",
-    image  : "https://picsum.photos/200/300",
+    image: "https://insight.kellogg.northwestern.edu/imager/clientcontent/565452/Full_0125_volatility-Index_e501e24c91d1dd1bb53c2057524667f0.jpg",
   },
   {
-    title: "Timeline",
-    description: "Tell your story chronologically with style",
+    title: "Market Sentiment Timeline",
+    description: "Visualize news events and price reactions in chronological flow",
     bgGradient: "from-orange-200 to-pink-200",
     textColor: "text-gray-800",
-    image  : "https://picsum.photos/200/300",
+    image: "/assets/trade4.jpg",
   },
   {
-    title: "Finish",
-    description: "End with a strong call-to-action or summary",
+    title: "Trade Execution Terminal",
+    description: "Execute orders with institutional-grade speed and reliability",
     bgGradient: "from-purple-200 to-pink-200",
     textColor: "text-gray-800",
-    image : "https://picsum.photos/800/1200?grayscale&random=3",
+    image: "https://images.squarespace-cdn.com/content/v1/637cf7273bbb7f7d32484e43/1710939812278-DSHFBJV67WK4JA3GRQJO/smoke-on-black-background-stock-photo-glenn-meling-0132.jpg",
   },
 ];
 
@@ -120,11 +119,11 @@ export default function HorizontalCarousel() {
           // Update scroll indicator
           if (indicator) {
             if (self.progress < 1) {
-              indicator.innerHTML = `Progress: ${Math.round(
+              indicator.innerHTML = ` ${Math.round(
                 self.progress * 100
               )}%<br>Keep scrolling →`;
             } else {
-              indicator.innerHTML = "Section complete!<br>Continue scrolling ↓";
+              indicator.innerHTML = "";
             }
           }
         },
@@ -192,7 +191,7 @@ export default function HorizontalCarousel() {
 
       {/* Scroll Indicator */}
       <div
-        ref={indicatorRef}
+        
         className="fixed pt-[100px] top-1/2 right-4 md:right-8 -translate-y-1/2 z-50 text-white text-sm bg-black/50 py-2 rounded backdrop-blur-sm"
       ></div>
 
@@ -201,7 +200,7 @@ export default function HorizontalCarousel() {
        
           <div className=" custom-text-7 md:flex justify-between px-[6%] md:px-[10%] w-full absolute bottom-19">
             <p className="md:w-[40%] w-[70%] md:leading-16">Want to explore Penta Stocks for Future Trading Experience </p>
-            <p className="custom-2-text">Introductin Penta Stocks And Future trading</p>
+            <p className="custom-2-text">Introducting Penta Stocks And Future trading</p>
           </div>
 
           <video
@@ -220,11 +219,11 @@ export default function HorizontalCarousel() {
       {/* Horizontal Scroll Section */}
       <div
         ref={containerRef}
-        className="h-screen overflow-hidden relative flex items-center"
+        className="h-screen overflow-hidden  relative flex items-center"
       >
         <div
           ref={horizontalRef}
-          className="flex h-full"
+          className="flex md:h-full"
           style={{ willChange: "transform" }}
         >
           {panelData.map((panel, index) => (
@@ -235,14 +234,14 @@ export default function HorizontalCarousel() {
                  justify-center relative text-2xl font-bold flex-shrink-0 bg-gradient-to-br `}
             >
               <div className={`panel-content relative h-[500px] w-[400px] p-6 rounded-[12px] text-start max-w-[80%] }`}>
-                <h2 className="mb-4 text-3xl md:text-4xl font-bold drop-shadow-lg">
+                <h2 className="mb-4 text-2xl md:text-4xl font-bold drop-shadow-lg">
                   {panel.title}
                 </h2>
                 <p className="text-lg md:text-xl opacity-90 leading-relaxed">
                   {panel.description}
                 </p>
              
-                <img className="absolute -z-30 bottom-0 rounded-[12px] left-0 w-full h-full" src={panel.image} alt="Panel Image" />
+                <img className="absolute -z-30 bottom-0 rounded-[12px] left-0 w-full h-full  " src={panel.image} alt="Panel Image" />
              
               </div>
             </div>

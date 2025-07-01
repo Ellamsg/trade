@@ -49,9 +49,9 @@ export default function Navbar() {
           </div>
           <form action={signOut}>
             <button className="relative cursor-pointer p-[2px] rounded-[50px] bg-gradient-to-r from-blue-400 to-purple-500">
-              <span className="block px-7 py-3 rounded-[48px] bg-[#171717] text-white text-[16px] ">
+              <Link href="/login" className="block px-7 py-3 rounded-[48px] bg-[#171717] text-white text-[16px] ">
                 Login
-              </span>
+              </Link>
             </button>
           </form>
           {/* Mobile menu button */}

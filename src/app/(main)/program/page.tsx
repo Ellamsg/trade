@@ -1,16 +1,14 @@
-// components/Navbar.tsx
-"use client";
 
+"use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import HorizontalCarousel from "../../components/HorizontalScroll";
-// Define navigation links in a single array
+
 
 export default function Program() {
   return (
 
     <div className="">
-
 <HorizontalCarousel />
     <div className="padding-2-screen  pb-[100px]">
       
@@ -41,7 +39,7 @@ export default function Program() {
       <div className="flex  pt-[130px] justify-center">
         <div className="lg:w-[64%]  ">
           <p className="small-big md:leading-15 leading-9 tracking-tighter">
-            Tangem redefines the crypto wallet experience with top-level
+            Penta Stocks redefines the Option Trading experience with top-level
             security, simplicity, and convenience. Enjoy total independence when
             managing your digital assets on the go. We break down barriers for
             newcomers and enhance self-custody for experts.
@@ -68,7 +66,7 @@ export default function Program() {
           </p>
 
           <p className="custom-2-text">
-            The set consists of one ring and two cards. The smart backup
+           The smart backup
             technology and seed phrase option provide maximum protection for
             your digital assets against loss or theft.
           </p>

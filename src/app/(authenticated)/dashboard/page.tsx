@@ -1,260 +1,5 @@
 
 
-
-// import { signOut } from "@/app/(auth)/login/action";
-// import { redirect } from 'next/navigation';
-// import { createClient } from "@/app/utils/supabase/servers";
-// import FrequencyStockCard from "@/app/components/frequency";
-// import CryptoCard from "@/app/components/cryptoCard";
-// const DashboardPage = async () => {
-//   const supabase = await createClient();
-//   const { data: { user }, error } = await supabase.auth.getUser();
-
-//   if (error || !user) {
-//     redirect('/login');
-//   }
-
-//   // Initialize data arrays
-//   let topGainers = [];
-//   let mostActive = [];
-//   let techStocks = [];
-//   let retailStocks = [];
-//   let evStocks = [];
-
-//   try {
-//     const apiKey = process.env.NEXT_PUBLIC_FMP_API_KEY || 'demo'; // Use your FMP API key
-
-//     // Fetch top gaining stocks
-//     const gainersResponse = await fetch(
-//       `https://financialmodelingprep.com/api/v3/stock_market/gainers?apikey=${apiKey}`,
-//       { next: { revalidate: 60 } }
-//     );
-    
-//     if (gainersResponse.ok) {
-//       const data = await gainersResponse.json();
-//       topGainers = data.slice(0, 4).map((stock: any) => ({
-//         name: stock.name,
-//         symbol: stock.symbol,
-//         price: stock.price,
-//         change: stock.changesPercentage,
-//         icon: `https://financialmodelingprep.com/image-stock/${stock.symbol}.png`
-//       }));
-//     }
-
-//     // Fetch most active stocks
-//     const activeResponse = await fetch(
-//       `https://financialmodelingprep.com/api/v3/stock_market/actives?apikey=${apiKey}`,
-//       { next: { revalidate: 120 } }
-//     );
-
-//     if (activeResponse.ok) {
-//       const data = await activeResponse.json();
-//       mostActive = data.slice(0, 4).map((stock: any) => ({
-//         name: stock.name,
-//         symbol: stock.symbol,
-//         price: stock.price,
-//         change: stock.changesPercentage,
-//         icon: `https://financialmodelingprep.com/image-stock/${stock.symbol}.png`
-//       }));
-//     }
-
-//     // Predefined tech stocks (AAPL, MSFT, GOOGL, META)
-//     const techSymbols = ['AAPL', 'MSFT', 'GOOGL', 'META'];
-//     techStocks = await Promise.all(techSymbols.map(async (symbol) => {
-//       const response = await fetch(
-//         `https://financialmodelingprep.com/api/v3/quote/${symbol}?apikey=${apiKey}`,
-//         { next: { revalidate: 300 } }
-//       );
-//       const data = await response.json();
-//       return {
-//         name: data[0]?.name || symbol,
-//         symbol,
-//         price: data[0]?.price || 0,
-//         change: data[0]?.changesPercentage || 0,
-//         icon: `https://financialmodelingprep.com/image-stock/${symbol}.png`
-//       };
-//     }));
-
-//     // Predefined retail stocks (AMZN, WMT, TGT, HD)
-//     const retailSymbols = ['AMZN', 'WMT', 'TGT', 'HD'];
-//     retailStocks = await Promise.all(retailSymbols.map(async (symbol) => {
-//       const response = await fetch(
-//         `https://financialmodelingprep.com/api/v3/quote/${symbol}?apikey=${apiKey}`,
-//         { next: { revalidate: 300 } }
-//       );
-//       const data = await response.json();
-//       return {
-//         name: data[0]?.name || symbol,
-//         symbol,
-//         price: data[0]?.price || 0,
-//         change: data[0]?.changesPercentage || 0,
-//         icon: `https://financialmodelingprep.com/image-stock/${symbol}.png`
-//       };
-//     }));
-
-//     // Predefined EV stocks (TSLA, NIO, LCID, RIVN)
-//     const evSymbols = ['TSLA', 'NIO', 'LCID', 'RIVN'];
-//     evStocks = await Promise.all(evSymbols.map(async (symbol) => {
-//       const response = await fetch(
-//         `https://financialmodelingprep.com/api/v3/quote/${symbol}?apikey=${apiKey}`,
-//         { next: { revalidate: 300 } }
-//       );
-//       const data = await response.json();
-//       return {
-//         name: data[0]?.name || symbol,
-//         symbol,
-//         price: data[0]?.price || 0,
-//         change: data[0]?.changesPercentage || 0,
-//         icon: `https://financialmodelingprep.com/image-stock/${symbol}.png`
-//       };
-//     }));
-
-//   } catch (error) {
-//     console.error('Error fetching stock data:', error);
-//   }
-
-//   return (
-//     <div className="space-y-8 p-5 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
-//       <FrequencyStockCard
-//             symbols={['TSLA', 'NIO', 'LCID', 'RIVN']}
-//             title="EV Stocks Frequency"
-//             colorClass="bg-yellow-500"
-//       />
-//       <h1 className="text-3xl font-bold mb-6">Stock Market Overview</h1>
-      
-//       {/* Top Gainers */}
-//       <section>
-//         <h2 className="text-xl font-semibold mb-4 flex items-center">
-//           <span className="w-3 h-3 bg-blue-500 rounded-full mr-2"></span>
-//           Top Gainers
-//         </h2>
-//         {topGainers.length > 0 ? (
-//           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-//             {topGainers.map((stock) => (
-//               <CryptoCard key={`top-${stock.symbol}`} {...stock} />
-//             ))}
-//           </div>
-//         ) : (
-//           <div className="bg-gray-800 rounded-lg p-4 text-center">
-//             <p>Loading top gainers...</p>
-//           </div>
-//         )}
-//       </section>
-
-//       {/* Most Active Stocks */}
-//       <section>
-//         <h2 className="text-xl font-semibold mb-4 flex items-center">
-//           <span className="w-3 h-3 bg-orange-500 rounded-full mr-2"></span>
-//           Most Active
-//         </h2>
-//         {mostActive.length > 0 ? (
-//           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-//             {mostActive.map((stock) => (
-//               <CryptoCard key={`active-${stock.symbol}`} {...stock} />
-//             ))}
-//           </div>
-//         ) : (
-//           <div className="bg-gray-800 rounded-lg p-4 text-center">
-//             <p>Loading most active stocks...</p>
-//           </div>
-//         )}
-//       </section>
-
-//       {/* Tech Stocks */}
-//       <section>
-//         <h2 className="text-xl font-semibold mb-4 flex items-center">
-//           <span className="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
-//           Tech Stocks
-//         </h2>
-//         {techStocks.length > 0 ? (
-//           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-//             {techStocks.map((stock) => (
-//               <CryptoCard key={`tech-${stock.symbol}`} {...stock} />
-//             ))}
-//           </div>
-//         ) : (
-//           <div className="bg-gray-800 rounded-lg p-4 text-center">
-//             <p>Loading tech stocks...</p>
-//           </div>
-//         )}
-//       </section>
-
-//       {/* Retail Stocks */}
-//       <section>
-//         <h2 className="text-xl font-semibold mb-4 flex items-center">
-//           <span className="w-3 h-3 bg-purple-500 rounded-full mr-2"></span>
-//           Retail Stocks
-//         </h2>
-//         {retailStocks.length > 0 ? (
-//           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-//             {retailStocks.map((stock) => (
-//               <CryptoCard key={`retail-${stock.symbol}`} {...stock} />
-//             ))}
-//           </div>
-//         ) : (
-//           <div className="bg-gray-800 rounded-lg p-4 text-center">
-//             <p>Loading retail stocks...</p>
-//           </div>
-//         )}
-//       </section>
-
-//       {/* EV Stocks */}
-//       <section>
-//         <h2 className="text-xl font-semibold mb-4 flex items-center">
-//           <span className="w-3 h-3 bg-yellow-500 rounded-full mr-2"></span>
-//           EV Stocks
-//         </h2>
-//         {evStocks.length > 0 ? (
-//           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-//             {evStocks.map((stock) => (
-//               <CryptoCard key={`ev-${stock.symbol}`} {...stock} />
-//             ))}
-//           </div>
-//         ) : (
-//           <div className="bg-gray-800 rounded-lg p-4 text-center">
-//             <p>Loading EV stocks...</p>
-//           </div>
-//         )}
-//       </section>
-
-//       {/* Recent Activity Section */}
-//       <section>
-//         <div className="bg-blue-600/20 rounded-xl border border-blue-500/30 p-6">
-//           <h2 className="text-xl font-bold mb-4 flex items-center">
-//             <span className="w-3 h-3 bg-gray-500 rounded-full mr-2"></span>
-//             Recent Activity
-//           </h2>
-//           <div className="space-y-4">
-//             <div className="flex justify-between items-center p-3 bg-blue-600/20 border border-blue-500/30 rounded-lg">
-//               <div>
-//                 <p className="font-medium">AAPL Purchase</p>
-//                 <p className="text-gray-400 text-sm">Today, 10:45 AM</p>
-//               </div>
-//               <span className="text-green-400">+5 Shares</span>
-//             </div>
-//             <div className="flex justify-between items-center p-3 bg-blue-600/20 border border-blue-500/30 rounded-lg">
-//               <div>
-//                 <p className="font-medium">TSLA Sell</p>
-//                 <p className="text-gray-400 text-sm">Today, 9:30 AM</p>
-//               </div>
-//               <span className="text-red-400">-2 Shares</span>
-//             </div>
-//             <div className="flex justify-between items-center p-3 bg-blue-600/20 border border-blue-500/30 rounded-lg">
-//               <div>
-//                 <p className="font-medium">Dividend Received</p>
-//                 <p className="text-gray-400 text-sm">Yesterday, 3:22 PM</p>
-//               </div>
-//               <span className="text-purple-400">+$125.00</span>
-//             </div>
-//           </div>
-//         </div>
-//       </section>
-//     </div>
-//   );
-// };
-
-// export default DashboardPage;
-
 'use client'
 
 import { signOut } from "@/app/(auth)/login/action";
@@ -263,30 +8,51 @@ import { createClient } from "@/app/utils/supabase/clients";
 import FrequencyStockCard from "@/app/components/frequency";
 import CryptoCard from "@/app/components/cryptoCard";
 import { useEffect, useState } from 'react';
+import { User } from '@supabase/supabase-js';
 
-const DashboardPage = () => {
+// Define interfaces for type safety
+interface StockData {
+  id: string;
+  name: string;
+  symbol: string;
+  current_price: string;
+  percentage_change: string;
+  image_url?: string;
+  created_at: string;
+}
+
+interface StockCardProps {
+  name: string;
+  symbol: string;
+  price: string;
+  change: string;
+  icon: string;
+}
+
+const DashboardPage: React.FC = () => {
   const supabase = createClient();
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   
-  // Stock categories
-  const [topGainers, setTopGainers] = useState([]);
-  const [mostActive, setMostActive] = useState([]);
-  const [techStocks, setTechStocks] = useState([]);
-  const [retailStocks, setRetailStocks] = useState([]);
-  const [evStocks, setEvStocks] = useState([]);
+  // Stock categories with proper typing
+  const [topGainers, setTopGainers] = useState<StockCardProps[]>([]);
+  const [mostActive, setMostActive] = useState<StockCardProps[]>([]);
+  const [techStocks, setTechStocks] = useState<StockCardProps[]>([]);
+  const [retailStocks, setRetailStocks] = useState<StockCardProps[]>([]);
+  const [evStocks, setEvStocks] = useState<StockCardProps[]>([]);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchUser = async (): Promise<void> => {
       const { data: { user }, error } = await supabase.auth.getUser();
       if (error || !user) {
         redirect('/login');
+        return;
       }
       setUser(user);
     };
 
-    const fetchStocks = async () => {
+    const fetchStocks = async (): Promise<void> => {
       try {
         setLoading(true);
         
@@ -300,11 +66,13 @@ const DashboardPage = () => {
 
         // Categorize stocks
         if (stocks && stocks.length > 0) {
+          const typedStocks = stocks as StockData[];
+
           // Top gainers - stocks with highest percentage_change
-          const gainers = [...stocks]
+          const gainers: StockCardProps[] = [...typedStocks]
             .sort((a, b) => parseFloat(b.percentage_change) - parseFloat(a.percentage_change))
             .slice(0, 4)
-            .map(stock => ({
+            .map((stock): StockCardProps => ({
               name: stock.name,
               symbol: stock.symbol,
               price: stock.current_price,
@@ -313,11 +81,11 @@ const DashboardPage = () => {
             }));
           setTopGainers(gainers);
 
-          // Most active - stocks with most recent updates (we'll use created_at for this)
-          const active = [...stocks]
-            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+          // Most active - stocks with most recent updates
+          const active: StockCardProps[] = [...typedStocks]
+            .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
             .slice(0, 4)
-            .map(stock => ({
+            .map((stock): StockCardProps => ({
               name: stock.name,
               symbol: stock.symbol,
               price: stock.current_price,
@@ -327,11 +95,11 @@ const DashboardPage = () => {
           setMostActive(active);
 
           // Tech stocks - filter by known tech symbols or names
-          const techSymbols = ['AAPL', 'MSFT', 'GOOGL', 'META', 'NVDA', 'AMD', 'INTC'];
-          const tech = stocks
-            .filter(stock => techSymbols.includes(stock.symbol))
+          const techSymbols: string[] = ['AAPL', 'MSFT', 'GOOGL', 'META', 'NVDA', 'AMD', 'INTC'];
+          const tech: StockCardProps[] = typedStocks
+            .filter((stock): boolean => techSymbols.includes(stock.symbol))
             .slice(0, 4)
-            .map(stock => ({
+            .map((stock): StockCardProps => ({
               name: stock.name,
               symbol: stock.symbol,
               price: stock.current_price,
@@ -341,11 +109,11 @@ const DashboardPage = () => {
           setTechStocks(tech);
 
           // Retail stocks
-          const retailSymbols = ['AMZN', 'WMT', 'TGT', 'HD', 'COST', 'LOW', 'BABA'];
-          const retail = stocks
-            .filter(stock => retailSymbols.includes(stock.symbol))
+          const retailSymbols: string[] = ['AMZN', 'WMT', 'TGT', 'HD', 'COST', 'LOW', 'BABA'];
+          const retail: StockCardProps[] = typedStocks
+            .filter((stock): boolean => retailSymbols.includes(stock.symbol))
             .slice(0, 4)
-            .map(stock => ({
+            .map((stock): StockCardProps => ({
               name: stock.name,
               symbol: stock.symbol,
               price: stock.current_price,
@@ -355,11 +123,11 @@ const DashboardPage = () => {
           setRetailStocks(retail);
 
           // EV stocks
-          const evSymbols = ['TSLA', 'NIO', 'LCID', 'RIVN', 'F', 'GM', 'RIDE'];
-          const ev = stocks
-            .filter(stock => evSymbols.includes(stock.symbol))
+          const evSymbols: string[] = ['TSLA', 'NIO', 'LCID', 'RIVN', 'F', 'GM', 'RIDE'];
+          const ev: StockCardProps[] = typedStocks
+            .filter((stock): boolean => evSymbols.includes(stock.symbol))
             .slice(0, 4)
-            .map(stock => ({
+            .map((stock): StockCardProps => ({
               name: stock.name,
               symbol: stock.symbol,
               price: stock.current_price,
@@ -369,7 +137,8 @@ const DashboardPage = () => {
           setEvStocks(ev);
         }
       } catch (err) {
-        setError(err.message);
+        const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+        setError(errorMessage);
         console.error('Error fetching stock data:', err);
       } finally {
         setLoading(false);
@@ -378,9 +147,17 @@ const DashboardPage = () => {
 
     fetchUser();
     fetchStocks();
-  }, []);
+  }, [supabase]);
 
-  if (!user) return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900"></div>;
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-white">Loading...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 p-5 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 min-h-screen">
@@ -413,7 +190,7 @@ const DashboardPage = () => {
           </div>
         ) : topGainers.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {topGainers.map((stock) => (
+            {topGainers.map((stock: StockCardProps) => (
               <CryptoCard key={`top-${stock.symbol}`} {...stock} />
             ))}
           </div>
@@ -436,7 +213,7 @@ const DashboardPage = () => {
           </div>
         ) : mostActive.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {mostActive.map((stock) => (
+            {mostActive.map((stock: StockCardProps) => (
               <CryptoCard key={`active-${stock.symbol}`} {...stock} />
             ))}
           </div>
@@ -459,7 +236,7 @@ const DashboardPage = () => {
           </div>
         ) : techStocks.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {techStocks.map((stock) => (
+            {techStocks.map((stock: StockCardProps) => (
               <CryptoCard key={`tech-${stock.symbol}`} {...stock} />
             ))}
           </div>
@@ -482,7 +259,7 @@ const DashboardPage = () => {
           </div>
         ) : retailStocks.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {retailStocks.map((stock) => (
+            {retailStocks.map((stock: StockCardProps) => (
               <CryptoCard key={`retail-${stock.symbol}`} {...stock} />
             ))}
           </div>
@@ -505,7 +282,7 @@ const DashboardPage = () => {
           </div>
         ) : evStocks.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {evStocks.map((stock) => (
+            {evStocks.map((stock: StockCardProps) => (
               <CryptoCard key={`ev-${stock.symbol}`} {...stock} />
             ))}
           </div>
@@ -553,5 +330,4 @@ const DashboardPage = () => {
 };
 
 export default DashboardPage;
-
 

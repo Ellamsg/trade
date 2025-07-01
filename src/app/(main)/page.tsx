@@ -36,7 +36,7 @@ export default function Home() {
 
                 <button className="relative p-[2px] rounded-[50px] bg-gradient-to-r from-blue-400 to-purple-500">
                   <Link
-                    href="/register"
+                    href="/signup"
                     className="block px-6 py-3 rounded-[48px] bg-[#171717] text-white text-[16px] md:text-[20px]"
                   >
                     Create Account
@@ -115,24 +115,25 @@ export default function Home() {
         </div>
 
         <div>
-          <img src="assets/cards.webp" alt="cards" />
+          <img className="h-[700px] md:pt-0 pt-[100px]" src="assets/pent.png" alt="cards" />
         </div>
       </div>
 
       <div className="border-t-[0.4px] border-white py-[130px] justify-center items-center">
-        <div className="md:px-[10%]">
-          <div className=" text-center flex flex-col justify-center items-center tracking-tighter ">
-            <p className="custom-2-text">
-              1.4 million user alread use Logo for option trading
-            </p>
-            <p className="custom-3-text">One Stock Option For All</p>
-            <p className="custom-2-text w-[50%]">
-              Lorem ipsum dolor sit amet consectetur adipindis amet id officia
-              doloremque atque quaerat vel nam maiores. Vero, illo? Quisquam
-              magni.
-            </p>
-          </div>
-        </div>
+      <div className="md:px-[10%]">
+  <div className="text-center flex flex-col justify-center items-center tracking-tighter">
+    <p className="custom-2-text text-gray-300">
+      Traders around the world choose <strong>Penta Stock</strong> for smarter options trading
+    </p>
+    <p className="custom-3-text text-white font-semibold mt-2">
+      One Platform. Endless Possibilities.
+    </p>
+    <p className="custom-2-text w-[50%] text-gray-400 mt-4">
+      Explore powerful tools, real-time insights, and advanced strategies — all in one place. Whether you're just starting out or refining your edge, Penta Stock helps you trade with confidence.
+    </p>
+  </div>
+</div>
+
         <div className="flex justify-center">
           <img
             className="md:h-[1000px] h-[600px] "
@@ -141,14 +142,17 @@ export default function Home() {
           />
         </div>
       </div>
-      <div className="flex  px-5 md:px-0 flex-col justify-center items-center">
-        <div className=" text-center md:w-[70%]  tracking-tighter ">
-          <p className="custom-2-text">
-            1.4 million user alread use Penta stocks for option trading
-          </p>
-          <p className="custom-3-text pb-17">Access to thousands of Stocks.</p>
-        </div>
-      </div>
+      <div className="flex px-5 md:px-0 flex-col justify-center items-center">
+  <div className="text-center md:w-[70%] tracking-tighter">
+    <p className="custom-2-text text-gray-300">
+      Take control of your trades with the tools and insights built for real market momentum — only on <strong>Penta Stock</strong>
+    </p>
+    <p className="custom-3-text pb-17 text-white font-semibold mt-2">
+      Explore Unlimited Stock Opportunities
+    </p>
+  </div>
+</div>
+
       <div className="custom-2-text grid md:h-[650px] font-bold md:mt-[150px] md:border-y-[0.4px] border-white   md:flex w-full">
         <div className="md:w-[50%]  md:order-first order-last ">
           <img
@@ -157,23 +161,25 @@ export default function Home() {
             alt="cards"
           />
         </div>
-        <div className="md:w-[50%]  order-last  md:pl-[10%]   tracking-tighter p-[50px] md:py-[140px]">
-          <p className="md:text-[50px] text-[30px]">Set up Your Account</p>
+        <div className="md:w-[50%] order-last md:pl-[10%] tracking-tighter p-[50px] md:py-[140px]">
+  <p className="md:text-[50px] text-[30px] font-semibold">
+    Join the Future of Trading
+  </p>
 
-          <p className="custom-2-text md:pt-0 pt-6">
-            {" "}
-            1.4 million user alread use Penta Stock for option trading, Latest
-            trends, trading psychology, and strategy breakdowns
-          </p>
-          <button className="relative cursor-pointer p-[2px] my-4  rounded-[50px] bg-gradient-to-r from-blue-400 to-purple-500">
-            <Link
-              href="/register"
-              className="block px-7 py-3 rounded-[48px] bg-[#171717] text-white text-[16px] "
-            >
-              Open Account
-            </Link>
-          </button>
-        </div>
+  <p className="custom-2-text md:pt-0 pt-6 text-gray-300">
+    Trusted Millions of traders worldwide, Penta Stock helps you stay ahead with real-time market insights, smart option strategies, and in-depth trading psychology breakdowns. Everything you need — in one place.
+  </p>
+
+  <button className="relative cursor-pointer p-[2px] my-4 rounded-[50px] bg-gradient-to-r from-blue-400 to-purple-500">
+    <Link
+      href="/signup"
+      className="block px-7 py-3 rounded-[48px] bg-[#171717] text-white text-[16px] font-medium"
+    >
+      Get Started Now
+    </Link>
+  </button>
+</div>
+
       </div>
 
       <div className="flex flex-col py-[120px]  justify-center items-center">

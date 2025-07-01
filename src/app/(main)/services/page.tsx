@@ -16,7 +16,12 @@ export default function Services() {
 
         <div>
           <p className="custom-4-text lg:w-[60%] md:w-[80%]">
-          Penta Stocks is a modern trading platform that empowers individuals to buy, sell, and manage stocks with ease. Built for both new and seasoned investors, Penta Stocks combines simplicity, security, and smart tools to help users make confident financial decisions in real time. At our core, we believe that the stock market shouldn’t be intimidating or reserved for the elite. That’s why we’re creating a seamless, accessible, and transparent ecosystem where users can explore opportunities, build wealth, and take control of their financial future.
+          Penta Stocks is a modern trading platform that empowers individuals to buy, sell, 
+          and manage stocks with ease. Built for both new and seasoned investors, Penta Stocks combines simplicity, security, and smart tools
+           to help users make confident financial decisions in real time.
+           At our core, we believe that the stock market shouldn’t be intimidating or reserved for the elite.
+            That’s why we’re creating a seamless, accessible, and transparent ecosystem where users can explore 
+            opportunities, build wealth, and take control of their financial future.
 
 What we offer
 
@@ -25,8 +30,8 @@ What we offer
         </div>
 
         <div className="flex gap-9 ">
-          <p className="text-[100px]">''</p>
-          <p className="custom-3-text leading-20">
+          <p className="text-[100px] md:block hidden">''</p>
+          <p className="custom-3-text  md:leading-20">
           To democratize access to the stock market by making investing simple, transparent, and accessible to everyone
           </p>
         </div>
@@ -40,17 +45,7 @@ What we offer
         At Penta Stocks, we empower traders and investors with cutting-edge tools, expert insights, and a seamless trading experience. Founded with a vision to democratize financial markets, we provide a secure and intuitive platform for stocks, forex, commodities, and cryptocurrencies.
         </p>
       </div>
-      <div className="py-9">
-        <p className="custom-3-text py-9 ">Product Partners</p>
-        <div className="flex gap-7">
-          <div className="bg-white s p-[60px] rounded-[20px]">
-            <img src="" alt="logo" />
-          </div>{" "}
-          <div className="bg-white p-[60px] rounded-[20px]">
-            <img src="" alt="logo" />
-          </div>
-        </div>
-      </div>
+   
     </div>
   );
 }

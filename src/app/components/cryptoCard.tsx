@@ -1,13 +1,13 @@
 interface CryptoCardProps {
-    name: string;
-    symbol: string;
-    price: number | string;
-    change: number ;
-    icon: string;
-  }
-  
+  name: string;
+  symbol: string;
+  price: number | string;
+  change: number | string;  // Allow both number and string
+  icon: string;
+}
   const CryptoCard = ({ name, symbol, price, change, icon }: CryptoCardProps) => {
-    const isPositive = change >= 0;
+    const changeNum = typeof change === 'string' ? parseFloat(change) : change;
+  const isPositive = changeNum >= 0;
 
     return (
       <div className="bg-blue-600/20 rounded-xl border border-blue-500/30 p-4 hover:bg-gray-700 transition-colors">

@@ -19,17 +19,18 @@ export default function Footer() {
         <div>
         <img className="h-9" src="assets/pentalogo.png" alt='main-log'/>
         </div>
-        <div className="space-y-6">
-          <p>names </p>
-          <p>names </p>
-          <p>names </p>
-          <p>names </p>
+        <div className="flex  md:items-start items-center flex-col gap-8">
+          <Link href="/"><p>Home</p></Link>
+          <Link href="/program"><p>Program</p></Link>
+          <Link href="/services"><p>Services</p></Link>
+
+         
         </div>
-        <div className="space-y-6">
-          <p>names </p>
-          <p>names </p>
-          <p>names </p>
-          <p>names </p>
+        <div className="flex flex-col md:items-start items-center   gap-8">
+        <Link href="/program"><p>Stocks</p></Link>
+        <Link href="/contact"><p>Contacts</p></Link>
+        <Link href="/supports"><p>Customer Supports</p></Link>
+       
         </div>
 
         <div className="grid text-center gap-4 grid-cols-6 justify-center ">

@@ -1,120 +1,17 @@
-// import Link from 'next/link'
-// import { signup,login } from './action'
-// import { FcGoogle } from 'react-icons/fc'
-// // import AuthForm from '@/app/components/AuthForm'
-// export default function LoginPage() {
-//   return (
-//     <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
-
-//       {/* <AuthForm/> */}
-//       <div className="w-full max-w-md">
-//         <div className="mb-10 text-center">
-//           <h1 className="text-3xl font-bold mb-2">Welcome Back</h1>
-//           <p className="text-gray-400">Sign in to access your account</p>
-//         </div>
-
-//         {/* Google Sign-In Button */}
-//         <button
-//           type="button"
-//           className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded-lg font-medium transition duration-200 mb-6"
-//         >
-//           <FcGoogle className="text-xl" />
-//           <span>Continue with Google</span>
-//         </button>
-
-//         <div className="flex items-center my-6">
-//           <div className="flex-1 border-t border-gray-700"></div>
-//           <span className="px-3 text-gray-400 text-sm">OR</span>
-//           <div className="flex-1 border-t border-gray-700"></div>
-//         </div>
-
-//         <form className="space-y-6">
-//           <div>
-//             <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
-//               Email Address
-//             </label>
-//             <input
-//               id="email"
-//               name="email"
-//               type="email"
-//               autoComplete="email"
-//               required
-//               className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-//               placeholder="you@example.com"
-//             />
-//           </div>
-
-//           <div>
-//             <div className="flex justify-between items-center mb-1">
-//               <label htmlFor="password" className="block text-sm font-medium text-gray-300">
-//                 Password
-//               </label>
-//               <Link href="/forgot-password" className="text-sm text-blue-500 hover:text-blue-400">
-//                 Forgot?
-//               </Link>
-//             </div>
-//             <input
-//               id="password"
-//               name="password"
-//               type="password"
-//               autoComplete="current-password"
-//               required
-//               className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-//               placeholder="••••••••"
-//             />
-//           </div>
-
-//           <div className="flex items-center">
-//             {/* <input
-//               id="remember-me"
-//               name="remember-me"
-//               type="checkbox"
-//               className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-700 rounded bg-gray-800"
-//             /> */}
-//             <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-300">
-//               Remember me
-//             </label>
-//           </div>
-
-//           <button
-//           formAction={login}
-//             type="submit"
-//             className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 focus:ring-offset-gray-900 text-white font-medium rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
-//           >
-//             Sign In
-//           </button>
-//         </form>
-
-//         <div className="mt-8 text-center text-sm text-gray-400">
-//           Don't have an account?{' '}
-//           <Link href="/register" className="text-blue-500 hover:text-blue-400 font-medium">
-//             Create one
-//           </Link>
-          
-//         </div>
-
-//         <div className="mt-10 border-t border-gray-800 pt-6 text-center">
-//           <p className="text-xs text-gray-500">
-//             © {new Date().getFullYear()} Your Company. All rights reserved.
-//           </p>
-//         </div>
-//       </div>
-//     </div>
-//   )
-// }
-
 'use client'
 import Link from 'next/link'
 import { signup, login, resendConfirmation } from './action'
 import { FcGoogle } from 'react-icons/fc'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { FaEye, FaEyeSlash } from 'react-icons/fa'
 
 export default function LoginPage() {
   const searchParams = useSearchParams()
   const [showModal, setShowModal] = useState(false)
   const [isResending, setIsResending] = useState(false)
   const [isSigningIn, setIsSigningIn] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const error = searchParams.get('error')
   const email = searchParams.get('email')
   const confirm = searchParams.get('confirm')
@@ -138,7 +35,7 @@ export default function LoginPage() {
     }
   }
 
-  const handleLogin = async (formData:any) => {
+  const handleLogin = async (formData: any) => {
     setIsSigningIn(true)
     try {
       await login(formData)
@@ -151,7 +48,6 @@ export default function LoginPage() {
 
   const closeModal = () => {
     setShowModal(false)
-    // Clear URL params
     window.history.replaceState({}, '', '/login')
   }
 
@@ -163,7 +59,6 @@ export default function LoginPage() {
           <p className="text-gray-400">Sign in to access your account</p>
         </div>
 
-        {/* Success Messages */}
         {confirm === 'email_sent' && (
           <div className="mb-6 p-4 bg-green-900/20 border border-green-700 rounded-lg">
             <p className="text-green-400 text-sm">
@@ -180,7 +75,6 @@ export default function LoginPage() {
           </div>
         )}
 
-        {/* Error Messages */}
         {error && error !== 'email_not_confirmed' && (
           <div className="mb-6 p-4 bg-red-900/20 border border-red-700 rounded-lg">
             <p className="text-red-400 text-sm">
@@ -192,20 +86,19 @@ export default function LoginPage() {
           </div>
         )}
 
-        {/* Google Sign-In Button */}
-        <button
+        {/* <button
           type="button"
           className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded-lg font-medium transition duration-200 mb-6"
         >
           <FcGoogle className="text-xl" />
           <span>Continue with Google</span>
-        </button>
+        </button> */}
 
-        <div className="flex items-center my-6">
+        {/* <div className="flex items-center my-6">
           <div className="flex-1 border-t border-gray-700"></div>
           <span className="px-3 text-gray-400 text-sm">OR</span>
           <div className="flex-1 border-t border-gray-700"></div>
-        </div>
+        </div> */}
 
         <form action={handleLogin} className="space-y-6">
           <div>
@@ -229,25 +122,35 @@ export default function LoginPage() {
               <label htmlFor="password" className="block text-sm font-medium text-gray-300">
                 Password
               </label>
-              <Link href="/forgot-password" className="text-sm text-blue-500 hover:text-blue-400">
+              {/* <Link href="/forgot-password" className="text-sm text-blue-500 hover:text-blue-400">
                 Forgot?
-              </Link>
+              </Link> */}
             </div>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              required
-              disabled={isSigningIn}
-              className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition disabled:opacity-50 disabled:cursor-not-allowed"
-              placeholder="••••••••"
-            />
+            <div className="relative">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                required
+                disabled={isSigningIn}
+                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition disabled:opacity-50 disabled:cursor-not-allowed pr-10"
+                placeholder="••••••••"
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-300"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
           </div>
 
           <div className="flex items-center">
             <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-300">
-              Remember me
+            
             </label>
           </div>
 
@@ -296,7 +199,6 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Email Confirmation Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-gray-900 border border-gray-700 rounded-lg p-6 w-full max-w-md">
