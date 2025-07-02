@@ -101,8 +101,8 @@ export default function Home() {
       </div>
 
       <div className="cards   px-5 md:px-0 flex md:flex-row flex-col">
-        <div className="md:px-[10%] md:order-first order-last  custom-2-text py-[100px]">
-          <div className="md:w-[80%] w-[70%]">
+        <div className="md:px-[10%] md:order-first order-last  custom-2-text py-6 md:pb-0 pb-[120px] md:py-[100px]">
+          <div className="md:w-[80%] w-[90%]">
             <p className="">
               To democratize access to the stock market by making investing
               simple, transparent, and accessible to everyone
@@ -114,8 +114,8 @@ export default function Home() {
           </div>
         </div>
 
-        <div>
-          <img className="h-[700px] md:w-[700px] md:pt-0 pt-[100px]" src="assets/pent.png" alt="cards" />
+        <div className="">
+          <img className="h-[600px] md:w-[700px] md:pt-0 pt-[100px]" src="assets/pent.png" alt="cards" />
         </div>
       </div>
 
@@ -161,7 +161,7 @@ export default function Home() {
             alt="cards"
           />
         </div>
-        <div className="md:w-[50%] order-last md:pl-[10%] tracking-tighter p-[50px] md:py-[140px]">
+        <div className="md:w-[50%] order-last md:pl-[10%] md:pt-0 pt-[40px] tracking-tighter md:p-[50px] md:py-[140px]">
   <p className="md:text-[50px] text-[30px] font-semibold">
     Join the Future of Trading
   </p>
@@ -182,20 +182,21 @@ export default function Home() {
 
       </div>
 
-      <div className="flex flex-col py-[120px]  justify-center items-center">
+      <div className="flex flex-col   py-[120px]  justify-center items-center">
         <div className=" text-center md:w-[70%]  tracking-tighter ">
           <p className="custom-3-text">Stay connected.</p>
           <p className="custom-2-text">
             Millions of users already use Penta Stocks for option trading
           </p>
 
-          <div className=" icons-box justify-center py-[60px]">
+          <div className=" icons-box  py-[60px]">
             <FaFacebook className="icons" />
-            <IoLogoYoutube className="icons" />
+        
             <FaInstagram className="icons" />
-            <FaLinkedin className="icons" />
+          
             <FaDiscord className="icons" />
             <FaTelegramPlane className="icons" />
+           
           </div>
         </div>
       </div>

@@ -26,7 +26,7 @@ export default function Program() {
           />
         </div>
 
-        <div className="md:w-full w-[70%]">
+        <div className="md:w-full pt-9 w-[70%]">
           <p className="custom-text-7 font-bold">
             Thousands of Stocks all in one Account
           </p>
@@ -36,7 +36,7 @@ export default function Program() {
         </div>
       </div>
 
-      <div className="flex  pt-[130px] justify-center">
+      <div className="flex pt-[50px] md:pt-[130px] justify-center">
         <div className="lg:w-[64%]  ">
           <p className="small-big md:leading-15 leading-9 tracking-tighter">
             Penta Stocks redefines the Option Trading experience with top-level
