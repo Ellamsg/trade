@@ -122,7 +122,7 @@ export default function Home() {
         </div>
 
         <div className="flex md:pt-0 pt-[100px] justify-center">
-          <div className="lg:w-[64%] ">
+          <div className="lg:w-[74%] ">
             <ScrollRevealText className="small-big md:leading-15 leading-9 tracking-tighter">
               Penta Stocks is a modern trading platform that empowers
               individuals to buy, sell, and manage stocks with ease. Built for
