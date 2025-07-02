@@ -208,6 +208,7 @@ export default function HorizontalCarousel() {
             autoPlay
             loop
             muted
+            playsInline
             x5-playsinline=""
             src="https://res.cloudinary.com/dalmrzjps/video/upload/v1751442343/dollar_dgr2z5.mp4"
             className="w-full h-full object-cover "
