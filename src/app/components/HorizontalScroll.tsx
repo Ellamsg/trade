@@ -199,7 +199,7 @@ export default function HorizontalCarousel() {
       <div className="relative h-[100vh]  bg-gradient-to-br ">
        
           <div className=" custom-text-7 md:flex justify-between px-[6%] md:px-[10%] w-full absolute bottom-19">
-            <p className="md:w-[40%] w-[70%] md:leading-16">Want to explore Penta Stocks for Future Trading Experience </p>
+            <p className="md:w-[40%] w-[70%] leading-9 md:leading-16">Want to explore Penta Stocks for Future Trading Experience </p>
             <p className="custom-2-text">Introducting Penta Stocks And Future trading</p>
           </div>
 
@@ -209,6 +209,7 @@ export default function HorizontalCarousel() {
             loop
             muted
             x5-playsinline=""
+            playsInline
             src="https://res.cloudinary.com/dalmrzjps/video/upload/v1750607897/Untitled_design-2_fjsr5e.mp4"
             className="w-full h-full object-cover "
           />

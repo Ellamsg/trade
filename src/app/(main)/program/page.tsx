@@ -15,15 +15,17 @@ export default function Program() {
 
       <div className="">
         <div className="md:-mx-[120px] -mx-[20px]">
-          <video
-            poster="/images/pose2.jpeg"
-            autoPlay
-            loop
-            muted
-            x5-playsinline=""
-            src="https://res.cloudinary.com/dalmrzjps/video/upload/v1751442343/dollar_dgr2z5.mp4"
-            className="w-full  h-[450px] md:h-[620px] object-cover "
-          />
+           <video
+              className="md:h-[300px] h-[324px] object-cover w-[100%]"
+              src="https://res.cloudinary.com/dalmrzjps/video/upload/v1707253371/first_ogkw0q.mp4"
+              poster="/images/mock13.jpg"
+              autoPlay
+              loop
+              muted
+              x5-playsinline=""
+              playsInline
+            />
+
         </div>
 
         <div className="md:w-full pt-9 w-[70%]">
@@ -55,6 +57,7 @@ export default function Program() {
             loop
             muted
             x5-playsinline=""
+            playsInline
             src="https://tangem.com/video/desktop/ring-unique-devices.mp4"
             className="w-full md:h-[750px] size-[400px] object-cover "
           />

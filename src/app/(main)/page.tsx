@@ -29,15 +29,16 @@ export default function Home() {
               <p className="custom-4-text">
                 Investing Made Simple, Trading Made Smarter.
               </p>
-              <div className="space-x-[30px] mt-4">
-                <button className="md:text-[25px] py-3 px-6   ">
-                  Discover
-                </button>
-
-                <button className="relative p-[2px] rounded-[50px] bg-gradient-to-r from-blue-400 to-purple-500">
+              <div className="space-x-[30px]  flex mt-4">
+              <button className="relative cursor-pointer  p-[2px] rounded-[17px] bg-gradient-to-r from-blue-400 to-purple-500">
+              <Link href="/stocks" className="block px-[50px] py-3 rounded-[17px] bg-[#171717] text-white text-[16px] ">
+                Discover
+              </Link>
+            </button>
+                <button className="relative px-6 py-3  p-[2px] rounded-[17px] bg-gradient-to-r from-blue-400 to-purple-500">
                   <Link
                     href="/signup"
-                    className="block px-6 py-3 rounded-[48px] bg-[#171717] text-white text-[16px] md:text-[20px]"
+                    className=" text-white  md:text-[20px]"
                   >
                     Create Account
                   </Link>
@@ -69,37 +70,71 @@ export default function Home() {
         <div></div>
       </main>
 
-      <div className="custom-2-text px-5 md:px-0 font-bold md:py-0 py-[100px] mt-[120px] md:mt-[150px] border-y-[0.4px] border-white md:divide-x-[0.4px] md:divide-white  md:flex w-full">
-        <div className="md:w-[50%] md:px-0   flex items-center small-big   pt-[20px]  md:text-center md:py-0 py-3 tracking-tighter  ">
-          <p className="transform md:rotate-[270deg] origin-middle">
-            What we offer{" "}
-          </p>
+      <div className="custom-2-text px-5 md:px-0 font-bold md:py-0 py-[100px] mt-[120px] md:mt-[150px] border-y-[0.4px] border-white md:divide-x-[0.4px] md:divide-white md:flex w-full">
+  <div className="md:w-[50%] md:px-0 flex items-center small-big pt-[20px] md:text-center md:py-0 py-3 tracking-tighter">
+    <p className="transform  md:rotate-[270deg] origin-middle">
+      What we offer{" "}
+    </p>
+  </div>
+  <div className="md:w-[90%] md:px-[10%] md:py-[140px] relative">
+    <div className="relative pl-10 space-y-10">
+      {/* Gradient connecting line */}
+      <div className="absolute left-[18px] top-0 h-full w-[1.5px] bg-gradient-to-b from-blue-400 to-purple-500"></div>
+      
+      {/* List items with gradient numbers */}
+      <div className="relative">
+        <div className="absolute -left-10 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold">
+          <span className="text-sm">1</span>
         </div>
-        <div className="md:w-[90%] md:px-[10%]  md:py-[140px]">
-          <p className="">
-            User-Friendly Trading App – A clean, intuitive interface that makes
-            investing easy and engaging. offline, ensuring it cannot be
-            compromised.
-          </p>
-          <p>
-            Real-Time Market Data – Stay informed with up-to-the-second updates
-            and analytics.
-          </p>
-          <p>
-            Secure Transactions – End-to-end encryption and regulatory
-            compliance to protect every trade.
-          </p>
-          <p>
-            -Educational Tools – Learn the basics or deepen your strategy with
-            our built-in resources.
-          </p>
-          <p>
-            Fractional Shares – Start investing with what you have—own a piece
-            of your favorite companies.
-          </p>
-        </div>
+        <p className="pl-2">
+          User-Friendly Trading App – A clean, intuitive interface that makes
+          investing easy and engaging. offline, ensuring it cannot be
+          compromised.
+        </p>
       </div>
-
+      
+      <div className="relative">
+        <div className="absolute -left-10 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold">
+          <span className="text-sm">2</span>
+        </div>
+        <p className="pl-2">
+          Real-Time Market Data – Stay informed with up-to-the-second updates
+          and analytics.
+        </p>
+      </div>
+      
+      <div className="relative">
+        <div className="absolute -left-10 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold">
+          <span className="text-sm">3</span>
+        </div>
+        <p className="pl-2">
+          Secure Transactions – End-to-end encryption and regulatory
+          compliance to protect every trade.
+        </p>
+      </div>
+      
+      <div className="relative">
+        <div className="absolute -left-10 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold">
+          <span className="text-sm">4</span>
+        </div>
+        <p className="pl-2">
+          Educational Tools – Learn the basics or deepen your strategy with
+          our built-in resources.
+        </p>
+      </div>
+      
+      <div className="relative">
+        <div className="absolute -left-10 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold">
+          <span className="text-sm">5</span>
+        </div>
+        <p className="pl-2">
+          Fractional Shares – Start investing with what you have—own a piece
+          of your favorite companies.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
       <div className="cards   px-5 md:px-0 flex md:flex-row flex-col">
         <div className="md:px-[10%] md:order-first order-last  custom-2-text py-6 md:pb-0 pb-[120px] md:py-[100px]">
           <div className="md:w-[80%] w-[90%]">
@@ -125,7 +160,7 @@ export default function Home() {
     <p className="custom-2-text text-gray-300">
       Traders around the world choose <strong>Penta Stock</strong> for smarter options trading
     </p>
-    <p className="custom-3-text text-white font-semibold mt-2">
+    <p className="custom-3-text text-white leading-[50px] md:leading-[80px] font-semibold mt-2">
       One Platform. Endless Possibilities.
     </p>
     <p className="custom-2-text w-[80%] md:w-[50%] text-gray-400 mt-4">
@@ -147,7 +182,7 @@ export default function Home() {
     <p className="custom-2-text text-gray-300">
       Take control of your trades with the tools and insights built for real market momentum — only on <strong>Penta Stock</strong>
     </p>
-    <p className="custom-3-text pb-17 text-white font-semibold mt-2">
+    <p className="custom-3-text pb-17 leading-[50px] md:leading-[80px] text-white font-semibold mt-2">
       Explore Unlimited Stock Opportunities
     </p>
   </div>
@@ -161,8 +196,8 @@ export default function Home() {
             alt="cards"
           />
         </div>
-        <div className="md:w-[50%] order-last md:pl-[10%] md:pt-0 pt-[40px] tracking-tighter md:p-[50px] md:py-[140px]">
-  <p className="md:text-[50px] text-[30px] font-semibold">
+        <div className="md:w-[50%]  order-last md:pl-[10%]  pt-[40px] md:px-0 tracking-tighter px-6 md:p-[50px] md:py-[140px]">
+  <p className="md:text-[50px] md:w-auto w-[70%] text-[30px] font-semibold">
     Join the Future of Trading
   </p>
 
@@ -170,10 +205,10 @@ export default function Home() {
     Trusted Millions of traders worldwide, Penta Stock helps you stay ahead with real-time market insights, smart option strategies, and in-depth trading psychology breakdowns. Everything you need — in one place.
   </p>
 
-  <button className="relative cursor-pointer p-[2px] my-4 rounded-[50px] bg-gradient-to-r from-blue-400 to-purple-500">
+  <button className="relative  px-7 py-3  cursor-pointer p-[2px] mt-9 my-4 rounded-[17px] bg-gradient-to-r from-blue-400 to-purple-500">
     <Link
       href="/signup"
-      className="block px-7 py-3 rounded-[48px] bg-[#171717] text-white text-[16px] font-medium"
+      className="  text-white text-[16px] font-medium"
     >
       Get Started Now
     </Link>

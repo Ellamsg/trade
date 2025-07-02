@@ -8,7 +8,7 @@ import Link from "next/link";
 
 export default function Services() {
   return (
-    <div className="padding-2-screen py-[200px]">
+    <div className="padding-2-screen py-[150px] md:py-[200px]">
       <div className=" space-y-[60px] ">
         <div>
           <h1 className="custom-1-text">What is Penta Stocks?</h1>
@@ -31,7 +31,7 @@ What we offer
 
         <div className="flex gap-9 ">
           <p className="text-[100px] md:block hidden">''</p>
-          <p className="custom-3-text  md:leading-20">
+          <p className="custom-3-text leading-[45px]  md:leading-20">
           To democratize access to the stock market by making investing simple, transparent, and accessible to everyone
           </p>
         </div>

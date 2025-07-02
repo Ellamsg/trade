@@ -62,8 +62,8 @@ const StackedCarousel = () => {
         </div>
 
         {/* Stacked Carousel Container */}
-        <div className="relative h-96 flex items-center justify-center">
-          <div className="relative w-full max-w-4xl">
+        <div className="relative  h-96 flex items-center justify-center">
+          <div className="relative w-full ">
             {/* Navigation Buttons */}
             <button
               onClick={prevSlide}

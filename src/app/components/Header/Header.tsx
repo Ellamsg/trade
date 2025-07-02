@@ -48,11 +48,14 @@ export default function Navbar() {
             ))}
           </div>
           <form className="md:block hidden " action={signOut}>
-            <button className="relative cursor-pointer p-[2px] rounded-[50px] bg-gradient-to-r from-blue-400 to-purple-500">
-              <Link href="/login" className="block px-7 py-3 rounded-[48px] bg-[#171717] text-white text-[16px] ">
-                Login
-              </Link>
-            </button>
+          <button className="relative px-6 py-3  p-[2px] rounded-[17px] bg-gradient-to-r from-blue-400 to-purple-500">
+                  <Link
+                    href="/login"
+                    className=" text-white text-[16px] md:text-[20px]"
+                  >
+                    Login
+                  </Link>
+                </button>
           </form>
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center">

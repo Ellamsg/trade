@@ -165,7 +165,7 @@ const Stocks: React.FC = () => {
       <div className="border-b border-slate-700/50 from-[#222222] to-[#5e5e5e]">
         <div className="mx-auto text-center  flex justify-center items-center flex-col  px-4 sm:px-6 py-[70px]">
           <div className="flex pt-[100px] justify-center ">
-            <p className="custom-3-text md:w-[70%]">
+            <p className="custom-3-text leading-13 md:leading-19 md:w-[70%]">
               Supported Stocks 
             </p>
           </div>
@@ -216,7 +216,7 @@ const Stocks: React.FC = () => {
           <>
             {/* Search Results Info */}
             {searchTerm.trim() && (
-              <div className="mb-4 px-4 sm:px-6">
+              <div className="mb-4 px-4 sm:px-6 ">
                 <div className="text-slate-400 text-sm">
                   {displayedStocks.length === 0 
                     ? `No results found for "${searchTerm}"`
@@ -228,7 +228,7 @@ const Stocks: React.FC = () => {
 
             {/* Default View Info */}
             {!searchTerm.trim() && hasMoreResults && (
-              <div className="mb-4 px-4 sm:px-6">
+              <div className="mb-4 px-4 sm:px-6 ">
                 <div className="text-slate-400 text-sm">
                   Showing top 5 stocks. Use search to find more from our {stocksData.length} supported assets.
                 </div>
@@ -252,7 +252,7 @@ const Stocks: React.FC = () => {
               {displayedStocks.map((stock, index) => (
                 <div
                   key={stock.id}
-                  className="sm:grid sm:grid-cols-12 gap-4 px-4 sm:px-6 py-4 hover:bg-slate-800/30 rounded-xl transition-all duration-200 border border-transparent hover:border-slate-700/30 group"
+                  className="sm:grid bg-[#1d1d1d] sm:grid-cols-12 gap-4 px-4 sm:px-6 py-4 hover:bg-slate-800/30 rounded-xl transition-all duration-200 border border-transparent hover:border-slate-700/30 group"
                 >
                   {/* Mobile View - Compact */}
                   <div className="sm:hidden flex items-center justify-between">
