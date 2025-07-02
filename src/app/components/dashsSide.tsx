@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { FiHome, FiPieChart, FiList, FiSettings, FiLogOut } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
-
+import { signOut } from '../(auth)/login/action';
 const Sidebar = ({ closeSidebar }: { closeSidebar?: () => void }) => {
   const pathname = usePathname();
   const [isClosing, setIsClosing] = useState(false);
@@ -112,7 +112,13 @@ const Sidebar = ({ closeSidebar }: { closeSidebar?: () => void }) => {
         >
           <FiLogOut className="mr-3 text-lg text-gray-400 group-hover:text-red-400" />
           <div className="flex flex-col">
+            <form action={signOut}>
+            <button className='cursor-pointer'>
             <span className="font-medium">Logout</span>
+              </button>
+            </form>
+         
+
             <span className="text-xs text-gray-500 group-hover:text-red-300">
               "Sign out now, take a bow"
             </span>

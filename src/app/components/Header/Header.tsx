@@ -61,22 +61,22 @@ export default function Navbar() {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-800 focus:outline-none"
+              className="text-white focus:outline-none"
               aria-label="Toggle menu"
             >
-              <div className="w-6 flex flex-col items-end space-y-1.5">
+              <div className="w-6 flex cursor-pointer flex-col items-end space-y-1.5">
                 <span
-                  className={`block h-0.5 bg-gray-800 transition-all duration-300 ${
+                  className={`block h-0.5 bg-white transition-all duration-300 ${
                     isOpen ? "w-6 rotate-45 translate-y-2" : "w-6"
                   }`}
                 ></span>
                 <span
-                  className={`block h-0.5 bg-gray-800 transition-all duration-300 ${
+                  className={`block h-0.5 bg-white transition-all duration-300 ${
                     isOpen ? "opacity-0" : "w-5"
                   }`}
                 ></span>
                 <span
-                  className={`block h-0.5 bg-gray-800 transition-all duration-300 ${
+                  className={`block h-0.5 bg-white transition-all duration-300 ${
                     isOpen ? "w-6 -rotate-45 -translate-y-2" : "w-4"
                   }`}
                 ></span>
@@ -87,10 +87,10 @@ export default function Navbar() {
 
         {/* Mobile Navigation */}
         <div
-          className={`md:hidden bg-black overflow-hidden transition-all 
+          className={`md:hidden bg-black text-white overflow-hidden transition-all 
             duration-500 ease-in-out ${isOpen ? "max-h-96 py-4" : "max-h-0"}`}
         >
-          <div className="flex flex-col space-y-4  pt-4">
+          <div className="flex flex-col text-white space-y-4  pt-4">
             {NAV_LINKS.map((link) => (
               <MobileNavLink
                 key={link.href}
@@ -100,11 +100,14 @@ export default function Navbar() {
               />
             ))}
               <form className="block md:hidden " action={signOut}>
-            <button className="relative cursor-pointer p-[2px] rounded-[50px] bg-gradient-to-r from-blue-400 to-purple-500">
-              <Link href="/login" className="block px-7 py-3 rounded-[48px] bg-[#171717] text-white text-[16px] ">
-                Login
-              </Link>
-            </button>
+              <button className="relative px-6 py-3  p-[2px] rounded-[17px] bg-gradient-to-r from-blue-400 to-purple-500">
+                  <Link
+                    href="/login"
+                    className=" text-white text-[16px] md:text-[20px]"
+                  >
+                    Login
+                  </Link>
+                </button>
           </form>
           </div>
         </div>
