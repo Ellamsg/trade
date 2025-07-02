@@ -47,7 +47,7 @@ export default function Navbar() {
               <NavLink key={link.href} href={link.href} text={link.text} />
             ))}
           </div>
-          <form action={signOut}>
+          <form className="md:block hidden " action={signOut}>
             <button className="relative cursor-pointer p-[2px] rounded-[50px] bg-gradient-to-r from-blue-400 to-purple-500">
               <Link href="/login" className="block px-7 py-3 rounded-[48px] bg-[#171717] text-white text-[16px] ">
                 Login
@@ -96,6 +96,13 @@ export default function Navbar() {
                 onClick={closeMenu}
               />
             ))}
+              <form className="block md:hidden " action={signOut}>
+            <button className="relative cursor-pointer p-[2px] rounded-[50px] bg-gradient-to-r from-blue-400 to-purple-500">
+              <Link href="/login" className="block px-7 py-3 rounded-[48px] bg-[#171717] text-white text-[16px] ">
+                Login
+              </Link>
+            </button>
+          </form>
           </div>
         </div>
       </div>

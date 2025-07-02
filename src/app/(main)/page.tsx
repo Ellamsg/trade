@@ -115,7 +115,7 @@ export default function Home() {
         </div>
 
         <div>
-          <img className="h-[700px] md:pt-0 pt-[100px]" src="assets/pent.png" alt="cards" />
+          <img className="h-[700px] md:w-[700px] md:pt-0 pt-[100px]" src="assets/pent.png" alt="cards" />
         </div>
       </div>
 
@@ -128,16 +128,16 @@ export default function Home() {
     <p className="custom-3-text text-white font-semibold mt-2">
       One Platform. Endless Possibilities.
     </p>
-    <p className="custom-2-text w-[50%] text-gray-400 mt-4">
+    <p className="custom-2-text w-[80%] md:w-[50%] text-gray-400 mt-4">
       Explore powerful tools, real-time insights, and advanced strategies — all in one place. Whether you're just starting out or refining your edge, Penta Stock helps you trade with confidence.
     </p>
   </div>
 </div>
 
-        <div className="flex justify-center">
+        <div className="flex pt-6 justify-center">
           <img
-            className="md:h-[1000px] h-[600px] "
-            src="assets/phone.png"
+            className="md:h-[600px] h-[600px] "
+            src="assets/penta-phone.png"
             alt="phone"
           />
         </div>

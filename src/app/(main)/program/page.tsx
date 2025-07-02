@@ -13,16 +13,16 @@ export default function Program() {
     <div className="padding-2-screen  pb-[100px]">
       
 
-      <div>
-        <div className="">
+      <div className="">
+        <div className="md:-mx-[120px] -mx-[20px]">
           <video
             poster="/images/pose2.jpeg"
             autoPlay
             loop
             muted
             x5-playsinline=""
-            src="https://tangem.com/video/desktop/ring-app-activation.mp4"
-            className="w-full h-[450px] md:h-[620px] object-cover "
+            src="https://res.cloudinary.com/dalmrzjps/video/upload/v1751442343/dollar_dgr2z5.mp4"
+            className="w-full  h-[450px] md:h-[620px] object-cover "
           />
         </div>
 
