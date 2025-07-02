@@ -37,9 +37,9 @@ What we offer
         </div>
 
         <p className="custom-5-text">
-        Millions of users alread Penta Stocks for option trading
+        Millions of users already Penta Stocks for option trading
 
-          1.4 million user alread use Penta Stocks for option trading  
+          1.4 million user already use Penta Stocks for option trading  
         </p>
         <p className="custom-4-text">
         At Penta Stocks, we empower traders and investors with cutting-edge tools, expert insights, and a seamless trading experience. Founded with a vision to democratize financial markets, we provide a secure and intuitive platform for stocks, forex, commodities, and cryptocurrencies.
