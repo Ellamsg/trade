@@ -16,8 +16,8 @@ export default function Program() {
       <div className="">
         <div className="md:-mx-[120px] -mx-[20px]">
            <video
-              className="md:h-[300px] h-[324px] object-cover w-[100%]"
-              src="https://res.cloudinary.com/dalmrzjps/video/upload/v1707253371/first_ogkw0q.mp4"
+              className="md:h-[700px] h-[324px] object-cover w-[100%]"
+              src="https://res.cloudinary.com/dalmrzjps/video/upload/v1750607897/Untitled_design-2_fjsr5e.mp4"
               poster="/images/mock13.jpg"
               autoPlay
               loop
