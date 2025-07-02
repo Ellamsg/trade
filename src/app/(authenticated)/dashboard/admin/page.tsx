@@ -655,3 +655,22 @@
 //       </div>
 //     )
 // }
+
+
+
+// components/Navbar.tsx
+"use client";
+import React from "react";
+import { useState, useEffect } from "react";
+
+
+// Define navigation links in a single array
+
+export default function Admin() {
+  return (
+    <div className="padding-2-screen py-[200px]">
+       Admin coming soon..........
+   
+    </div>
+  );
+}
