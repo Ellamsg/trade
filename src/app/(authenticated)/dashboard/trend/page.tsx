@@ -666,9 +666,9 @@ const CryptoPriceChart: React.FC = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">
-            Crypto Price Charts
+           Stocks Charts
           </h1>
-          <p className="text-gray-300">Track cryptocurrency prices with your portfolio data</p>
+          <p className="text-gray-300">Track Stocks prices with your portfolio data</p>
         </div>
 
         {/* Main Chart Container */}
@@ -678,11 +678,11 @@ const CryptoPriceChart: React.FC = () => {
             {/* Coin Selector */}
             <div className="flex-1">
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                Select Cryptocurrency
+                Select Stocks
               </label>
               {coinsLoading ? (
                 <div className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-gray-400">
-                  Loading cryptocurrencies...
+                  Loading stocks...
                 </div>
               ) : (
                 <select
