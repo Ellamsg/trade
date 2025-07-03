@@ -1,8 +1,10 @@
 
 
-// "use client"
+
+// 'use client'
 // import React, { useState, useEffect } from 'react';
 // import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+// import { createClient } from '@/app/utils/supabase/clients';
 
 // interface PriceData {
 //   timestamp: string;
@@ -38,6 +40,7 @@
 // }
 
 // const CryptoPriceChart: React.FC = () => {
+//   const supabase = createClient();
 //   const [priceData, setPriceData] = useState<PriceData[]>([]);
 //   const [coins, setCoins] = useState<Coin[]>([]);
 //   const [coinStats, setCoinStats] = useState<CoinStats | null>(null);
@@ -51,9 +54,6 @@
 //   });
 //   const [error, setError] = useState<string>('');
 
-//   // FMP API key - in a real app, this should be in environment variables
-//   const FMP_API_KEY = process.env.NEXT_PUBLIC_FMP_API_KEY; // Replace with your actual API key
-
 //   const timeRanges: TimeRange[] = [
 //     { label: '1D', days: '1', interval: 'hourly' },
 //     { label: '7D', days: '7', interval: 'hourly' },
@@ -62,32 +62,29 @@
 //     { label: '1Y', days: '365', interval: 'daily' }
 //   ];
 
-//   // Fetch available coins from FMP API
+//   // Fetch available coins from Supabase
 //   const fetchCoins = async () => {
 //     setCoinsLoading(true);
 //     try {
-//       const response = await fetch(
-//         `https://financialmodelingprep.com/api/v3/cryptocurrency?apikey=${FMP_API_KEY}`
-//       );
-      
-//       if (!response.ok) {
-//         throw new Error('Failed to fetch coins');
-//       }
-      
-//       const data = await response.json();
-      
-//       // Transform FMP data to match our Coin interface
-//       const formattedCoins: Coin[] = data.cryptocurrenciesList.map((coin: any) => ({
-//         id: coin.symbol.toLowerCase(),
-//         name: coin.name,
-//         symbol: coin.symbol,
-//         image: `https://financialmodelingprep.com/image-stock/${coin.symbol}.png`,
-//         current_price: coin.price,
-//         price_change_percentage_24h: coin.change,
-//         market_cap: coin.marketCap,
-//         total_volume: coin.volume
+//       const { data: stocks, error } = await supabase
+//         .from('posts')
+//         .select('*')
+//         .order('created_at', { ascending: false });
+
+//       if (error) throw error;
+
+//       // Transform Supabase data to match our Coin interface
+//       const formattedCoins: Coin[] = stocks.map((stock: any) => ({
+//         id: stock.symbol.toLowerCase(),
+//         name: stock.name,
+//         symbol: stock.symbol,
+//         image: stock.image_url || `https://financialmodelingprep.com/image-stock/${stock.symbol}.png`,
+//         current_price: stock.current_price,
+//         price_change_percentage_24h: parseFloat(stock.percentage_change),
+//         market_cap: stock.current_price * 1000000, // Approximate market cap
+//         total_volume: stock.current_price * 10000  // Approximate volume
 //       }));
-      
+
 //       setCoins(formattedCoins);
       
 //       // Set first coin as default if no selection
@@ -102,33 +99,29 @@
 //     }
 //   };
 
-//   // Fetch coin statistics from FMP API
+//   // Fetch coin statistics from Supabase
 //   const fetchCoinStats = async (coinId: string) => {
 //     try {
-//       const response = await fetch(
-//         `https://financialmodelingprep.com/api/v3/quote/${coinId.toUpperCase()}?apikey=${FMP_API_KEY}`
-//       );
-      
-//       if (!response.ok) {
-//         throw new Error('Failed to fetch coin stats');
-//       }
-      
-//       const data = await response.json();
-      
-//       if (data.length === 0) {
-//         throw new Error('No data returned for this coin');
-//       }
-      
-//       const coinData = data[0];
+//       const { data: stock, error } = await supabase
+//         .from('posts')
+//         .select('*')
+//         .eq('symbol', coinId.toUpperCase())
+//         .single();
+
+//       if (error) throw error;
+//       if (!stock) throw new Error('No data returned for this coin');
+
+//       // Calculate price change based on percentage
+//       const priceChange = (stock.current_price * parseFloat(stock.percentage_change)) / 100;
       
 //       setCoinStats({
-//         currentPrice: coinData.price,
-//         priceChange24h: coinData.change,
-//         priceChangePercent24h: coinData.changesPercentage,
-//         volume24h: coinData.volume,
-//         marketCap: coinData.marketCap,
-//         high24h: coinData.dayHigh,
-//         low24h: coinData.dayLow
+//         currentPrice: stock.current_price,
+//         priceChange24h: priceChange,
+//         priceChangePercent24h: parseFloat(stock.percentage_change),
+//         volume24h: stock.current_price * 10000, // Approximate volume
+//         marketCap: stock.current_price * 1000000, // Approximate market cap
+//         high24h: stock.current_price * 1.05, // Approximate high
+//         low24h: stock.current_price * 0.95   // Approximate low
 //       });
 //     } catch (err) {
 //       console.error('Error fetching coin stats:', err);
@@ -148,48 +141,60 @@
 //     }
 //   };
 
-//   // Fetch historical price data from FMP API
+//   // Generate mock historical data based on current price and volatility
+//   const generateMockHistoricalData = (currentPrice: number, volatility: number, days: number) => {
+//     const data: PriceData[] = [];
+//     const now = new Date();
+//     const priceHistory = [currentPrice];
+    
+//     // Generate price path with some randomness
+//     for (let i = 1; i < days * 24; i++) {
+//       const previousPrice = priceHistory[i - 1];
+//       const changePercent = (Math.random() * 2 - 1) * volatility;
+//       const newPrice = previousPrice * (1 + changePercent / 100);
+//       priceHistory.push(newPrice);
+//     }
+    
+//     // Create data points
+//     for (let i = 0; i < days * 24; i++) {
+//       const date = new Date(now);
+//       date.setHours(date.getHours() - i);
+      
+//       data.push({
+//         timestamp: date.toLocaleDateString('en-US', {
+//           month: 'short',
+//           day: 'numeric',
+//           ...(days === 1 ? { hour: '2-digit' } : {})
+//         }),
+//         price: priceHistory[i],
+//         volume: Math.random() * 10000 + 5000
+//       });
+//     }
+    
+//     return data.reverse();
+//   };
+
+//   // Fetch historical price data (mock for now - you can replace with real data from Supabase if available)
 //   const fetchPriceData = async (coinId: string, days: string) => {
 //     setLoading(true);
 //     setError('');
     
 //     try {
-//       // Determine the time frame based on days
-//       let timeFrame = '1hour';
-//       if (days === '30' || days === '90' || days === '365') {
-//         timeFrame = '1day';
-//       }
+//       // Get current price for the coin
+//       const { data: stock, error } = await supabase
+//         .from('posts')
+//         .select('current_price, percentage_change')
+//         .eq('symbol', coinId.toUpperCase())
+//         .single();
+
+//       if (error) throw error;
+//       if (!stock) throw new Error('No data returned for this coin');
+
+//       // Generate mock historical data based on current price
+//       const volatility = Math.abs(parseFloat(stock.percentage_change)) || 5; // Use percentage change as volatility indicator
+//       const mockData = generateMockHistoricalData(stock.current_price, volatility, parseInt(days));
       
-//       const response = await fetch(
-//         `https://financialmodelingprep.com/api/v3/historical-chart/${timeFrame}/${coinId.toUpperCase()}?apikey=${FMP_API_KEY}`
-//       );
-      
-//       if (!response.ok) {
-//         throw new Error('Failed to fetch chart data');
-//       }
-      
-//       const data = await response.json();
-      
-//       // Limit data points based on selected range
-//       let limit = 24; // Default to 1 day
-//       if (days === '7') limit = 7 * 24;
-//       if (days === '30') limit = 30;
-//       if (days === '90') limit = 90;
-//       if (days === '365') limit = 365;
-      
-//       const limitedData = data.slice(0, limit).reverse();
-      
-//       const formattedData: PriceData[] = limitedData.map((item: any) => ({
-//         timestamp: new Date(item.date).toLocaleDateString('en-US', {
-//           month: 'short',
-//           day: 'numeric',
-//           ...(days === '1' ? { hour: '2-digit' } : {})
-//         }),
-//         price: item.close,
-//         volume: item.volume
-//       }));
-      
-//       setPriceData(formattedData);
+//       setPriceData(mockData);
 //     } catch (err) {
 //       console.error('Error fetching price data:', err);
 //       setError('Failed to load price chart data');
@@ -214,7 +219,7 @@
 //   const formatPrice = (price: number): string => {
 //     if (price < 0.001) return `$${price.toFixed(8)}`;
 //     if (price < 1) return `$${price.toFixed(6)}`;
-//     if (price < 100) return `$${price.toFixed(4)}`;
+//     if (price < 100) return `$${price}`;
 //     return `$${price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 //   };
 
@@ -236,7 +241,7 @@
 //           <h1 className="text-4xl font-bold text-white mb-2">
 //             Crypto Price Charts
 //           </h1>
-//           <p className="text-gray-300">Real-time cryptocurrency price tracking with live data</p>
+//           <p className="text-gray-300">Track cryptocurrency prices with your portfolio data</p>
 //         </div>
 
 //         {/* Main Chart Container */}
@@ -415,6 +420,8 @@
 // export default CryptoPriceChart;
 
 
+
+
 'use client'
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -460,13 +467,14 @@ const CryptoPriceChart: React.FC = () => {
   const [coinStats, setCoinStats] = useState<CoinStats | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [coinsLoading, setCoinsLoading] = useState<boolean>(true);
-  const [selectedCoin, setSelectedCoin] = useState<string>('bitcoin');
+  const [selectedCoin, setSelectedCoin] = useState<string>('');
   const [selectedRange, setSelectedRange] = useState<TimeRange>({
     label: '7D',
     days: '7',
     interval: 'hourly'
   });
   const [error, setError] = useState<string>('');
+  const [initialLoad, setInitialLoad] = useState<boolean>(true);
 
   const timeRanges: TimeRange[] = [
     { label: '1D', days: '1', interval: 'hourly' },
@@ -495,14 +503,14 @@ const CryptoPriceChart: React.FC = () => {
         image: stock.image_url || `https://financialmodelingprep.com/image-stock/${stock.symbol}.png`,
         current_price: stock.current_price,
         price_change_percentage_24h: parseFloat(stock.percentage_change),
-        market_cap: stock.current_price * 1000000, // Approximate market cap
-        total_volume: stock.current_price * 10000  // Approximate volume
+        market_cap: stock.current_price * 1000000,
+        total_volume: stock.current_price * 10000
       }));
 
       setCoins(formattedCoins);
       
-      // Set first coin as default if no selection
-      if (formattedCoins.length > 0 && !selectedCoin) {
+      // Automatically select first coin if available
+      if (formattedCoins.length > 0) {
         setSelectedCoin(formattedCoins[0].id);
       }
     } catch (err) {
@@ -532,10 +540,10 @@ const CryptoPriceChart: React.FC = () => {
         currentPrice: stock.current_price,
         priceChange24h: priceChange,
         priceChangePercent24h: parseFloat(stock.percentage_change),
-        volume24h: stock.current_price * 10000, // Approximate volume
-        marketCap: stock.current_price * 1000000, // Approximate market cap
-        high24h: stock.current_price * 1.05, // Approximate high
-        low24h: stock.current_price * 0.95   // Approximate low
+        volume24h: stock.current_price * 10000,
+        marketCap: stock.current_price * 1000000,
+        high24h: stock.current_price * 1.05,
+        low24h: stock.current_price * 0.95
       });
     } catch (err) {
       console.error('Error fetching coin stats:', err);
@@ -548,8 +556,8 @@ const CryptoPriceChart: React.FC = () => {
           priceChangePercent24h: coinFromList.price_change_percentage_24h,
           volume24h: coinFromList.total_volume,
           marketCap: coinFromList.market_cap,
-          high24h: coinFromList.current_price * 1.05, // Approximate
-          low24h: coinFromList.current_price * 0.95   // Approximate
+          high24h: coinFromList.current_price * 1.05,
+          low24h: coinFromList.current_price * 0.95
         });
       }
     }
@@ -588,12 +596,16 @@ const CryptoPriceChart: React.FC = () => {
     return data.reverse();
   };
 
-  // Fetch historical price data (mock for now - you can replace with real data from Supabase if available)
+  // Fetch historical price data
   const fetchPriceData = async (coinId: string, days: string) => {
     setLoading(true);
     setError('');
     
     try {
+      if (!coinId) {
+        throw new Error('No coin selected');
+      }
+
       // Get current price for the coin
       const { data: stock, error } = await supabase
         .from('posts')
@@ -605,13 +617,14 @@ const CryptoPriceChart: React.FC = () => {
       if (!stock) throw new Error('No data returned for this coin');
 
       // Generate mock historical data based on current price
-      const volatility = Math.abs(parseFloat(stock.percentage_change)) || 5; // Use percentage change as volatility indicator
+      const volatility = Math.abs(parseFloat(stock.percentage_change)) || 5;
       const mockData = generateMockHistoricalData(stock.current_price, volatility, parseInt(days));
       
       setPriceData(mockData);
+      setInitialLoad(false);
     } catch (err) {
       console.error('Error fetching price data:', err);
-      setError('Failed to load price chart data');
+      setError(err instanceof Error ? err.message : 'Failed to load price chart data');
     } finally {
       setLoading(false);
     }
@@ -770,13 +783,20 @@ const CryptoPriceChart: React.FC = () => {
 
           {/* Chart */}
           <div className="bg-slate-900/50 rounded-xl p-4">
-            {error && (
+            {!selectedCoin && coins.length === 0 && !coinsLoading ? (
+              <div className="flex items-center justify-center h-96">
+                <p className="text-gray-400">No cryptocurrencies available to display</p>
+              </div>
+            ) : initialLoad ? (
+              <div className="flex items-center justify-center h-96">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+                <p className="ml-4 text-gray-400">Loading initial data...</p>
+              </div>
+            ) : error ? (
               <div className="bg-red-900/20 border border-red-600 rounded-lg p-3 mb-4">
                 <p className="text-red-400 text-sm">{error}</p>
               </div>
-            )}
-            
-            {loading ? (
+            ) : loading ? (
               <div className="flex items-center justify-center h-96">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
                 <p className="ml-4 text-gray-400">Loading chart data...</p>
