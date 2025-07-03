@@ -1486,12 +1486,12 @@ const WaitlistPage = () => {
         {/* Header Section */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-4">
-              <div className="p-3 bg-blue-600/20 rounded-xl border border-blue-500/30">
-                <FiActivity className="w-6 h-6 text-blue-400" />
+            <div className="flex md:flex-row flex-col  md:items-center space-x-4">
+              <div className="p-3 bg-blue-600/20 md:block hidden rounded-xl border border-blue-500/30">
+                <FiActivity className="md:size-6 size-4 text-blue-400" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+                <h1 className="md:text-3xl text-[19px] font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
                   Stock Order Waitlist
                 </h1>
                 <p className="text-slate-400">Manage your pending stock trades</p>
@@ -1499,11 +1499,11 @@ const WaitlistPage = () => {
             </div>
             <button 
               onClick={() => setIsModalOpen(true)}
-              className="flex cursor-pointer items-center bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700
+              className="flex cursor-pointer md:text-[16px] text-[13px] items-center bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700
                hover:to-blue-800 text-white px-6 py-[10px] rounded-xl shadow-lg
                 hover:shadow-xl transition-all duration-200 border border-blue-500/30"
             >
-              <FiPlus className="mr-2 w-5 h-5" />
+             
               New Order
             </button>
           </div>
