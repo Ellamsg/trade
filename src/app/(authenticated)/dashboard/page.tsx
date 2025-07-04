@@ -9,7 +9,7 @@ import FrequencyStockCard from "@/app/components/frequency";
 import CryptoCard from "@/app/components/cryptoCard";
 import { useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
-
+import {  FiPieChart, FiActivity } from 'react-icons/fi';
 // Define interfaces for type safety
 interface StockData {
   id: string;
@@ -160,9 +160,20 @@ const DashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8 p-5 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 min-h-screen">
+    <div className="space-y-8 py-9 p-5 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 min-h-screen">
    
-      <h1 className="text-3xl font-bold mb-6 text-white">Stock Market Overview</h1>
+       <div className="flex items-center space-x-4 mb-6">
+                               <div className="p-3 bg-blue-600/20 rounded-xl border border-blue-500/30">
+                                 <FiPieChart className="w-6 h-6 text-blue-400" />
+                               </div>
+                               <div>
+                                 <h1 className="md:text-3xl text-[19px] font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+                                    Stocks
+                                 </h1>
+                                 <p className="text-slate-400"> stock investments</p>
+                               </div>
+                             </div>
+               
       
       {error && (
         <div className="p-4 bg-red-900/50 border-l-4 border-red-500 rounded-xl">
