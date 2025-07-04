@@ -6,7 +6,7 @@ import { signOut } from "@/app/(auth)/login/action";
 import { redirect } from 'next/navigation';
 import { createClient } from "@/app/utils/supabase/clients";
 import FrequencyStockCard from "@/app/components/frequency";
-import CryptoCard from "@/app/components/cryptoCard";
+import { CryptoCard } from "@/app/components/cryptoCard";
 import { useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
 import {  FiPieChart, FiActivity } from 'react-icons/fi';

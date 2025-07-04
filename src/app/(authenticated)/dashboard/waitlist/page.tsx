@@ -258,7 +258,7 @@ const WaitlistPage = () => {
               </div>
               <div>
                 <h1 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-                  Stock Order Waitlist
+                  Stock Order Watchlist
                 </h1>
                 <p className="text-slate-400 text-sm md:text-base">Manage your pending stock trades</p>
               </div>
