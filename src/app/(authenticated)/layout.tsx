@@ -87,7 +87,7 @@ export default function DashboardLayout({
   };
 
   return (
-    <div className="flex h-screen bg-gray-900 text-white">
+    <div className="md:flex md:h-screen bg-gray-900 text-white">
       {/* Sidebar - Desktop */}
       <aside className="hidden lg:flex lg:w-64 bg-gray-900 border-r border-gray-800 flex-col">
         <Sidebar />

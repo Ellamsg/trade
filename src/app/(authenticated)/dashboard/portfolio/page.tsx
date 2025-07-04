@@ -132,7 +132,7 @@ const PortfolioPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white">
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="max-w-7xl mx-auto p-4 md:p-6">
         {/* Header Section */}
         <div className="mb-8">
           <div className="flex items-center space-x-4 mb-6">
@@ -140,7 +140,7 @@ const PortfolioPage = () => {
               <FiPieChart className="w-6 h-6 text-blue-400" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+              <h1 className="md:text-3xl text-[19px] font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
                 Your Stock Portfolio
               </h1>
               <p className="text-slate-400">Track your stock investments</p>
