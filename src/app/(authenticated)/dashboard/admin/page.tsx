@@ -295,10 +295,10 @@ export default function PostsList() {
             </div>
           </div>
 
-          <div className="lg:grid  space-y-6 lg:grid-cols-3 lg:gap-8">
+          <div className="lg:grid   space-y-6 lg:grid-cols-3 lg:gap-8">
             {/* Add Stock Form */}
-            <div className="lg:col-span-1">
-              <div className="bg-slate-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-slate-700/20 sticky top-8">
+            <div className="lg:col-span-1 lg:sticky lg:top-4 lg:self-start">
+              <div className="bg-slate-800/80 backdrop-blur-sm  rounded-2xl p-6 shadow-xl border border-slate-700/20 sticky top-8 h-fit">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-green-600 rounded-xl flex items-center justify-center">
                     <span className="text-white font-bold text-lg">+</span>
