@@ -5,9 +5,24 @@ import { usePathname } from 'next/navigation';
 import { FiHome, FiPieChart, FiList, FiSettings, FiLogOut } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
 import { signOut } from '../(auth)/login/action';
+import { createClient } from '../utils/supabase/clients';
+
+import { User } from '@supabase/supabase-js';
 const Sidebar = ({ closeSidebar }: { closeSidebar?: () => void }) => {
   const pathname = usePathname();
   const [isClosing, setIsClosing] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const supabase = createClient();
+
+  // Fetch user data
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+
+    getUser();
+  }, []);
 
   const navItems = [
     { 
@@ -119,9 +134,12 @@ const Sidebar = ({ closeSidebar }: { closeSidebar?: () => void }) => {
             </form>
          
 
-            <span className="text-xs text-gray-500 group-hover:text-red-300">
-              "Sign out now, take a bow"
-            </span>
+            <p>{user && (
+          
+                <p className="text-xs text-gray-500 group-hover:text-red-300">{user.email}</p>
+               
+            
+          )}</p>
           </div>
         </button>
       </div>
