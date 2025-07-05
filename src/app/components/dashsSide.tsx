@@ -78,8 +78,8 @@ const Sidebar = ({ closeSidebar }: { closeSidebar?: () => void }) => {
       <div className="flex-1 overflow-y-auto">
         <div className="p-6">
          <div className='pb-9'>
-         <Link href="/" className="text-2xl font-bold text-white md:py-0 ">
-            <img className="h-9" src="/assets/pentalogo.png" alt="main-log" />
+         <Link href="/" className="text-2xl  font-bold text-white md:py-0 ">
+            <img className="" src="/assets/pentalogo4.png" alt="main-log" />
           </Link>
 
          </div>
