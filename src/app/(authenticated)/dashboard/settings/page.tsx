@@ -1,28 +1,28 @@
-
-"use client"
-import { useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
+"use client";
+import { useState } from "react";
+import { createClient } from "@supabase/supabase-js";
+import { FiPieChart } from "react-icons/fi";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 const SettingsPage = () => {
-  const [email, setEmail] = useState('user@example.com');
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState("user@example.com");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState({ text: '', type: '' });
+  const [message, setMessage] = useState({ text: "", type: "" });
 
-  const handlePasswordUpdate = async (e:any) => {
+  const handlePasswordUpdate = async (e: any) => {
     e.preventDefault();
     setLoading(true);
-    setMessage({ text: '', type: '' });
+    setMessage({ text: "", type: "" });
 
     // Validate passwords match
     if (newPassword !== confirmPassword) {
-      setMessage({ text: 'Passwords do not match', type: 'error' });
+      setMessage({ text: "Passwords do not match", type: "error" });
       setLoading(false);
       return;
     }
@@ -43,15 +43,15 @@ const SettingsPage = () => {
 
       if (updateError) throw updateError;
 
-      setMessage({ text: 'Password updated successfully!', type: 'success' });
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
+      setMessage({ text: "Password updated successfully!", type: "success" });
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
     } catch (error) {
       if (error instanceof Error) {
-        setMessage({ text: error.message, type: 'error' });
+        setMessage({ text: error.message, type: "error" });
       } else {
-        setMessage({ text: 'An unknown error occurred', type: 'error' });
+        setMessage({ text: "An unknown error occurred", type: "error" });
       }
     } finally {
       setLoading(false);
@@ -61,10 +61,16 @@ const SettingsPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white p-4 md:p-6">
       <div className="max-w-3xl mx-auto space-y-6">
-        <h1 className="text-3xl font-bold mb-6 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-          Settings
-        </h1>
-        
+        <div className="flex items-center space-x-4 mb-6">
+          <div className="p-3 bg-blue-600/20 rounded-xl border border-blue-500/30">
+            <FiPieChart className="w-6 h-6 text-blue-400" />
+          </div>
+          <div>
+            <h1 className="md:text-3xl text-[19px] font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+              Settings
+            </h1>
+          </div>
+        </div>
         {/* Account Section */}
         <div className="bg-slate-800/30 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6">
           <h2 className="text-xl font-bold mb-4 flex items-center">
@@ -81,9 +87,11 @@ const SettingsPage = () => {
                 className="w-full bg-slate-700/50 border border-slate-600/50 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none backdrop-blur-sm"
               />
             </div>
-            
+
             <div>
-              <label className="block text-slate-400 mb-1">Current Password</label>
+              <label className="block text-slate-400 mb-1">
+                Current Password
+              </label>
               <input
                 type="password"
                 value={currentPassword}
@@ -92,7 +100,7 @@ const SettingsPage = () => {
                 className="w-full bg-slate-700/50 border border-slate-600/50 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none backdrop-blur-sm"
               />
             </div>
-            
+
             <div>
               <label className="block text-slate-400 mb-1">New Password</label>
               <input
@@ -103,9 +111,11 @@ const SettingsPage = () => {
                 className="w-full bg-slate-700/50 border border-slate-600/50 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none backdrop-blur-sm"
               />
             </div>
-            
+
             <div>
-              <label className="block text-slate-400 mb-1">Confirm New Password</label>
+              <label className="block text-slate-400 mb-1">
+                Confirm New Password
+              </label>
               <input
                 type="password"
                 value={confirmPassword}
@@ -114,19 +124,25 @@ const SettingsPage = () => {
                 className="w-full bg-slate-700/50 border border-slate-600/50 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none backdrop-blur-sm"
               />
             </div>
-            
+
             {message.text && (
-              <div className={`p-3 rounded-lg ${message.type === 'error' ? 'bg-red-500/20 border border-red-500/50' : 'bg-green-500/20 border border-green-500/50'}`}>
+              <div
+                className={`p-3 rounded-lg ${
+                  message.type === "error"
+                    ? "bg-red-500/20 border border-red-500/50"
+                    : "bg-green-500/20 border border-green-500/50"
+                }`}
+              >
                 {message.text}
               </div>
             )}
-            
-            <button 
+
+            <button
               onClick={handlePasswordUpdate}
               disabled={loading}
               className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 border border-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Updating...' : 'Update Password'}
+              {loading ? "Updating..." : "Update Password"}
             </button>
           </div>
         </div>

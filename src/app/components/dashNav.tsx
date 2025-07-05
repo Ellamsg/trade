@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
 import { signOut } from '../(auth)/login/action';
 import Chatbot from './Chatbot';
-
+import Link from 'next/link';
 const Navbar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
   const [user, setUser] = useState<User | null>(null);
   const [userName, setUserName] = useState<string>('');
@@ -101,6 +101,8 @@ const Navbar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
         ) : user ? (
           <>
             {/* User Avatar and Name with rhyme */}
+            <Link href="/dashboard/settings">
+
             <div className="flex items-center space-x-3 bg-gray-800/40 backdrop-blur-sm rounded-xl px-4 py-2 border border-gray-700/30 group">
               <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center group-hover:rotate-6 transition-transform">
                 <FiUser size={16} className="text-white" />
@@ -114,7 +116,7 @@ const Navbar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
                 </span>
               </div>
             </div>
-
+            </Link>
             {/* Logout Button with rhyme */}
             <form>
               <button 

@@ -1,11 +1,22 @@
-
-
-
-'use client'
-import React, { useState, useEffect } from 'react';
-import { LineChart,Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { createClient } from '@/app/utils/supabase/clients';
-import { FiTrendingUp, FiTrendingDown, FiDollarSign, FiPieChart, FiActivity } from 'react-icons/fi';
+"use client";
+import React, { useState, useEffect } from "react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { createClient } from "@/app/utils/supabase/clients";
+import {
+  FiTrendingUp,
+  FiTrendingDown,
+  FiDollarSign,
+  FiPieChart,
+  FiActivity,
+} from "react-icons/fi";
 
 interface PriceData {
   timestamp: string;
@@ -47,21 +58,21 @@ const CryptoPriceChart: React.FC = () => {
   const [coinStats, setCoinStats] = useState<CoinStats | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [coinsLoading, setCoinsLoading] = useState<boolean>(true);
-  const [selectedCoin, setSelectedCoin] = useState<string>('');
+  const [selectedCoin, setSelectedCoin] = useState<string>("");
   const [selectedRange, setSelectedRange] = useState<TimeRange>({
-    label: '7D',
-    days: '7',
-    interval: 'hourly'
+    label: "7D",
+    days: "7",
+    interval: "hourly",
   });
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
 
   const timeRanges: TimeRange[] = [
-    { label: '1D', days: '1', interval: 'hourly' },
-    { label: '7D', days: '7', interval: 'hourly' },
-    { label: '30D', days: '30', interval: 'daily' },
-    { label: '90D', days: '90', interval: 'daily' },
-    { label: '1Y', days: '365', interval: 'daily' }
+    { label: "1D", days: "1", interval: "hourly" },
+    { label: "7D", days: "7", interval: "hourly" },
+    { label: "30D", days: "30", interval: "daily" },
+    { label: "90D", days: "90", interval: "daily" },
+    { label: "1Y", days: "365", interval: "daily" },
   ];
 
   // Fetch available coins from Supabase
@@ -69,9 +80,9 @@ const CryptoPriceChart: React.FC = () => {
     setCoinsLoading(true);
     try {
       const { data: stocks, error } = await supabase
-        .from('posts')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .from("posts")
+        .select("*")
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
 
@@ -80,22 +91,24 @@ const CryptoPriceChart: React.FC = () => {
         id: stock.symbol.toLowerCase(),
         name: stock.name,
         symbol: stock.symbol,
-        image: stock.image_url || `https://financialmodelingprep.com/image-stock/${stock.symbol}.png`,
+        image:
+          stock.image_url ||
+          `https://financialmodelingprep.com/image-stock/${stock.symbol}.png`,
         current_price: stock.current_price,
         price_change_percentage_24h: parseFloat(stock.percentage_change),
         market_cap: stock.current_price * 1000000,
-        total_volume: stock.current_price * 10000
+        total_volume: stock.current_price * 10000,
       }));
 
       setCoins(formattedCoins);
-      
+
       // Automatically select first coin if available
       if (formattedCoins.length > 0) {
         setSelectedCoin(formattedCoins[0].id);
       }
     } catch (err) {
-      console.error('Error fetching coins:', err);
-      setError('Failed to load available cryptocurrencies');
+      console.error("Error fetching coins:", err);
+      setError("Failed to load available cryptocurrencies");
     } finally {
       setCoinsLoading(false);
     }
@@ -105,17 +118,18 @@ const CryptoPriceChart: React.FC = () => {
   const fetchCoinStats = async (coinId: string) => {
     try {
       const { data: stock, error } = await supabase
-        .from('posts')
-        .select('*')
-        .eq('symbol', coinId.toUpperCase())
+        .from("posts")
+        .select("*")
+        .eq("symbol", coinId.toUpperCase())
         .single();
 
       if (error) throw error;
-      if (!stock) throw new Error('No data returned for this coin');
+      if (!stock) throw new Error("No data returned for this coin");
 
       // Calculate price change based on percentage
-      const priceChange = (stock.current_price * parseFloat(stock.percentage_change)) / 100;
-      
+      const priceChange =
+        (stock.current_price * parseFloat(stock.percentage_change)) / 100;
+
       setCoinStats({
         currentPrice: stock.current_price,
         priceChange24h: priceChange,
@@ -123,32 +137,39 @@ const CryptoPriceChart: React.FC = () => {
         volume24h: stock.current_price * 10000,
         marketCap: stock.current_price * 1000000,
         high24h: stock.current_price * 1.05,
-        low24h: stock.current_price * 0.95
+        low24h: stock.current_price * 0.95,
       });
     } catch (err) {
-      console.error('Error fetching coin stats:', err);
+      console.error("Error fetching coin stats:", err);
       // Fallback to coin list data if available
-      const coinFromList = coins.find(coin => coin.id === coinId);
+      const coinFromList = coins.find((coin) => coin.id === coinId);
       if (coinFromList) {
         setCoinStats({
           currentPrice: coinFromList.current_price,
-          priceChange24h: (coinFromList.current_price * coinFromList.price_change_percentage_24h) / 100,
+          priceChange24h:
+            (coinFromList.current_price *
+              coinFromList.price_change_percentage_24h) /
+            100,
           priceChangePercent24h: coinFromList.price_change_percentage_24h,
           volume24h: coinFromList.total_volume,
           marketCap: coinFromList.market_cap,
           high24h: coinFromList.current_price * 1.05,
-          low24h: coinFromList.current_price * 0.95
+          low24h: coinFromList.current_price * 0.95,
         });
       }
     }
   };
 
   // Generate mock historical data based on current price and volatility
-  const generateMockHistoricalData = (currentPrice: number, volatility: number, days: number) => {
+  const generateMockHistoricalData = (
+    currentPrice: number,
+    volatility: number,
+    days: number
+  ) => {
     const data: PriceData[] = [];
     const now = new Date();
     const priceHistory = [currentPrice];
-    
+
     // Generate price path with some randomness
     for (let i = 1; i < days * 24; i++) {
       const previousPrice = priceHistory[i - 1];
@@ -156,55 +177,61 @@ const CryptoPriceChart: React.FC = () => {
       const newPrice = previousPrice * (1 + changePercent / 100);
       priceHistory.push(newPrice);
     }
-    
+
     // Create data points
     for (let i = 0; i < days * 24; i++) {
       const date = new Date(now);
       date.setHours(date.getHours() - i);
-      
+
       data.push({
-        timestamp: date.toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          ...(days === 1 ? { hour: '2-digit' } : {})
+        timestamp: date.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          ...(days === 1 ? { hour: "2-digit" } : {}),
         }),
         price: priceHistory[i],
-        volume: Math.random() * 10000 + 5000
+        volume: Math.random() * 10000 + 5000,
       });
     }
-    
+
     return data.reverse();
   };
 
   // Fetch historical price data
   const fetchPriceData = async (coinId: string, days: string) => {
     setLoading(true);
-    setError('');
-    
+    setError("");
+
     try {
       if (!coinId) {
-        throw new Error('No coin selected');
+        throw new Error("No coin selected");
       }
 
       // Get current price for the coin
       const { data: stock, error } = await supabase
-        .from('posts')
-        .select('current_price, percentage_change')
-        .eq('symbol', coinId.toUpperCase())
+        .from("posts")
+        .select("current_price, percentage_change")
+        .eq("symbol", coinId.toUpperCase())
         .single();
 
       if (error) throw error;
-      if (!stock) throw new Error('No data returned for this coin');
+      if (!stock) throw new Error("No data returned for this coin");
 
       // Generate mock historical data based on current price
       const volatility = Math.abs(parseFloat(stock.percentage_change)) || 5;
-      const mockData = generateMockHistoricalData(stock.current_price, volatility, parseInt(days));
-      
+      const mockData = generateMockHistoricalData(
+        stock.current_price,
+        volatility,
+        parseInt(days)
+      );
+
       setPriceData(mockData);
       setInitialLoad(false);
     } catch (err) {
-      console.error('Error fetching price data:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load price chart data');
+      console.error("Error fetching price data:", err);
+      setError(
+        err instanceof Error ? err.message : "Failed to load price chart data"
+      );
     } finally {
       setLoading(false);
     }
@@ -227,7 +254,10 @@ const CryptoPriceChart: React.FC = () => {
     if (price < 0.001) return `$${price.toFixed(8)}`;
     if (price < 1) return `$${price.toFixed(6)}`;
     if (price < 100) return `$${price}`;
-    return `$${price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    return `$${price.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
   };
 
   const formatLargeNumber = (num: number): string => {
@@ -238,23 +268,23 @@ const CryptoPriceChart: React.FC = () => {
     return `$${num.toFixed(2)}`;
   };
 
-  const selectedCoinData = coins.find(coin => coin.id === selectedCoin);
+  const selectedCoinData = coins.find((coin) => coin.id === selectedCoin);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-       <div className="flex items-center space-x-4 mb-6">
-                   <div className="p-3 bg-blue-600/20 rounded-xl border border-blue-500/30">
-                     <FiPieChart className="w-6 h-6 text-blue-400" />
-                   </div>
-                   <div>
-                     <h1 className="md:text-3xl text-[19px] font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-                       Your Stock Charts
-                     </h1>
-                     <p className="text-slate-400">Track your stock investments</p>
-                   </div>
-                 </div>
+        <div className="flex items-center space-x-4 mb-6">
+          <div className="p-3 bg-blue-600/20 rounded-xl border border-blue-500/30">
+            <FiPieChart className="w-6 h-6 text-blue-400" />
+          </div>
+          <div className="">
+            <h1 className="md:text-3xl    text-[19px] font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+              Your Stock Charts
+            </h1>
+            <p className="text-slate-400">Track your stock investments</p>
+          </div>
+        </div>
 
         {/* Main Chart Container */}
         <div className="bg-slate-800/50 backdrop-blur-lg rounded-2xl border border-slate-700/50 shadow-2xl p-6 mb-6">
@@ -277,7 +307,8 @@ const CryptoPriceChart: React.FC = () => {
                 >
                   {coins.map((coin) => (
                     <option key={coin.id} value={coin.id}>
-                      {coin.name} ({coin.symbol.toUpperCase()}) - {formatPrice(coin.current_price)}
+                      {coin.name} ({coin.symbol.toUpperCase()}) -{" "}
+                      {formatPrice(coin.current_price)}
                     </option>
                   ))}
                 </select>
@@ -296,8 +327,8 @@ const CryptoPriceChart: React.FC = () => {
                     onClick={() => setSelectedRange(range)}
                     className={`flex-1 px-3 py-1 rounded-md text-sm font-medium transition-colors ${
                       selectedRange.label === range.label
-                        ? 'bg-purple-600 text-white'
-                        : 'text-gray-300 hover:text-white hover:bg-slate-600'
+                        ? "bg-purple-600 text-white"
+                        : "text-gray-300 hover:text-white hover:bg-slate-600"
                     }`}
                   >
                     {range.label}
@@ -310,14 +341,18 @@ const CryptoPriceChart: React.FC = () => {
           {/* Selected Coin Header */}
           {selectedCoinData && (
             <div className="flex items-center gap-4 mb-6 p-4 bg-slate-700/30 rounded-lg">
-              <img 
-                src={selectedCoinData.image} 
+              <img
+                src={selectedCoinData.image}
                 alt={selectedCoinData.name}
                 className="w-12 h-12 rounded-full"
               />
               <div>
-                <h3 className="text-2xl font-bold text-white">{selectedCoinData.name}</h3>
-                <p className="text-gray-400">{selectedCoinData.symbol.toUpperCase()}</p>
+                <h3 className="text-2xl font-bold text-white">
+                  {selectedCoinData.name}
+                </h3>
+                <p className="text-gray-400">
+                  {selectedCoinData.symbol.toUpperCase()}
+                </p>
               </div>
             </div>
           )}
@@ -327,23 +362,41 @@ const CryptoPriceChart: React.FC = () => {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
               <div className="bg-slate-700/50 rounded-lg p-4">
                 <p className="text-gray-400 text-sm">Current Price</p>
-                <p className="text-2xl font-bold text-white">{formatPrice(coinStats.currentPrice)}</p>
+                <p className="text-2xl font-bold text-white">
+                  {formatPrice(coinStats.currentPrice)}
+                </p>
               </div>
               <div className="bg-slate-700/50 rounded-lg p-4">
                 <p className="text-gray-400 text-sm">24h Change</p>
-                <p className={`text-xl font-bold ${coinStats.priceChange24h >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                  {coinStats.priceChange24h >= 0 ? '+' : ''}{formatPrice(Math.abs(coinStats.priceChange24h))}
+                <p
+                  className={`text-xl font-bold ${
+                    coinStats.priceChange24h >= 0
+                      ? "text-green-400"
+                      : "text-red-400"
+                  }`}
+                >
+                  {coinStats.priceChange24h >= 0 ? "+" : ""}
+                  {formatPrice(Math.abs(coinStats.priceChange24h))}
                 </p>
               </div>
               <div className="bg-slate-700/50 rounded-lg p-4">
                 <p className="text-gray-400 text-sm">24h Change %</p>
-                <p className={`text-xl font-bold ${coinStats.priceChangePercent24h >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                  {coinStats.priceChangePercent24h >= 0 ? '+' : ''}{coinStats.priceChangePercent24h.toFixed(2)}%
+                <p
+                  className={`text-xl font-bold ${
+                    coinStats.priceChangePercent24h >= 0
+                      ? "text-green-400"
+                      : "text-red-400"
+                  }`}
+                >
+                  {coinStats.priceChangePercent24h >= 0 ? "+" : ""}
+                  {coinStats.priceChangePercent24h.toFixed(2)}%
                 </p>
               </div>
               <div className="bg-slate-700/50 rounded-lg p-4">
                 <p className="text-gray-400 text-sm">24h Volume</p>
-                <p className="text-xl font-bold text-white">{formatLargeNumber(coinStats.volume24h)}</p>
+                <p className="text-xl font-bold text-white">
+                  {formatLargeNumber(coinStats.volume24h)}
+                </p>
               </div>
             </div>
           )}
@@ -353,15 +406,21 @@ const CryptoPriceChart: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
               <div className="bg-slate-700/30 rounded-lg p-4">
                 <p className="text-gray-400 text-sm">Market Cap</p>
-                <p className="text-lg font-bold text-white">{formatLargeNumber(coinStats.marketCap)}</p>
+                <p className="text-lg font-bold text-white">
+                  {formatLargeNumber(coinStats.marketCap)}
+                </p>
               </div>
               <div className="bg-slate-700/30 rounded-lg p-4">
                 <p className="text-gray-400 text-sm">24h High</p>
-                <p className="text-lg font-bold text-green-400">{formatPrice(coinStats.high24h)}</p>
+                <p className="text-lg font-bold text-green-400">
+                  {formatPrice(coinStats.high24h)}
+                </p>
               </div>
               <div className="bg-slate-700/30 rounded-lg p-4">
                 <p className="text-gray-400 text-sm">24h Low</p>
-                <p className="text-lg font-bold text-red-400">{formatPrice(coinStats.low24h)}</p>
+                <p className="text-lg font-bold text-red-400">
+                  {formatPrice(coinStats.low24h)}
+                </p>
               </div>
             </div>
           )}
@@ -370,7 +429,9 @@ const CryptoPriceChart: React.FC = () => {
           <div className="bg-slate-900/50 rounded-xl p-4">
             {!selectedCoin && coins.length === 0 && !coinsLoading ? (
               <div className="flex items-center justify-center h-96">
-                <p className="text-gray-400">No cryptocurrencies available to display</p>
+                <p className="text-gray-400">
+                  No cryptocurrencies available to display
+                </p>
               </div>
             ) : initialLoad ? (
               <div className="flex items-center justify-center h-96">
@@ -390,29 +451,29 @@ const CryptoPriceChart: React.FC = () => {
               <ResponsiveContainer width="100%" height={400}>
                 <LineChart data={priceData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                  <XAxis 
-                    dataKey="timestamp" 
+                  <XAxis
+                    dataKey="timestamp"
                     stroke="#9CA3AF"
                     fontSize={12}
                     angle={-45}
                     textAnchor="end"
                     height={60}
                   />
-                  <YAxis 
+                  <YAxis
                     stroke="#9CA3AF"
                     fontSize={12}
                     tickFormatter={formatPrice}
                   />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#1F2937',
-                      border: '1px solid #374151',
-                      borderRadius: '8px',
-                      color: '#F3F4F6'
+                      backgroundColor: "#1F2937",
+                      border: "1px solid #374151",
+                      borderRadius: "8px",
+                      color: "#F3F4F6",
                     }}
-                    formatter={(value: number) => [formatPrice(value), 'Price']}
+                    formatter={(value: number) => [formatPrice(value), "Price"]}
                     labelFormatter={(label) => `Date: ${label}`}
-                    labelStyle={{ color: '#9CA3AF' }}
+                    labelStyle={{ color: "#9CA3AF" }}
                   />
                   <Line
                     type="monotone"
@@ -420,7 +481,7 @@ const CryptoPriceChart: React.FC = () => {
                     stroke="#8B5CF6"
                     strokeWidth={2}
                     dot={false}
-                    activeDot={{ r: 4, fill: '#8B5CF6' }}
+                    activeDot={{ r: 4, fill: "#8B5CF6" }}
                   />
                 </LineChart>
               </ResponsiveContainer>

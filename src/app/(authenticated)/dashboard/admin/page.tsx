@@ -1,6 +1,6 @@
 
 'use client'
-
+import React from 'react';
 import { useEffect, useState } from 'react'
 import { createClient } from '@/app/utils/supabase/clients'
 import { redirect } from 'next/navigation';
@@ -287,8 +287,8 @@ export default function PostsList() {
       <div className="min-h-screen bg-gradient-to-br overflow-x-hidden from-slate-900 via-blue-900 to-slate-900 text-white">
         <div className=" md:mx-auto px-4 md:px-6 py-8">
           
-          <div className="mb-8">
-            <div className="bg-slate-800/70 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-slate-700/20">
+          <div className="mb-8 ">
+            <div className="bg-slate-800/70  backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-slate-700/20">
               <h1 className="md:text-4xl text-2xl font-bold bg-gradient-to-r from-slate-200 via-blue-300 to-indigo-300 bg-clip-text text-transparent mb-2">
                 📈 Stock Portfolio Admin
               </h1>
@@ -296,10 +296,18 @@ export default function PostsList() {
             </div>
           </div>
 
-          <div className="lg:grid  space-y-6 lg:grid-cols-3 lg:gap-8">
+          <div className="lg:grid h-screen space-y-6 lg:grid-cols-3 lg:gap-8">
             {/* Add Stock Form */}
-            <div className="lg:col-span-1 card lg:sticky lg:top-8 ">
-              <div className="bg-slate-800/80 backdrop-blur-sm  rounded-2xl p-6 shadow-xl border border-slate-700/20  h-fit">
+            <div className="lg:col-span-1  lg:top-8 ">
+              <div className="bg-slate-800/80  top-8 backdrop-blur-sm 
+               rounded-2xl p-6 shadow-xl border border-slate-700/20  
+               lg:sticky lg:top-8 lg:h-[90vh] lg:overflow-y-auto"
+               style={{
+                alignSelf: 'flex-start', // Keeps it at the top
+                overflowAnchor: 'none' // Prevents scroll adjustment
+              }}
+               
+               >
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-green-600 rounded-xl flex items-center justify-center">
                     <span className="text-white font-bold text-lg">+</span>
@@ -731,3 +739,6 @@ export default function PostsList() {
       </>
     )
 }
+
+
+

@@ -6,7 +6,7 @@ import { FiHome, FiPieChart, FiList, FiSettings, FiLogOut } from 'react-icons/fi
 import { useEffect, useState } from 'react';
 import { signOut } from '../(auth)/login/action';
 import { createClient } from '../utils/supabase/clients';
-
+import { RiAdminLine } from "react-icons/ri";
 import { User } from '@supabase/supabase-js';
 const Sidebar = ({ closeSidebar }: { closeSidebar?: () => void }) => {
   const pathname = usePathname();
@@ -55,7 +55,22 @@ const Sidebar = ({ closeSidebar }: { closeSidebar?: () => void }) => {
       icon: <FiSettings />,
       rhyme: "Tweak and tune, make it prime"
     },
+    { 
+      name: 'Admin', 
+      href: '/dashboard/admin', 
+      icon: <RiAdminLine />,
+      rhyme: "For Admin Only"
+    },
   ];
+
+   // Filter nav items based on user
+   const filteredNavItems = navItems.filter(item => {
+    if (item.name === 'Admin') {
+      return user?.email === process.env.NEXT_PUBLIC_AUTHORIZED_EMAIL;
+    }
+    return true;
+  });
+
 
   const handleLinkClick = () => {
     if (closeSidebar) {
@@ -86,7 +101,7 @@ const Sidebar = ({ closeSidebar }: { closeSidebar?: () => void }) => {
 
           <nav>
             <ul className="space-y-3">
-              {navItems.map((item) => (
+              {filteredNavItems.map((item) => (
                 <li key={item.name}>
                   <Link
                     href={item.href}
