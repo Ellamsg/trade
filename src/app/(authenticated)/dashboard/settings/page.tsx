@@ -60,8 +60,8 @@ const SettingsPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white p-4 md:p-6">
-      <div className="max-w-3xl mx-auto space-y-6">
-        <div className="flex items-center space-x-4 mb-6">
+      <div className=" mx-auto space-y-6">
+        <div className="flex  space-x-4 mb-6">
           <div className="p-3 bg-blue-600/20 rounded-xl border border-blue-500/30">
             <FiPieChart className="w-6 h-6 text-blue-400" />
           </div>

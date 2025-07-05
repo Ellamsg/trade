@@ -121,7 +121,7 @@ const Navbar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
             <form>
               <button 
                 formAction={signOut}
-                className="group flex items-center space-x-2 bg-gradient-to-r from-red-600 to-red-700 
+                className="group flex cursor-pointer items-center space-x-2 bg-gradient-to-r from-red-600 to-red-700 
                          hover:from-red-700 hover:to-red-800 px-4 py-2.5 rounded-xl 
                          transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-red-500/25
                          border border-red-500/20 backdrop-blur-sm"
