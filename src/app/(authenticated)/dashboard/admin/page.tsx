@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/app/utils/supabase/clients'
 import { redirect } from 'next/navigation';
 import { User } from '@supabase/supabase-js';
+import { useRef } from 'react';
 type Post = {
     id: string;
     name: string;
@@ -37,12 +38,27 @@ export default function PostsList() {
   const [searchTerm, setSearchTerm] = useState('')
   const supabase = createClient()
   const [user, setUser] = useState<User | null>(null);
-  
+  const editFormRef = useRef<HTMLDivElement>(null);
+
 
   const filteredPosts = posts.filter(post => 
     post.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
     post.symbol.toLowerCase().includes(searchTerm.toLowerCase())
   )
+
+  const handleEditClick = (post: Post) => {
+    setEditingPost(post);
+    
+    setTimeout(() => {
+      if (editFormRef.current) {
+        (editFormRef.current as HTMLDivElement).scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start',
+          inline: 'nearest'
+        });
+      }
+    }, 100);
+  };
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -433,7 +449,7 @@ export default function PostsList() {
             <div className="lg:col-span-2 space-y-6">
               {/* Edit Stock Form */}
               {editingPost && (
-                <div className="bg-slate-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-slate-700/20 animate-in slide-in-from-top duration-300">
+                <div  ref={editFormRef} className="bg-slate-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-slate-700/20 animate-in slide-in-from-top duration-300">
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-10 h-10 bg-gradient-to-r from-amber-500 to-orange-600 rounded-xl flex items-center justify-center">
                       <span className="text-white font-bold text-lg">✏️</span>
@@ -441,7 +457,7 @@ export default function PostsList() {
                     <h2 className="text-xl font-bold text-slate-100">Edit Stock Entry</h2>
                   </div>
                   
-                  <div className="md:grid md:grid-cols-2 gap-4 mb-6">
+                  <div className="grid md:grid-cols-2 gap-4 mb-6">
                     <input
                       type="text"
                       placeholder="Company Name"
@@ -693,10 +709,7 @@ export default function PostsList() {
                       
                       <div className="flex md:justify-end justify-between gap-2 lg:opacity-0 group-hover:opacity-100 transition-all duration-300">
   <button
-    onClick={() => {
-      setEditingPost(post);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }}
+    onClick={() => handleEditClick(post)}
     className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl font-medium shadow-md hover:shadow-lg hover:from-blue-600 hover:to-indigo-700 transform hover:scale-105 transition-all duration-300"
   >
     ✏️ Edit
