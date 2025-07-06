@@ -258,28 +258,7 @@ const DashboardPage: React.FC = () => {
         )}
       </section>
 
-      {/* Retail Stocks */}
-      <section>
-        <h2 className="text-xl font-semibold mb-4 flex items-center text-white">
-          <span className="w-3 h-3 bg-purple-500 rounded-full mr-2"></span>
-          Retail Stocks
-        </h2>
-        {loading ? (
-          <div className="bg-slate-800/50 rounded-lg p-4 text-center text-slate-400">
-            <p>Loading retail stocks...</p>
-          </div>
-        ) : retailStocks.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {retailStocks.map((stock: StockCardProps) => (
-              <CryptoCard key={`retail-${stock.symbol}`} {...stock} />
-            ))}
-          </div>
-        ) : (
-          <div className="bg-slate-800/50 rounded-lg p-4 text-center text-slate-400">
-            <p>No retail stocks found</p>
-          </div>
-        )}
-      </section>
+     
 
       {/* EV Stocks */}
       <section>
@@ -300,6 +279,29 @@ const DashboardPage: React.FC = () => {
         ) : (
           <div className="bg-slate-800/50 rounded-lg p-4 text-center text-slate-400">
             <p>No EV stocks found</p>
+          </div>
+        )}
+      </section>
+
+       {/* Retail Stocks */}
+       <section>
+        <h2 className="text-xl font-semibold mb-4 flex items-center text-white">
+          <span className="w-3 h-3 bg-purple-500 rounded-full mr-2"></span>
+          Retail Stocks
+        </h2>
+        {loading ? (
+          <div className="bg-slate-800/50 rounded-lg p-4 text-center text-slate-400">
+            <p>Loading retail stocks...</p>
+          </div>
+        ) : retailStocks.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {retailStocks.map((stock: StockCardProps) => (
+              <CryptoCard key={`retail-${stock.symbol}`} {...stock} />
+            ))}
+          </div>
+        ) : (
+          <div className="bg-slate-800/50 rounded-lg p-4 text-center text-slate-400">
+            <p>No retail stocks found</p>
           </div>
         )}
       </section>

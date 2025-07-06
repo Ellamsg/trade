@@ -616,7 +616,7 @@ const WaitlistPage = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 border border-slate-700/50">
+            {/* <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 border border-slate-700/50">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-slate-400 text-xs md:text-sm">
@@ -630,7 +630,7 @@ const WaitlistPage = () => {
                   <FiDollarSign className="size-4 md:size-6 text-purple-400" />
                 </div>
               </div>
-            </div>
+            </div> */}
             <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 border border-slate-700/50">
               <div className="flex items-center justify-between">
                 <div>

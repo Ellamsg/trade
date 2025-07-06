@@ -80,7 +80,8 @@ export default function SigningUp() {
           <button
             type="submit"
             formAction={signup}
-            className="w-full py-3 mt-6 px-4 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 focus:ring-offset-gray-900 text-white font-medium rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
+            className="w-full py-3 mt-6 px-4 cursor-pointer
+             bg-blue-600 hover:bg-[#6075a5] hover:text-white focus:ring-blue-500 focus:ring-offset-gray-900 text-white font-medium rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
           >
             Create Account
           </button>

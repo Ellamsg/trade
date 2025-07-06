@@ -284,7 +284,7 @@ export default function PostsList() {
       </div>
     )}
      
-      <div className="min-h-screen bg-gradient-to-br overflow-x-hidden from-slate-900 via-blue-900 to-slate-900 text-white">
+      <div  className="min-h-screen bg-gradient-to-br overflow-x-hidden from-slate-900 via-blue-900 to-slate-900 text-white">
         <div className=" md:mx-auto px-4 md:px-6 py-8">
           
           <div className="mb-8 ">
@@ -635,9 +635,9 @@ export default function PostsList() {
               <div className="space-y-4">
                 {filteredPosts.map((post, index) => (
                   <div key={post.id} className={`group bg-slate-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl border border-slate-700/20 transition-all duration-300 hover:transform hover:scale-[1.02] animate-in slide-in-from-bottom duration-300`} style={{ animationDelay: `${index * 100}ms` }}>
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-4 mb-4">
+                    <div className="lg:flex  justify-between items-start">
+                      <div className="flex-1 ">
+                        <div className="flex  items-center gap-4 mb-4">
                           <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-lg ${
                             post.is_gain 
                               ? 'bg-gradient-to-r from-emerald-500 to-green-600' 
@@ -654,7 +654,7 @@ export default function PostsList() {
                           </div>
                         </div>
                         
-                        <div className="flex items-center gap-6 mb-4">
+                        <div className="flex  items-center gap-6 mb-4">
                           <div className={`px-4 py-2 rounded-xl font-bold text-lg ${
                             post.is_gain ? 'text-emerald-400' : 'text-red-400'
                           }`}>
@@ -691,20 +691,23 @@ export default function PostsList() {
                         )}
                       </div>
                       
-                      <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                        <button
-                          onClick={() => setEditingPost(post)}
-                          className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl font-medium shadow-md hover:shadow-lg hover:from-blue-600 hover:to-indigo-700 transform hover:scale-105 transition-all duration-300"
-                        >
-                          ✏️ Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeletePost(post.id, post.image_path)}
-                          className="px-4 py-2 bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-xl font-medium shadow-md hover:shadow-lg hover:from-red-600 hover:to-rose-700 transform hover:scale-105 transition-all duration-300"
-                        >
-                          🗑️ Delete
-                        </button>
-                      </div>
+                      <div className="flex md:justify-end justify-between gap-2 lg:opacity-0 group-hover:opacity-100 transition-all duration-300">
+  <button
+    onClick={() => {
+      setEditingPost(post);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }}
+    className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl font-medium shadow-md hover:shadow-lg hover:from-blue-600 hover:to-indigo-700 transform hover:scale-105 transition-all duration-300"
+  >
+    ✏️ Edit
+  </button>
+  <button
+    onClick={() => handleDeletePost(post.id, post.image_path)}
+    className="px-4 py-2 bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-xl font-medium shadow-md hover:shadow-lg hover:from-red-600 hover:to-rose-700 transform hover:scale-105 transition-all duration-300"
+  >
+    🗑️ Delete
+  </button>
+</div>
                     </div>
                   </div>
                 ))}
