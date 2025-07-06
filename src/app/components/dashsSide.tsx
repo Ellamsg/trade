@@ -29,7 +29,7 @@ const Sidebar = ({ closeSidebar }: { closeSidebar?: () => void }) => {
       name: 'Dashboard', 
       href: '/dashboard', 
       icon: <FiHome />,
-      rhyme: "Track your coins, watch them shine"
+      rhyme: "Track your Stocks, watch them shine"
     },
     { 
       name: 'Portfolio', 
