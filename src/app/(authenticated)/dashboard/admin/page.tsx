@@ -303,19 +303,25 @@ export default function PostsList() {
       <div  className="min-h-screen bg-gradient-to-br overflow-x-hidden from-slate-900 via-blue-900 to-slate-900 text-white">
         <div className=" md:mx-auto px-4 md:px-6 py-8">
           
-          <div className="mb-8 ">
+          <div className="mb-4 ">
             <div className="bg-slate-800/70  backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-slate-700/20">
               <h1 className="md:text-4xl text-2xl font-bold bg-gradient-to-r from-slate-200 via-blue-300 to-indigo-300 bg-clip-text text-transparent mb-2">
                 📈 Stock Portfolio Admin
               </h1>
               <p className="text-slate-400 text-lg">Manage your stock entries with ease</p>
             </div>
+            <button
+        onClick={() => window.open('https://dashboard.tawk.to/#/chat', '_blank')}
+        className="px-4 cursor-pointer mt-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-medium shadow-md hover:shadow-lg hover:from-purple-700 hover:to-indigo-700 transform hover:scale-105 transition-all duration-300"
+      >
+        💬 Chat Dashboard
+      </button>
           </div>
 
           <div className="lg:grid h-screen space-y-6 lg:grid-cols-3 lg:gap-8">
             {/* Add Stock Form */}
             <div className="lg:col-span-1  lg:top-8 ">
-              <div className="bg-slate-800/80  top-8 backdrop-blur-sm 
+              <div className="bg-slate-800/80   top-8 backdrop-blur-sm 
                rounded-2xl p-6 shadow-xl border border-slate-700/20  
                lg:sticky lg:top-8 lg:h-[90vh] lg:overflow-y-auto"
                style={{
@@ -422,7 +428,10 @@ export default function PostsList() {
                     <input
                       type="file"
                       onChange={(e) => setFile(e.target.files?.[0] || null)}
-                      className="w-full p-4 border-2 border-dashed border-slate-600 rounded-xl bg-slate-700/30 backdrop-blur-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-600 file:text-white file:font-medium hover:file:bg-blue-700 transition-all duration-300 text-white"
+                      className="w-full p-3 cursor-pointer border-2 border-dashed border-slate-600 rounded-xl
+                       bg-slate-700/30 backdrop-blur-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg 
+                       file:border-0 file:bg-blue-600 file:text-white file:font-medium
+                        hover:file:bg-blue-700 transition-all duration-300 text-white"
                       accept="image/*"
                     />
                   </div>
