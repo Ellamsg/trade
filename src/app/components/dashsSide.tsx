@@ -84,7 +84,7 @@ const Sidebar = ({ closeSidebar }: { closeSidebar?: () => void }) => {
 
   return (
     <div className={`
-      flex flex-col h-full bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 border-r border-gray-700/50 backdrop-blur-sm
+      flex flex-col relative h-full bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 border-r border-gray-700/50 backdrop-blur-sm
       lg:static lg:translate-x-0 lg:w-64
       ${closeSidebar ? 
         (isClosing ? 'animate-slide-out-left' : 'animate-slide-in-left') : 
@@ -92,7 +92,7 @@ const Sidebar = ({ closeSidebar }: { closeSidebar?: () => void }) => {
     `}>
       <div className="flex-1 overflow-y-auto">
         <div className="p-6">
-         <div className='pb-9'>
+         <div className='pb-9 sticky top-6'>
          <Link href="/" className="text-2xl  font-bold text-white md:py-0 ">
             <img className="" src="/assets/pentalogo4.png" alt="main-log" />
           </Link>
