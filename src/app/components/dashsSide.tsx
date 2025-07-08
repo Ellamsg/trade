@@ -64,13 +64,21 @@ const Sidebar = ({ closeSidebar }: { closeSidebar?: () => void }) => {
   ];
 
    // Filter nav items based on user
-   const filteredNavItems = navItems.filter(item => {
+  //  const filteredNavItems = navItems.filter(item => {
+  //   if (item.name === 'Admin') {
+  //     return user?.email === process.env.NEXT_PUBLIC_AUTHORIZED_EMAIL;
+  //   }
+  //   return true;
+  // });
+  const filteredNavItems = navItems.filter(item => {
     if (item.name === 'Admin') {
-      return user?.email === process.env.NEXT_PUBLIC_AUTHORIZED_EMAIL;
+      const authorizedEmails = process.env.NEXT_PUBLIC_AUTHORIZED_EMAILS
+        ?.split(',')
+        .map(email => email.trim()) || [];
+      return user?.email && authorizedEmails.includes(user.email);
     }
     return true;
   });
-
 
   const handleLinkClick = () => {
     if (closeSidebar) {
