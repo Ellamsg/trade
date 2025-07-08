@@ -82,7 +82,7 @@ export default function PostsList() {
   //   }
 
   //   checkAuth()
-  // }, []) 
+  // }, [])  //
   useEffect(() => {
     const checkAuth = async () => {
       setAuthChecking(true); // Show loading overlay
