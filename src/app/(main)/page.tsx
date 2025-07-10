@@ -89,7 +89,7 @@ const ScrollRevealText: React.FC<ScrollRevealTextProps> = ({ children, className
 export default function Home() {
   return (
     <div>
-      <main className="pt-[100px] padding-screen">
+      <main className="pt-[100px]   padding-screen">
         <div className="  relative ">
           <div className="flex justify-center items-center w-full absolute ">
             <div className="flex z-[100] md:w-[60%]  pt-[40px] flex-col text-center justify-center items-center">

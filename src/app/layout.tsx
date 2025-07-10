@@ -24,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html className="blvck" lang="en">
       <head>
       <link rel="icon" href="/assets/pentalogo4.png" sizes="any" />
       </head>
