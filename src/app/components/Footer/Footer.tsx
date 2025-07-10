@@ -17,20 +17,30 @@ export default function Footer() {
     <footer className="bg-[#151515] p-6 lg:p-[70px]">
       <div className="grid md:grid-cols-4 justify-items-center md:justify-items-start md:items-start items-center justify-center  md:gap-0 gap-9  ">
         <div>
-        <img className="h-9" src="assets/pentalogo.png" alt='main-log'/>
+          <img className="h-9" src="assets/pentalogo.png" alt="main-log" />
         </div>
         <div className="flex  md:items-start items-center flex-col gap-8">
-          <Link href="/"><p>Home</p></Link>
-          <Link href="/program"><p>Program</p></Link>
-          <Link href="/services"><p>Services</p></Link>
-
-         
+          <Link href="/">
+            <p>Home</p>
+          </Link>
+          <Link href="/program">
+            <p>Program</p>
+          </Link>
+          <Link href="/services">
+            <p>Services</p>
+          </Link>
         </div>
         <div className="flex flex-col md:items-start items-center   gap-8">
-        <Link href="/program"><p>Stocks</p></Link>
-        <Link href="/contact"><p>Contacts</p></Link>
-        <Link href="/supports"><p>Customer Supports</p></Link>
-       
+          <Link href="/stocks">
+            <p>Stocks</p>
+          </Link>
+
+          <Link
+            href="mailto:pentastocks@gmail.com?subject=Support Request&body=Hello, I need help with..."
+            className="hover:text-blue-400 transition-colors"
+          >
+            <p>Customer Support</p>
+          </Link>
         </div>
 
         <div className="grid text-center gap-4 grid-cols-6 justify-center ">
@@ -45,13 +55,14 @@ export default function Footer() {
 
       <div className="text-center my-[40px] md:py-[20px] md:pt-[90px] text-[13px] text-[#404040]">
         <p>
-          Reg. No CHE-390.112.525 Penta Stocks provides only hardware wallets and
-          non-custodial software solutions for managing digital assets. Penta Stocks
-          is not regulated as a financial services provider or cryptocurrency
-          exchange. Penta Stocks does not hold, custody, or control users' assets or
-          transactions. Penta Stocks transaction services are provided by third-party
-          providers. Penta Stocks provides no advice or recommendation on use of these
-          third-party services. Copyright © 2025 Penta Stocks. All Rights Reserved
+          Reg. No CHE-390.112.525 Penta Stocks provides only hardware wallets
+          and non-custodial software solutions for managing digital assets.
+          Penta Stocks is not regulated as a financial services provider or
+          cryptocurrency exchange. Penta Stocks does not hold, custody, or
+          control users' assets or transactions. Penta Stocks transaction
+          services are provided by third-party providers. Penta Stocks provides
+          no advice or recommendation on use of these third-party services.
+          Copyright © 2025 Penta Stocks. All Rights Reserved
         </p>
       </div>
     </footer>
