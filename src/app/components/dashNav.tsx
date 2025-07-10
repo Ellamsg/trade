@@ -26,14 +26,10 @@ const Navbar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
         setUser(user);
 
         // Fetch additional user data (name) from profiles table
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('full_name')
-          .eq('id', user.id)
-          .single();
+      
 
         // Fallback to user_metadata if profile doesn't exist
-        const displayName = profile?.full_name || user.user_metadata?.full_name || user.email || 'User';
+        const displayName =  user.user_metadata?.full_name || user.email || 'User';
         setUserName(displayName);
       } catch (error) {
         console.error('Error fetching user:', error);

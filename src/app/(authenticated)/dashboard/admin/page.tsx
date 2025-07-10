@@ -60,29 +60,7 @@ export default function PostsList() {
     }, 100);
   };
 
-  // useEffect(() => {
-  //   const checkAuth = async () => {
-  //     setAuthChecking(true) // Show loading overlay
-  //     const { data: { user }, error } = await supabase.auth.getUser()
-      
-  //     // Redirect if not logged in
-  //     if (error || !user) {
-  //       return redirect('/login')
-  //     }
-      
-  //     // Redirect if not the authorized email
-  //     if (user.email !== process.env.NEXT_PUBLIC_AUTHORIZED_EMAIL) {
-  //       return redirect('/login')
-  //     }
-      
-  //     setUser(user)
-  //    await refreshPosts()
-  //    setAuthChecking(false)
-  //    // Only fetch posts after auth validation
-  //   }
-
-  //   checkAuth()
-  // }, [])  //
+ 
   useEffect(() => {
     const checkAuth = async () => {
       setAuthChecking(true); // Show loading overlay

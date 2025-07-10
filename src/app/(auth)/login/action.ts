@@ -63,8 +63,9 @@ export async function signup(formData: FormData) {
       .from('profiles')
       .upsert({
         id: data.user.id,
-        email: data.user.email,                   
-        updated_at: new Date().toISOString()
+        email: data.user.email, 
+        full_name :signUpData.options.data.full_name,                  
+        created_at: new Date().toISOString()
       })
   }
      
