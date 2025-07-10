@@ -150,7 +150,7 @@ export default function EmailPage() {
               </div>
               <div>
                 <h1 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-                  Email Management
+                  User Management
                 </h1>
                 <p className="text-slate-400 text-sm md:text-base">Send emails to your users</p>
               </div>
