@@ -1,248 +1,4 @@
-// "use client"
 
-// import { useState, useEffect } from 'react';
-// import { FiPlus, FiX, FiArrowUp, FiArrowDown, FiClock, FiDollarSign, FiTrendingUp, FiActivity, FiCheck } from 'react-icons/fi';
-// import { createClient } from '@/app/utils/supabase/clients';
-
-// type StockAsset = {
-//   symbol: string;
-//   name: string;
-//   current_price: number;
-//   percentage_change: string;
-// };
-
-// type Order = {
-//   id: string;
-//   asset: string;
-//   assetName: string;
-//   type: 'buy' | 'sell';
-//   price: number;
-//   amount: number;
-//   total: number;
-//   status: 'pending' | 'approved' | 'cancelled';
-//   createdAt: Date;
-//   approvedAt?: Date;
-// };
-
-// type PortfolioItem = {
-//   id: string;
-//   asset: string;
-//   assetName: string;
-//   amount: number;
-//   averagePrice: number;
-//   totalValue: number;
-//   addedAt: Date;
-// };
-
-// const WaitlistPage = () => {
-//   const supabase = createClient();
-//   const [orders, setOrders] = useState<Order[]>([]);
-//   const [stockAssets, setStockAssets] = useState<StockAsset[]>([]);
-//   const [loading, setLoading] = useState(true);
-//   const [isModalOpen, setIsModalOpen] = useState(false);
-//   const [orderType, setOrderType] = useState<'buy' | 'sell'>('buy');
-//   const [selectedAsset, setSelectedAsset] = useState<StockAsset | null>(null);
-//   const [price, setPrice] = useState('');
-//   const [amount, setAmount] = useState('');
-
-//   // Load orders from localStorage on component mount
-//   useEffect(() => {
-//     const savedOrders = localStorage.getItem('stock_orders');
-//     if (savedOrders) {
-//       const parsedOrders = JSON.parse(savedOrders).map((order: any) => ({
-//         ...order,
-//         createdAt: new Date(order.createdAt),
-//         approvedAt: order.approvedAt ? new Date(order.approvedAt) : undefined
-//       }));
-//       setOrders(parsedOrders);
-//     }
-//   }, []);
-
-//   // Save orders to localStorage whenever orders change
-//   useEffect(() => {
-//     if (orders.length > 0) {
-//       localStorage.setItem('stock_orders', JSON.stringify(orders));
-//     }
-//   }, [orders]);
-
-//   // Fetch stock data from Supabase
-//   useEffect(() => {
-//     const fetchStockData = async () => {
-//       try {
-//         setLoading(true);
-
-//         const { data, error } = await supabase
-//           .from('posts')
-//           .select('symbol, name, current_price, percentage_change')
-//           .order('created_at', { ascending: false });
-
-//         if (error) throw error;
-
-//         const formattedStocks = data.map((stock: any) => ({
-//           symbol: stock.symbol,
-//           name: stock.name,
-//           current_price: stock.current_price,
-//           percentage_change: stock.percentage_change,
-//         }));
-
-//         setStockAssets(formattedStocks);
-//         if (formattedStocks.length > 0) {
-//           setSelectedAsset(formattedStocks[0]);
-//           setPrice(formattedStocks[0].current_price.toString());
-//         }
-//       } catch (error) {
-//         console.error('Error fetching stock data:', error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchStockData();
-//   }, []);
-
-//   // Handle pending to approved status transition
-//   useEffect(() => {
-//     const interval = setInterval(() => {
-//       setOrders(prevOrders => {
-//         return prevOrders.map(order => {
-//           if (order.status === 'pending') {
-//             const timeDiff = Date.now() - order.createdAt.getTime();
-//             if (timeDiff >= 30000) { // 30 seconds
-//               const approvedOrder = {
-//                 ...order,
-//                 status: 'approved' as const,
-//                 approvedAt: new Date()
-//               };
-
-//               // Add to portfolio when approved
-//               addToPortfolio(approvedOrder);
-
-//               return approvedOrder;
-//             }
-//           }
-//           return order;
-//         });
-//       });
-//     }, 1000);
-
-//     return () => clearInterval(interval);
-//   }, []);
-
-//   const addToPortfolio = (approvedOrder: Order) => {
-//     if (approvedOrder.type === 'buy') {
-//       const existingPortfolio = JSON.parse(localStorage.getItem('stock_portfolio') || '[]');
-
-//       // Check if asset already exists in portfolio
-//       const existingAssetIndex = existingPortfolio.findIndex((item: PortfolioItem) => item.asset === approvedOrder.asset);
-
-//       if (existingAssetIndex >= 0) {
-//         // Update existing asset - calculate new average price
-//         const existingItem = existingPortfolio[existingAssetIndex];
-//         const totalAmount = existingItem.amount + approvedOrder.amount;
-//         const totalValue = (existingItem.amount * existingItem.averagePrice) + (approvedOrder.amount * approvedOrder.price);
-//         const newAveragePrice = totalValue / totalAmount;
-
-//         existingPortfolio[existingAssetIndex] = {
-//           ...existingItem,
-//           amount: totalAmount,
-//           averagePrice: newAveragePrice,
-//           totalValue: totalAmount * (selectedAsset?.current_price || approvedOrder.price)
-//         };
-//       } else {
-//         // Add new asset to portfolio
-//         const newPortfolioItem: PortfolioItem = {
-//           id: Date.now().toString(),
-//           asset: approvedOrder.asset,
-//           assetName: approvedOrder.assetName,
-//           amount: approvedOrder.amount,
-//           averagePrice: approvedOrder.price,
-//           totalValue: approvedOrder.amount * (selectedAsset?.current_price || approvedOrder.price),
-//           addedAt: new Date()
-//         };
-//         existingPortfolio.push(newPortfolioItem);
-//       }
-
-//       localStorage.setItem('stock_portfolio', JSON.stringify(existingPortfolio));
-//     }
-//   };
-
-//   const handleNewOrder = () => {
-//     if (!price || !amount || !selectedAsset) return;
-
-//     const newOrder: Order = {
-//       id: Date.now().toString(),
-//       asset: selectedAsset.symbol.toUpperCase(),
-//       assetName: selectedAsset.name,
-//       type: orderType,
-//       price: parseFloat(price),
-//       amount: parseFloat(amount),
-//       total: parseFloat(price) * parseFloat(amount),
-//       status: 'pending',
-//       createdAt: new Date()
-//     };
-
-//     setOrders([newOrder, ...orders]);
-//     setIsModalOpen(false);
-//     setPrice(selectedAsset.current_price.toString());
-//     setAmount('');
-//   };
-
-//   const cancelOrder = (id: string) => {
-//     setOrders(orders.map(order =>
-//       order.id === id ? { ...order, status: 'cancelled' } : order
-//     ));
-//   };
-
-//   const handleAssetChange = (symbol: string) => {
-//     const asset = stockAssets.find(a => a.symbol === symbol);
-//     if (asset) {
-//       setSelectedAsset(asset);
-//       setPrice(asset.current_price.toString());
-//     }
-//   };
-
-//   const pendingOrders = orders.filter(o => o.status === 'pending');
-//   const approvedOrders = orders.filter(o => o.status === 'approved');
-//   const totalValue = pendingOrders.reduce((sum, order) => sum + order.total, 0);
-
-//   const getStatusBadge = (status: string) => {
-//     switch (status) {
-//       case 'pending':
-//         return (
-//           <span className="px-3 py-1 bg-yellow-500/10 text-yellow-400 rounded-full text-xs font-medium border border-yellow-500/20 flex items-center w-fit">
-//             <div className="w-2 h-2 bg-yellow-400 rounded-full mr-2 animate-pulse"></div>
-//             PENDING
-//           </span>
-//         );
-//       case 'approved':
-//         return (
-//           <span className="px-3 py-1 bg-green-500/10 text-green-400 rounded-full text-xs font-medium border border-green-500/20 flex items-center w-fit">
-//             <FiCheck className="w-3 h-3 mr-2" />
-//             APPROVED
-//           </span>
-//         );
-//       case 'cancelled':
-//         return (
-//           <span className="px-3 py-1 bg-red-500/10 text-red-400 rounded-full text-xs font-medium border border-red-500/20 flex items-center w-fit">
-//             <FiX className="w-3 h-3 mr-2" />
-//             CANCELLED
-//           </span>
-//         );
-//       default:
-//         return null;
-//     }
-//   };
-
-//   if (loading) {
-//     return (
-//       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white flex items-center justify-center">
-//         <div className="text-center">
-//           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-4"></div>
-//           <p className="text-slate-400">Loading stock data...</p>
-//         </div>
-//       </div>
-//     );
-//   }
 
 "use client";
 
@@ -257,10 +13,12 @@ import {
   FiTrendingUp,
   FiActivity,
   FiCheck,
+  FiArrowLeft,
 } from "react-icons/fi";
 import { createClient } from "@/app/utils/supabase/clients";
 
 type StockAsset = {
+  id: string;
   symbol: string;
   name: string;
   current_price: number;
@@ -270,32 +28,47 @@ type StockAsset = {
 
 type Order = {
   id: string;
+  user_id: string;
+  wallet_id: string;
   asset: string;
-  assetName: string;
+  asset_name: string;
+  email: string;
   type: "buy" | "sell";
   price: number;
   amount: number;
   total: number;
   status: "pending" | "approved" | "cancelled";
-  createdAt: Date;
-  approvedAt?: Date;
+  created_at: string;
+  approved_at?: string;
   image_url?: string;
 };
 
 type PortfolioItem = {
   id: string;
+  user_id: string;
+  wallet_id: string;
   asset: string;
-  assetName: string;
+  asset_name: string;
+  email: string;
   amount: number;
-  averagePrice: number;
-  totalValue: number;
-  addedAt: Date;
+  average_price: number;
+  current_value: number;
+  created_at: string;
+  updated_at: string;
   image_url?: string;
+};
+
+type UserWallet = {
+  id: string;
+  balance: number;
+  wallet_number: string;
+  tier: "bronze" | "silver" | "gold";
 };
 
 const WaitlistPage = () => {
   const supabase = createClient();
   const [orders, setOrders] = useState<Order[]>([]);
+  const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
   const [stockAssets, setStockAssets] = useState<StockAsset[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -303,172 +76,106 @@ const WaitlistPage = () => {
   const [selectedAsset, setSelectedAsset] = useState<StockAsset | null>(null);
   const [price, setPrice] = useState("");
   const [amount, setAmount] = useState("");
+  const [wallet, setWallet] = useState<UserWallet | null>(null);
 
-  // Load orders from localStorage on component mount
+  // Fetch initial data
   useEffect(() => {
-    const savedOrders = localStorage.getItem("stock_orders");
-    if (savedOrders) {
-      const parsedOrders = JSON.parse(savedOrders).map((order: any) => ({
-        ...order,
-        createdAt: new Date(order.createdAt),
-        approvedAt: order.approvedAt ? new Date(order.approvedAt) : undefined,
-      }));
-      setOrders(parsedOrders);
-    }
-  }, []);
-
-  // Save orders to localStorage whenever orders change
-  useEffect(() => {
-    if (orders.length > 0) {
-      localStorage.setItem("stock_orders", JSON.stringify(orders));
-    }
-  }, [orders]);
-
-  // Fetch stock data from Supabase
-  useEffect(() => {
-    const fetchStockData = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
 
-        const { data, error } = await supabase
+        // Get user session
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error("User not authenticated");
+
+        // Fetch user wallet
+        const { data: walletData, error: walletError } = await supabase
+          .from("wallets")
+          .select("id, balance, wallet_number, tier")
+          .eq("user_id", user.id)
+          .single();
+
+        if (walletError) throw walletError;
+        setWallet(walletData);
+
+        // Fetch stock assets
+        const { data: stocksData, error: stocksError } = await supabase
           .from("posts")
-          .select("symbol, name, current_price, percentage_change, image_url")
+          .select("id, symbol, name, current_price, percentage_change, image_url")
           .order("created_at", { ascending: false });
 
-        if (error) throw error;
-
-        const formattedStocks = data.map((stock: any) => ({
-          symbol: stock.symbol,
-          name: stock.name,
-          current_price: stock.current_price,
-          percentage_change: stock.percentage_change,
-          image_url: stock.image_url,
-        }));
-
-        setStockAssets(formattedStocks);
-        if (formattedStocks.length > 0) {
-          setSelectedAsset(formattedStocks[0]);
-          setPrice(formattedStocks[0].current_price.toString());
+        if (stocksError) throw stocksError;
+        setStockAssets(stocksData);
+        if (stocksData.length > 0) {
+          setSelectedAsset(stocksData[0]);
+          setPrice(stocksData[0].current_price.toString());
         }
+
+        // Fetch user orders
+        const { data: ordersData, error: ordersError } = await supabase
+          .from("stock_orders")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+
+        if (ordersError) throw ordersError;
+        setOrders(ordersData || []);
+
+        // Fetch user portfolio
+        const { data: portfolioData, error: portfolioError } = await supabase
+          .from("stock_portfolio")
+          .select("*")
+          .eq("user_id", user.id);
+
+        if (portfolioError) throw portfolioError;
+        setPortfolio(portfolioData || []);
+
       } catch (error) {
-        console.error("Error fetching stock data:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchStockData();
+    fetchData();
   }, []);
 
-  // Handle pending to approved status transition
+  // Poll for order status updates
   useEffect(() => {
-    const interval = setInterval(() => {
-      setOrders((prevOrders) => {
-        return prevOrders.map((order) => {
-          if (order.status === "pending") {
-            const timeDiff = Date.now() - order.createdAt.getTime();
-            if (timeDiff >= 30000) {
-              // 30 seconds
-              const approvedOrder = {
-                ...order,
-                status: "approved" as const,
-                approvedAt: new Date(),
-              };
+    if (!wallet) return;
 
-              // Add to portfolio when approved
-              addToPortfolio(approvedOrder);
+    const interval = setInterval(async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
 
-              return approvedOrder;
-            }
-          }
-          return order;
-        });
-      });
-    }, 1000);
+        // Check for pending orders that need approval
+        const pendingOrders = orders.filter(o => o.status === "pending");
+        if (pendingOrders.length === 0) return;
+
+        // Update orders from database
+        const { data: updatedOrders, error } = await supabase
+          .from("stock_orders")
+          .select("*")
+          .eq("user_id", user.id)
+          .in("id", pendingOrders.map(o => o.id));
+
+        if (error) throw error;
+
+        // Update local state if any orders changed
+        if (updatedOrders && updatedOrders.some(o => o.status !== "pending")) {
+          setOrders(prev => prev.map(order => {
+            const updated = updatedOrders.find(u => u.id === order.id);
+            return updated || order;
+          }));
+        }
+      } catch (error) {
+        console.error("Error polling orders:", error);
+      }
+    }, 10000); // Poll every 10 seconds
 
     return () => clearInterval(interval);
-  }, []);
-
-  const addToPortfolio = (approvedOrder: Order) => {
-    if (approvedOrder.type === "buy") {
-      const existingPortfolio = JSON.parse(
-        localStorage.getItem("stock_portfolio") || "[]"
-      );
-
-      // Check if asset already exists in portfolio
-      const existingAssetIndex = existingPortfolio.findIndex(
-        (item: PortfolioItem) => item.asset === approvedOrder.asset
-      );
-
-      if (existingAssetIndex >= 0) {
-        // Update existing asset - calculate new average price
-        const existingItem = existingPortfolio[existingAssetIndex];
-        const totalAmount = existingItem.amount + approvedOrder.amount;
-        const totalValue =
-          existingItem.amount * existingItem.averagePrice +
-          approvedOrder.amount * approvedOrder.price;
-        const newAveragePrice = totalValue / totalAmount;
-
-        existingPortfolio[existingAssetIndex] = {
-          ...existingItem,
-          amount: totalAmount,
-          averagePrice: newAveragePrice,
-          totalValue:
-            totalAmount * (selectedAsset?.current_price || approvedOrder.price),
-        };
-      } else {
-        // Add new asset to portfolio
-        const newPortfolioItem: PortfolioItem = {
-          id: Date.now().toString(),
-          asset: approvedOrder.asset,
-          assetName: approvedOrder.assetName,
-          amount: approvedOrder.amount,
-          averagePrice: approvedOrder.price,
-          totalValue:
-            approvedOrder.amount *
-            (selectedAsset?.current_price || approvedOrder.price),
-          addedAt: new Date(),
-          image_url: approvedOrder.image_url,
-        };
-        existingPortfolio.push(newPortfolioItem);
-      }
-
-      localStorage.setItem(
-        "stock_portfolio",
-        JSON.stringify(existingPortfolio)
-      );
-    }
-  };
-
-  const handleNewOrder = () => {
-    if (!price || !amount || !selectedAsset) return;
-
-    const newOrder: Order = {
-      id: Date.now().toString(),
-      asset: selectedAsset.symbol.toUpperCase(),
-      assetName: selectedAsset.name,
-      type: orderType,
-      price: parseFloat(price),
-      amount: parseFloat(amount),
-      total: parseFloat(price) * parseFloat(amount),
-      status: "pending",
-      createdAt: new Date(),
-      image_url: selectedAsset.image_url,
-    };
-
-    setOrders([newOrder, ...orders]);
-    setIsModalOpen(false);
-    setPrice(selectedAsset.current_price.toString());
-    setAmount("");
-  };
-
-  const cancelOrder = (id: string) => {
-    setOrders(
-      orders.map((order) =>
-        order.id === id ? { ...order, status: "cancelled" } : order
-      )
-    );
-  };
+  }, [orders, wallet]);
 
   const handleAssetChange = (symbol: string) => {
     const asset = stockAssets.find((a) => a.symbol === symbol);
@@ -478,9 +185,118 @@ const WaitlistPage = () => {
     }
   };
 
+  const handleNewOrder = async () => {
+    if (!price || !amount || !selectedAsset || !wallet) return;
+
+    const orderPrice = parseFloat(price);
+    const orderAmount = parseFloat(amount);
+    const orderTotal = orderPrice * orderAmount;
+
+    if (orderType === "buy" && orderTotal > wallet.balance) {
+      alert("Insufficient wallet balance");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("User not authenticated");
+
+      // Create new order
+      const { data: newOrder, error: orderError } = await supabase
+        .from("stock_orders")
+        .insert({
+          user_id: user.id,
+          wallet_id: wallet.id,
+          asset: selectedAsset.symbol.toUpperCase(),
+          asset_name: selectedAsset.name,
+          type: orderType,
+          email: user.email!, // Add this line
+          price: orderPrice,
+          amount: orderAmount,
+          total: orderTotal,
+          status: "pending",
+          image_url: selectedAsset.image_url
+        })
+        .select()
+        .single();
+
+      if (orderError) throw orderError;
+
+      // If buy order, deduct from wallet immediately
+      if (orderType === "buy") {
+        const { error: walletError } = await supabase
+          .from("wallets")
+          .update({ balance: wallet.balance - orderTotal })
+          .eq("id", wallet.id);
+
+        if (walletError) throw walletError;
+
+        // Update local wallet state
+        setWallet(prev => prev ? { ...prev, balance: prev.balance - orderTotal } : null);
+      }
+
+      // Update orders list
+      setOrders(prev => [newOrder, ...prev]);
+      setIsModalOpen(false);
+      setPrice(selectedAsset.current_price.toString());
+      setAmount("");
+
+    } catch (error) {
+      console.error("Error creating order:", error);
+      alert("Failed to create order. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const cancelOrder = async (orderId: string) => {
+    try {
+      setLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("User not authenticated");
+
+      // Get the order first to check if it's a buy order that needs refund
+      const orderToCancel = orders.find(o => o.id === orderId);
+      if (!orderToCancel) return;
+
+      // Update order status in database
+      const { error: updateError } = await supabase
+        .from("stock_orders")
+        .update({ status: "cancelled" })
+        .eq("id", orderId);
+
+      if (updateError) throw updateError;
+
+      // If it was a pending buy order, refund the wallet
+      if (orderToCancel.type === "buy" && orderToCancel.status === "pending" && wallet) {
+        const { error: walletError } = await supabase
+          .from("wallets")
+          .update({ balance: wallet.balance + orderToCancel.total })
+          .eq("id", wallet.id);
+
+        if (walletError) throw walletError;
+
+        // Update local wallet state
+        setWallet(prev => prev ? { ...prev, balance: prev.balance + orderToCancel.total } : null);
+      }
+
+      // Update local orders state
+      setOrders(prev => prev.map(order => 
+        order.id === orderId ? { ...order, status: "cancelled" } : order
+      ));
+
+    } catch (error) {
+      console.error("Error cancelling order:", error);
+      alert("Failed to cancel order. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const pendingOrders = orders.filter((o) => o.status === "pending");
   const approvedOrders = orders.filter((o) => o.status === "approved");
-  const totalValue = pendingOrders.reduce((sum, order) => sum + order.total, 0);
+  const totalPendingValue = pendingOrders.reduce((sum, order) => sum + order.total, 0);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -526,7 +342,6 @@ const WaitlistPage = () => {
           alt={symbol}
           className={`${className} rounded-full object-cover border-2 border-slate-600/50`}
           onError={(e) => {
-            // Fallback to initials if image fails to load
             const target = e.target as HTMLImageElement;
             target.style.display = "none";
             target.nextElementSibling?.classList.remove("hidden");
@@ -535,7 +350,6 @@ const WaitlistPage = () => {
       );
     }
 
-    // Fallback to initials
     return (
       <div
         className={`${className} bg-gradient-to-r from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-sm font-bold text-white`}
@@ -545,12 +359,39 @@ const WaitlistPage = () => {
     );
   };
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-4"></div>
           <p className="text-slate-400">Loading stock data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!wallet) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white flex items-center justify-center">
+        <div className="text-center max-w-md p-6 bg-slate-800/50 rounded-xl border border-slate-700/50">
+          <h2 className="text-xl font-bold mb-4">Wallet Not Found</h2>
+          <p className="text-slate-400 mb-6">
+            You need to create a wallet before you can trade stocks.
+          </p>
+          <a
+            href="/portfolio"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors inline-flex items-center gap-2"
+          >
+            <FiArrowLeft className="w-4 h-4" />
+            Go to Portfolio
+          </a>
         </div>
       </div>
     );
@@ -568,10 +409,10 @@ const WaitlistPage = () => {
               </div>
               <div>
                 <h1 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-                  Stock Order Watchlist
+                  Stock Trading Platform
                 </h1>
                 <p className="text-slate-400 text-sm md:text-base">
-                  Manage your pending stock trades
+                  Trade stocks using your wallet balance
                 </p>
               </div>
             </div>
@@ -586,6 +427,21 @@ const WaitlistPage = () => {
 
           {/* Stats Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-6">
+            <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 border border-slate-700/50">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-slate-400 text-xs md:text-sm">
+                    Wallet Balance
+                  </p>
+                  <p className="text-lg md:text-2xl font-bold text-white">
+                    ₦{wallet.balance.toLocaleString()}
+                  </p>
+                </div>
+                <div className="p-2 md:p-3 bg-blue-600/20 rounded-lg">
+                  <FiDollarSign className="size-4 md:size-6 text-blue-400" />
+                </div>
+              </div>
+            </div>
             <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 border border-slate-700/50">
               <div className="flex items-center justify-between">
                 <div>
@@ -616,33 +472,18 @@ const WaitlistPage = () => {
                 </div>
               </div>
             </div>
-            {/* <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 border border-slate-700/50">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-slate-400 text-xs md:text-sm">
-                    Total Value
-                  </p>
-                  <p className="text-lg md:text-2xl font-bold text-white">
-                    ${totalValue.toLocaleString()}
-                  </p>
-                </div>
-                <div className="p-2 md:p-3 bg-purple-600/20 rounded-lg">
-                  <FiDollarSign className="size-4 md:size-6 text-purple-400" />
-                </div>
-              </div>
-            </div> */}
             <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 border border-slate-700/50">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-slate-400 text-xs md:text-sm">
-                    Active Stocks
+                    Portfolio Value
                   </p>
                   <p className="text-lg md:text-2xl font-bold text-white">
-                    {new Set(orders.map((o) => o.asset)).size}
+                    ₦{portfolio.reduce((sum, item) => sum + item.current_value, 0).toLocaleString()}
                   </p>
                 </div>
-                <div className="p-2 md:p-3 bg-blue-600/20 rounded-lg">
-                  <FiTrendingUp className="size-4 md:size-6 text-blue-400" />
+                <div className="p-2 md:p-3 bg-purple-600/20 rounded-lg">
+                  <FiTrendingUp className="size-4 md:size-6 text-purple-400" />
                 </div>
               </div>
             </div>
@@ -654,7 +495,7 @@ const WaitlistPage = () => {
           <div className="px-4 md:px-6 py-4 border-b border-slate-700/50 bg-slate-800/50">
             <h2 className="text-lg md:text-xl font-semibold flex items-center">
               <FiActivity className="mr-2 text-blue-400" />
-              All Orders
+              Your Orders
             </h2>
           </div>
 
@@ -667,7 +508,7 @@ const WaitlistPage = () => {
                     Stock
                   </th>
                   <th className="text-left px-6 py-4 text-slate-300 font-medium text-sm uppercase tracking-wider">
-                    Side
+                    Type
                   </th>
                   <th className="text-left px-6 py-4 text-slate-300 font-medium text-sm uppercase tracking-wider">
                     Price
@@ -717,13 +558,12 @@ const WaitlistPage = () => {
                             symbol={order.asset}
                             className="w-8 h-8 mr-3"
                           />
-
                           <div>
                             <div className="font-semibold text-white">
                               {order.asset}
                             </div>
                             <div className="text-xs text-slate-400">
-                              {order.assetName}
+                              {order.asset_name}
                             </div>
                           </div>
                         </div>
@@ -755,7 +595,7 @@ const WaitlistPage = () => {
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-white font-mono font-medium">
-                          ${order.price.toLocaleString()}
+                          ₦{order.price.toLocaleString()}
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -765,7 +605,7 @@ const WaitlistPage = () => {
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-white font-mono font-semibold">
-                          ${order.total.toLocaleString()}
+                          ₦{order.total.toLocaleString()}
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -773,10 +613,7 @@ const WaitlistPage = () => {
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-slate-400 text-sm font-mono">
-                          {order.createdAt.toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
+                          {formatDate(order.created_at)}
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -817,26 +654,26 @@ const WaitlistPage = () => {
                   >
                     <div className="flex justify-between items-start">
                       <div className="flex items-center">
-                      <StockImage 
-  imageUrl={order.image_url} 
-  symbol={order.asset} 
-  className="w-8 h-8 mr-3" 
-/>
+                        <StockImage 
+                          imageUrl={order.image_url} 
+                          symbol={order.asset} 
+                          className="w-8 h-8 mr-3" 
+                        />
                         <div>
                           <div className="font-semibold text-white">
                             {order.asset}
                           </div>
                           <div className="text-xs text-slate-400">
-                            {order.assetName}
+                            {order.asset_name}
                           </div>
                         </div>
                       </div>
                       <div className="text-right">
                         <div className="font-semibold text-white">
-                          ${order.total.toLocaleString()}
+                          ₦{order.total.toLocaleString()}
                         </div>
                         <div className="text-xs text-slate-400">
-                          {order.amount} @ ${order.price.toLocaleString()}
+                          {order.amount} @ ₦{order.price.toLocaleString()}
                         </div>
                       </div>
                     </div>
@@ -852,10 +689,7 @@ const WaitlistPage = () => {
                       </div>
 
                       <div className="text-xs text-slate-400">
-                        {order.createdAt.toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
+                        {formatDate(order.created_at)}
                       </div>
                     </div>
 
@@ -865,7 +699,7 @@ const WaitlistPage = () => {
                         <div>
                           <span className="text-slate-400">Total Value:</span>
                           <span className="ml-2 text-white">
-                            ${order.total.toLocaleString()}
+                            ₦{order.total.toLocaleString()}
                           </span>
                         </div>
                         <div>
@@ -877,7 +711,7 @@ const WaitlistPage = () => {
                         <div>
                           <span className="text-slate-400">Price:</span>
                           <span className="ml-2 text-white">
-                            ${order.price.toLocaleString()}
+                            ₦{order.price.toLocaleString()}
                           </span>
                         </div>
                         <div>
@@ -968,7 +802,7 @@ const WaitlistPage = () => {
                       value={stock.symbol}
                       className="bg-slate-800"
                     >
-                      {stock.symbol} - {stock.name} ($
+                      {stock.symbol} - {stock.name} (₦
                       {stock.current_price.toLocaleString()})
                     </option>
                   ))}
@@ -982,7 +816,7 @@ const WaitlistPage = () => {
                     <span className="text-slate-400">Current Market Price</span>
                     <div className="text-right">
                       <span className="font-mono font-bold text-lg text-white">
-                        ${selectedAsset.current_price.toLocaleString()}
+                        ₦{selectedAsset.current_price.toLocaleString()}
                       </span>
                       <div
                         className={`text-sm ${
@@ -1004,7 +838,7 @@ const WaitlistPage = () => {
               {/* Price Input */}
               <div>
                 <label className="block text-slate-300 mb-2 font-medium">
-                  Limit Price (USD)
+                  Limit Price (₦)
                 </label>
                 <div className="relative">
                   <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400">
@@ -1041,23 +875,30 @@ const WaitlistPage = () => {
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-slate-400">Order Total</span>
                   <span className="font-mono font-bold text-xl text-white">
-                    $
+                    ₦
                     {(
                       parseFloat(price || "0") * parseFloat(amount || "0")
                     ).toLocaleString()}
                   </span>
                 </div>
                 <div className="flex justify-between items-center text-sm">
-                  <span className="text-slate-400">Est. Fees (0.1%)</span>
+                  <span className="text-slate-400">Wallet Balance</span>
                   <span className="font-mono text-slate-300">
-                    $
-                    {(
-                      parseFloat(price || "0") *
-                      parseFloat(amount || "0") *
-                      0.001
-                    ).toLocaleString()}
+                    ₦{wallet.balance.toLocaleString()}
                   </span>
                 </div>
+                {orderType === "buy" && (
+                  <div className="flex justify-between items-center text-sm mt-2">
+                    <span className="text-slate-400">Remaining Balance</span>
+                    <span className="font-mono text-white">
+                      ₦
+                      {(
+                        wallet.balance -
+                        parseFloat(price || "0") * parseFloat(amount || "0")
+                      ).toLocaleString()}
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Submit Button */}

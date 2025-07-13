@@ -1,482 +1,616 @@
-// "use client"
-
-// import { useState, useEffect } from 'react';
-// import { FiTrendingUp, FiTrendingDown, FiDollarSign, FiPieChart, FiActivity } from 'react-icons/fi';
-
-// type PortfolioItem = {
-//   id: string;
-//   asset: string;
-//   assetName: string;
-//   amount: number;
-//   averagePrice: number;
-//   totalValue: number;
-//   addedAt: Date;
-//   currentPrice?: number;
-//   priceChange24h?: number;
-// };
-
-// type StockAsset = {
-//   symbol: string;
-//   name: string;
-//   price: number;
-//   changesPercentage: number;
-// };
-
-// const PortfolioPage = () => {
-//   const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
-//   const [stockData, setStockData] = useState<StockAsset[]>([]);
-//   const [loading, setLoading] = useState(true);
-//   const [totalValue, setTotalValue] = useState(0);
-//   const [totalChange24h, setTotalChange24h] = useState(0);
-
-//   // Load portfolio from localStorage
-//   useEffect(() => {
-//     const loadPortfolio = () => {
-//       try {
-//         const savedPortfolio = localStorage.getItem('stock_portfolio');
-//         if (savedPortfolio) {
-//           const parsedPortfolio = JSON.parse(savedPortfolio).map((item: any) => ({
-//             ...item,
-//             addedAt: new Date(item.addedAt)
-//           }));
-//           setPortfolio(parsedPortfolio);
-//         }
-//       } catch (error) {
-//         console.error('Error loading portfolio:', error);
-//       }
-//     };
-
-//     loadPortfolio();
-//   }, []);
-
-//   // Fetch current stock prices from FMP API
-//   useEffect(() => {
-//     const fetchStockData = async () => {
-//       if (portfolio.length === 0) {
-//         setLoading(false);
-//         return;
-//       }
-
-//       try {
-//         setLoading(true);
-//         const apiKey = process.env.NEXT_PUBLIC_FMP_API_KEY || 'demo';
-//         const symbols = portfolio.map(item => item.asset).join(',');
-        
-//         const response = await fetch(
-//           `https://financialmodelingprep.com/api/v3/quote/${symbols}?apikey=${apiKey}`,
-//           { next: { revalidate: 300 } } // Cache for 5 minutes
-//         );
-        
-//         if (response.ok) {
-//           const data = await response.json();
-//           setStockData(data);
-          
-//           // Update portfolio with current prices
-//           const updatedPortfolio = portfolio.map(item => {
-//             const stockInfo = data.find((stock: StockAsset) => 
-//               stock.symbol.toUpperCase() === item.asset.toUpperCase()
-//             );
-            
-//             if (stockInfo) {
-//               return {
-//                 ...item,
-//                 currentPrice: stockInfo.price,
-//                 priceChange24h: stockInfo.changesPercentage,
-//                 totalValue: item.amount * stockInfo.price
-//               };
-//             }
-//             return item;
-//           });
-          
-//           setPortfolio(updatedPortfolio);
-          
-//           // Calculate total values
-//           const total = updatedPortfolio.reduce((sum, item) => sum + item.totalValue, 0);
-//           const totalInvested = updatedPortfolio.reduce((sum, item) => sum + (item.amount * item.averagePrice), 0);
-//           const change24h = ((total - totalInvested) / totalInvested) * 100;
-          
-//           setTotalValue(total);
-//           setTotalChange24h(change24h);
-//         }
-//       } catch (error) {
-//         console.error('Error fetching stock data:', error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchStockData();
-//   }, [portfolio.length]);
-
-//   const getProfitLoss = (item: PortfolioItem) => {
-//     if (!item.currentPrice) return { amount: 0, percentage: 0 };
-    
-//     const currentValue = item.amount * item.currentPrice;
-//     const investedValue = item.amount * item.averagePrice;
-//     const profitLoss = currentValue - investedValue;
-//     const percentage = ((profitLoss / investedValue) * 100);
-    
-//     return { amount: profitLoss, percentage };
-//   };
-
-//   if (loading) {
-//     return (
-//       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white flex items-center justify-center">
-//         <div className="text-center">
-//           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-4"></div>
-//           <p className="text-slate-400">Loading portfolio...</p>
-//         </div>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="min-h-screen bg-gradient-to-br  py-9 from-slate-900 via-blue-900 to-slate-900 text-white">
-//       <div className="max-w-7xl mx-auto p-4 md:p-6">
-//         {/* Header Section */}
-//         <div className="mb-8">
-//           <div className="flex items-center space-x-4 mb-6">
-//             <div className="p-3 bg-blue-600/20 rounded-xl border border-blue-500/30">
-//               <FiPieChart className="w-6 h-6 text-blue-400" />
-//             </div>
-//             <div>
-//               <h1 className="md:text-3xl text-[19px] font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-//                 Your Stock Portfolio
-//               </h1>
-//               <p className="text-slate-400">Track your stock investments</p>
-//             </div>
-//           </div>
-
-//           {/* Portfolio Summary Card */}
-//           <div className="bg-gradient-to-r from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-slate-700/50 shadow-2xl">
-//             <div className="flex items-center justify-between mb-6">
-//               <div>
-//                 <p className="text-slate-400 text-lg mb-2">Total Portfolio Value</p>
-//                 <p className="text-4xl font-bold text-white mb-2">
-//                   ${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-//                 </p>
-//                 <div className={`flex items-center text-lg ${
-//                   totalChange24h >= 0 ? 'text-green-400' : 'text-red-400'
-//                 }`}>
-//                   {totalChange24h >= 0 ? (
-//                     <FiTrendingUp className="w-5 h-5 mr-2" />
-//                   ) : (
-//                     <FiTrendingDown className="w-5 h-5 mr-2" />
-//                   )}
-//                   {totalChange24h >= 0 ? '+' : ''}
-//                   {totalChange24h.toFixed(2)}%
-//                 </div>
-//               </div>
-//               <div className="p-4 bg-blue-600/20 rounded-xl">
-//                 <FiDollarSign className="w-8 h-8 text-blue-400" />
-//               </div>
-//             </div>
-            
-//             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-//               <div className="bg-slate-800/30 rounded-xl p-4 border border-slate-700/30">
-//                 <p className="text-slate-400 text-sm mb-1">Total Stocks</p>
-//                 <p className="text-xl font-bold text-white">{portfolio.length}</p>
-//               </div>
-//               <div className="bg-slate-800/30 rounded-xl p-4 border border-slate-700/30">
-//                 <p className="text-slate-400 text-sm mb-1">Total Invested</p>
-//                 <p className="text-xl font-bold text-white">
-//                   ${portfolio.reduce((sum, item) => sum + (item.amount * item.averagePrice), 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-//                 </p>
-//               </div>
-//               <div className="bg-slate-800/30 rounded-xl p-4 border border-slate-700/30">
-//                 <p className="text-slate-400 text-sm mb-1">Best Performer</p>
-//                 <p className="text-xl font-bold text-green-400">
-//                   {portfolio.length > 0 ? 
-//                     portfolio.reduce((best, item) => {
-//                       const currentPL = getProfitLoss(item);
-//                       const bestPL = getProfitLoss(best);
-//                       return currentPL.percentage > bestPL.percentage ? item : best;
-//                     }).asset : 'N/A'}
-//                 </p>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-
-//         {/* Portfolio Assets Table */}
-//         <div className="bg-slate-800/30 backdrop-blur-sm rounded-2xl border border-slate-700/50 overflow-hidden shadow-2xl">
-//           <div className="px-6 py-4 border-b border-slate-700/50 bg-slate-800/50">
-//             <h2 className="text-xl font-semibold flex items-center">
-//               <FiActivity className="mr-2 text-blue-400" />
-//               Your Stocks
-//             </h2>
-//           </div>
-          
-//           <div className="overflow-x-auto">
-//             <table className="w-full">
-//               <thead>
-//                 <tr className="bg-slate-800/30 border-b border-slate-700/50">
-//                   <th className="text-left px-6 py-4 text-slate-300 font-medium text-sm uppercase tracking-wider">Stock</th>
-//                   <th className="text-left px-6 py-4 text-slate-300 font-medium text-sm uppercase tracking-wider">Shares</th>
-//                   <th className="text-left px-6 py-4 text-slate-300 font-medium text-sm uppercase tracking-wider">Avg. Price</th>
-//                   <th className="text-left px-6 py-4 text-slate-300 font-medium text-sm uppercase tracking-wider">Current Price</th>
-//                   <th className="text-left px-6 py-4 text-slate-300 font-medium text-sm uppercase tracking-wider">Market Value</th>
-//                   <th className="text-left px-6 py-4 text-slate-300 font-medium text-sm uppercase tracking-wider">P&L</th>
-//                   <th className="text-left px-6 py-4 text-slate-300 font-medium text-sm uppercase tracking-wider">24h Change</th>
-//                 </tr>
-//               </thead>
-//               <tbody>
-//                 {portfolio.length === 0 ? (
-//                   <tr>
-//                     <td colSpan={7} className="px-6 py-12 text-center">
-//                       <div className="flex flex-col items-center text-slate-400">
-//                         <FiPieChart className="w-12 h-12 mb-4 opacity-50" />
-//                         <p className="text-lg font-medium">No stocks in portfolio</p>
-//                         <p className="text-sm">Complete some buy orders to build your portfolio</p>
-//                       </div>
-//                     </td>
-//                   </tr>
-//                 ) : (
-//                   portfolio.map((item, index) => {
-//                     const profitLoss = getProfitLoss(item);
-//                     return (
-//                       <tr key={item.id} className={`hover:bg-slate-800/30 transition-colors ${index % 2 === 0 ? 'bg-slate-800/10' : ''}`}>
-//                         <td className="px-6 py-4">
-//                           <div className="flex items-center">
-//                             <div className="w-10 h-10 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full flex items-center justify-center mr-3 text-sm font-bold text-white">
-//                               {item.asset.slice(0, 2)}
-//                             </div>
-//                             <div>
-//                               <div className="font-semibold text-white text-lg">{item.asset}</div>
-//                               <div className="text-sm text-slate-400">{item.assetName}</div>
-//                             </div>
-//                           </div>
-//                         </td>
-//                         <td className="px-6 py-4">
-//                           <div className="text-white font-mono font-medium">
-//                             {item.amount} shares
-//                           </div>
-//                         </td>
-//                         <td className="px-6 py-4">
-//                           <div className="text-white font-mono">
-//                             ${item.averagePrice.toLocaleString(undefined, { 
-//                               minimumFractionDigits: 2, 
-//                               maximumFractionDigits: 2 
-//                             })}
-//                           </div>
-//                         </td>
-//                         <td className="px-6 py-4">
-//                           <div className="text-white font-mono font-medium">
-//                             ${(item.currentPrice || 0).toLocaleString(undefined, { 
-//                               minimumFractionDigits: 2, 
-//                               maximumFractionDigits: 2 
-//                             })}
-//                           </div>
-//                         </td>
-//                         <td className="px-6 py-4">
-//                           <div className="text-white font-mono font-bold text-lg">
-//                             ${item.totalValue.toLocaleString(undefined, { 
-//                               minimumFractionDigits: 2, 
-//                               maximumFractionDigits: 2 
-//                             })}
-//                           </div>
-//                         </td>
-//                         <td className="px-6 py-4">
-//                           <div className={`font-mono font-medium ${
-//                             profitLoss.amount >= 0 ? 'text-green-400' : 'text-red-400'
-//                           }`}>
-//                             <div className="flex items-center">
-//                               {profitLoss.amount >= 0 ? (
-//                                 <FiTrendingUp className="w-4 h-4 mr-1" />
-//                               ) : (
-//                                 <FiTrendingDown className="w-4 h-4 mr-1" />
-//                               )}
-//                               <div>
-//                                 <div>${Math.abs(profitLoss.amount).toLocaleString(undefined, { 
-//                                   minimumFractionDigits: 2, 
-//                                   maximumFractionDigits: 2 
-//                                 })}</div>
-//                                 <div className="text-xs">
-//                                   ({profitLoss.percentage >= 0 ? '+' : ''}{profitLoss.percentage.toFixed(2)}%)
-//                                 </div>
-//                               </div>
-//                             </div>
-//                           </div>
-//                         </td>
-//                         <td className="px-6 py-4">
-//                           <div className={`font-mono text-sm ${
-//                             (item.priceChange24h || 0) >= 0 ? 'text-green-400' : 'text-red-400'
-//                           }`}>
-//                             {(item.priceChange24h || 0) >= 0 ? '+' : ''}
-//                             {(item.priceChange24h || 0).toFixed(2)}%
-//                           </div>
-//                         </td>
-//                       </tr>
-//                     );
-//                   })
-//                 )}
-//               </tbody>
-//             </table>
-//           </div>
-//         </div>
-
-//         {/* Portfolio Allocation Chart Placeholder */}
-//         {portfolio.length > 0 && (
-//           <div className="mt-8 bg-slate-800/30 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6">
-//             <h3 className="text-xl font-semibold mb-4 flex items-center">
-//               <FiPieChart className="mr-2 text-blue-400" />
-//               Portfolio Allocation
-//             </h3>
-//             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-//               {portfolio.map((item) => {
-//                 const percentage = (item.totalValue / totalValue) * 100;
-//                 return (
-//                   <div key={item.id} className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/30">
-//                     <div className="flex items-center justify-between mb-2">
-//                       <span className="font-medium text-white">{item.asset}</span>
-//                       <span className="text-slate-400 text-sm">{percentage.toFixed(1)}%</span>
-//                     </div>
-//                     <div className="w-full bg-slate-700 rounded-full h-2">
-//                       <div 
-//                         className="bg-gradient-to-r from-blue-400 to-purple-500 h-2 rounded-full transition-all duration-300"
-//                         style={{ width: `${percentage}%` }}
-//                       ></div>
-//                     </div>
-//                     <div className="mt-2 text-sm text-slate-400">
-//                       ${item.totalValue.toLocaleString(undefined, { 
-//                         minimumFractionDigits: 2, 
-//                         maximumFractionDigits: 2 
-//                       })}
-//                     </div>
-//                   </div>
-//                 );
-//               })}
-//             </div>
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default PortfolioPage;
 
 
 
 "use client"
+import React, { useState, useEffect, useRef } from 'react';
+import { FiTrendingUp, FiTrendingDown, FiDollarSign, FiPieChart, FiActivity, FiPlus, FiCreditCard, FiArrowUpRight, FiArrowDownLeft, FiCheck, FiClock, FiX, FiArrowLeft, FiExternalLink } from 'react-icons/fi';
+import { createClient } from '@/app/utils/supabase/clients';
 
-import { useState, useEffect } from 'react';
-import { FiTrendingUp, FiTrendingDown, FiDollarSign, FiPieChart, FiActivity, FiPlus } from 'react-icons/fi';
+type WalletTier = 'bronze' | 'silver' | 'gold';
+type NetworkType = 'bitcoin' | 'ethereum' | 'binance' | 'polygon' | 'solana' | 'cardano';
+type TokenType = 'btc' | 'eth' | 'usdt' | 'usdc' | 'bnb' | 'ada' | 'sol' | 'matic' | 'busd' | 'dai';
 
-type PortfolioItem = {
+type UserWallet = {
   id: string;
-  asset: string;
-  assetName: string;
-  amount: number;
-  averagePrice: number;
-  totalValue: number;
-  addedAt: Date;
-  currentPrice?: number;
-  priceChange24h?: number;
+  user_id: string;
+  tier: WalletTier;
+  wallet_number: string;
+  status: boolean;
+  balance: number;
+  email: string;
+  created_at: string;
+  current_value: number;
+  profit_loss: number;
+  performance_percentage: number;
+  network?: NetworkType;
+  token_type?: TokenType;
 };
 
-type StockAsset = {
-  symbol: string;
-  name: string;
-  price: number;
-  changesPercentage: number;
+type TransactionRequest = {
+  id: string;
+  email: string;
+  amount: number;
+  wallet_type: WalletTier;
+  account_number: string | null;
+  status: boolean;
+  created_at: string;
+  network?: NetworkType;
+  token_type?: TokenType;
+};
+
+type WithdrawalRequest = {
+  id: string;
+  user_id: string;
+  wallet_id: string;
+  email: string;
+  amount: number;
+  network: NetworkType;
+  token_type: TokenType;
+  account_number: string;
+  status: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+const TIER_CONFIG = {
+  bronze: {
+    name: 'Bronze Wallet',
+    minimum: 10000,
+    color: 'from-orange-400 to-orange-600',
+    bgColor: 'bg-orange-500/20',
+    borderColor: 'border-orange-500/30',
+    icon: '🟫',
+    description: 'Perfect for beginners'
+  },
+  silver: {
+    name: 'Silver Wallet',
+    minimum: 50000,
+    color: 'from-gray-400 to-gray-600',
+    bgColor: 'bg-gray-500/20',
+    borderColor: 'border-gray-500/30',
+    icon: '🟡',
+    description: 'For growing portfolios'
+  },
+  gold: {
+    name: 'Gold Wallet',
+    minimum: 100000,
+    color: 'from-yellow-400 to-yellow-600',
+    bgColor: 'bg-yellow-500/20',
+    borderColor: 'border-yellow-500/30',
+    icon: '🟨',
+    description: 'Premium investment tier'
+  }
+};
+
+const NETWORK_CONFIG = {
+  bitcoin: {
+    name: 'Bitcoin Network',
+    symbol: 'BTC',
+    icon: '₿',
+    color: 'from-orange-400 to-orange-600',
+    bgColor: 'bg-orange-500/20',
+    borderColor: 'border-orange-500/30',
+    description: 'Original cryptocurrency network'
+  },
+  ethereum: {
+    name: 'Ethereum Network',
+    symbol: 'ETH',
+    icon: '⟠',
+    color: 'from-blue-400 to-blue-600',
+    bgColor: 'bg-blue-500/20',
+    borderColor: 'border-blue-500/30',
+    description: 'Smart contract platform'
+  },
+  binance: {
+    name: 'Binance Smart Chain',
+    symbol: 'BSC',
+    icon: '🔶',
+    color: 'from-yellow-400 to-yellow-600',
+    bgColor: 'bg-yellow-500/20',
+    borderColor: 'border-yellow-500/30',
+    description: 'Fast and low-cost transactions'
+  },
+  polygon: {
+    name: 'Polygon Network',
+    symbol: 'MATIC',
+    icon: '🔷',
+    color: 'from-purple-400 to-purple-600',
+    bgColor: 'bg-purple-500/20',
+    borderColor: 'border-purple-500/30',
+    description: 'Ethereum scaling solution'
+  },
+  solana: {
+    name: 'Solana Network',
+    symbol: 'SOL',
+    icon: '☀️',
+    color: 'from-purple-400 to-pink-600',
+    bgColor: 'bg-purple-500/20',
+    borderColor: 'border-purple-500/30',
+    description: 'High-performance blockchain'
+  },
+  cardano: {
+    name: 'Cardano Network',
+    symbol: 'ADA',
+    icon: '🔵',
+    color: 'from-blue-400 to-cyan-600',
+    bgColor: 'bg-blue-500/20',
+    borderColor: 'border-blue-500/30',
+    description: 'Research-driven blockchain'
+  }
+};
+
+const TOKEN_CONFIG = {
+  btc: {
+    name: 'Bitcoin',
+    symbol: 'BTC',
+    icon: '₿',
+    networks: ['bitcoin'],
+    color: 'from-orange-400 to-orange-600',
+    description: 'Digital gold'
+  },
+  eth: {
+    name: 'Ethereum',
+    symbol: 'ETH',
+    icon: '⟠',
+    networks: ['ethereum'],
+    color: 'from-blue-400 to-blue-600',
+    description: 'Smart contract platform token'
+  },
+  usdt: {
+    name: 'Tether USD',
+    symbol: 'USDT',
+    icon: '💵',
+    networks: ['ethereum', 'binance', 'polygon'],
+    color: 'from-green-400 to-green-600',
+    description: 'USD stablecoin'
+  },
+  usdc: {
+    name: 'USD Coin',
+    symbol: 'USDC',
+    icon: '🪙',
+    networks: ['ethereum', 'binance', 'polygon'],
+    color: 'from-blue-400 to-blue-600',
+    description: 'Regulated USD stablecoin'
+  },
+  bnb: {
+    name: 'Binance Coin',
+    symbol: 'BNB',
+    icon: '🔶',
+    networks: ['binance'],
+    color: 'from-yellow-400 to-yellow-600',
+    description: 'Binance exchange token'
+  },
+  ada: {
+    name: 'Cardano',
+    symbol: 'ADA',
+    icon: '🔵',
+    networks: ['cardano'],
+    color: 'from-blue-400 to-cyan-600',
+    description: 'Cardano native token'
+  },
+  sol: {
+    name: 'Solana',
+    symbol: 'SOL',
+    icon: '☀️',
+    networks: ['solana'],
+    color: 'from-purple-400 to-pink-600',
+    description: 'Solana native token'
+  },
+  matic: {
+    name: 'Polygon',
+    symbol: 'MATIC',
+    icon: '🔷',
+    networks: ['polygon'],
+    color: 'from-purple-400 to-purple-600',
+    description: 'Polygon native token'
+  },
+  busd: {
+    name: 'Binance USD',
+    symbol: 'BUSD',
+    icon: '💰',
+    networks: ['binance'],
+    color: 'from-yellow-400 to-yellow-600',
+    description: 'Binance USD stablecoin'
+  },
+  dai: {
+    name: 'Dai Stablecoin',
+    symbol: 'DAI',
+    icon: '🏦',
+    networks: ['ethereum'],
+    color: 'from-orange-400 to-orange-600',
+    description: 'Decentralized stablecoin'
+  }
 };
 
 const PortfolioPage = () => {
-  const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
-  const [stockData, setStockData] = useState<StockAsset[]>([]);
+  const [wallet, setWallet] = useState<UserWallet | null>(null);
   const [loading, setLoading] = useState(true);
-  const [totalValue, setTotalValue] = useState(0);
-  const [totalChange24h, setTotalChange24h] = useState(0);
+  const [showTierSelection, setShowTierSelection] = useState(false);
+  const [showNetworkSelection, setShowNetworkSelection] = useState(false);
+  const [showTokenSelection, setShowTokenSelection] = useState(false);
+  const [creatingWallet, setCreatingWallet] = useState(false);
+  const [selectedTier, setSelectedTier] = useState<WalletTier | null>(null);
+  const [selectedNetwork, setSelectedNetwork] = useState<NetworkType | null>(null);
+  const [selectedToken, setSelectedToken] = useState<TokenType | null>(null);
+  const [accountRequest, setAccountRequest] = useState<TransactionRequest | null>(null);
+  const [generatingAccount, setGeneratingAccount] = useState(false);
+  const [waitingForAccount, setWaitingForAccount] = useState(false);
+  const [showWithdrawalForm, setShowWithdrawalForm] = useState(false);
+  const [withdrawalAmount, setWithdrawalAmount] = useState('');
+  const [withdrawalNetwork, setWithdrawalNetwork] = useState<NetworkType | null>(null);
+  const [withdrawalToken, setWithdrawalToken] = useState<TokenType | null>(null);
+  const [withdrawalAccount, setWithdrawalAccount] = useState('');
+  const [withdrawing, setWithdrawing] = useState(false);
+  const [withdrawals, setWithdrawals] = useState<WithdrawalRequest[]>([]);
+  const [activeTab, setActiveTab] = useState<'portfolio' | 'withdrawals'>('portfolio');
+  
+  const supabase = createClient();
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const walletPollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const withdrawalPollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Load portfolio from localStorage
   useEffect(() => {
-    const loadPortfolio = () => {
-      try {
-        const savedPortfolio = localStorage.getItem('stock_portfolio');
-        if (savedPortfolio) {
-          const parsedPortfolio = JSON.parse(savedPortfolio).map((item: any) => ({
-            ...item,
-            addedAt: new Date(item.addedAt)
-          }));
-          setPortfolio(parsedPortfolio);
-        }
-      } catch (error) {
-        console.error('Error loading portfolio:', error);
+    fetchWalletData();
+    
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+      if (walletPollingIntervalRef.current) {
+        clearInterval(walletPollingIntervalRef.current);
+      }
+      if (withdrawalPollingIntervalRef.current) {
+        clearInterval(withdrawalPollingIntervalRef.current);
       }
     };
-
-    loadPortfolio();
   }, []);
 
-  // Fetch current stock prices from FMP API
   useEffect(() => {
-    const fetchStockData = async () => {
-      if (portfolio.length === 0) {
+    if (!wallet || wallet.status) return;
+
+    // Start polling for wallet status updates
+    walletPollingIntervalRef.current = setInterval(async () => {
+      try {
+        const { data, error } = await supabase
+          .from('wallets')
+          .select('*')
+          .eq('wallet_number', wallet.wallet_number)
+          .single();
+
+        if (!error && data && data.status !== wallet.status) {
+          setWallet(data);
+          clearInterval(walletPollingIntervalRef.current!);
+        }
+      } catch (error) {
+        console.error('Error polling wallet status:', error);
+      }
+    }, 5000); // Poll every 5 seconds
+
+    return () => {
+      if (walletPollingIntervalRef.current) {
+        clearInterval(walletPollingIntervalRef.current);
+      }
+    };
+  }, [wallet]);
+
+  useEffect(() => {
+    if (wallet) {
+      fetchWithdrawals();
+      startWithdrawalPolling();
+    }
+  }, [wallet]);
+
+  const fetchWalletData = async () => {
+    try {
+      setLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
         setLoading(false);
         return;
       }
 
+      const { data: walletData, error: walletError } = await supabase
+        .from('wallets')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (walletError && !walletData) {
+        setShowTierSelection(true);
+      } else if (walletData) {
+        setWallet(walletData);
+      }
+    } catch (error) {
+      console.error('Error fetching wallet data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchWithdrawals = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('withdrawals')
+        .select('*')
+        .eq('wallet_id', wallet!.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setWithdrawals(data || []);
+    } catch (error) {
+      console.error('Error fetching withdrawals:', error);
+    }
+  };
+
+  const startWithdrawalPolling = () => {
+    if (withdrawalPollingIntervalRef.current) {
+      clearInterval(withdrawalPollingIntervalRef.current);
+    }
+
+    withdrawalPollingIntervalRef.current = setInterval(async () => {
       try {
-        setLoading(true);
-        const apiKey = process.env.NEXT_PUBLIC_FMP_API_KEY || 'demo';
-        const symbols = portfolio.map(item => item.asset).join(',');
-        
-        const response = await fetch(
-          `https://financialmodelingprep.com/api/v3/quote/${symbols}?apikey=${apiKey}`,
-          { next: { revalidate: 300 } } // Cache for 5 minutes
-        );
-        
-        if (response.ok) {
-          const data = await response.json();
-          setStockData(data);
-          
-          // Update portfolio with current prices
-          const updatedPortfolio = portfolio.map(item => {
-            const stockInfo = data.find((stock: StockAsset) => 
-              stock.symbol.toUpperCase() === item.asset.toUpperCase()
-            );
-            
-            if (stockInfo) {
-              return {
-                ...item,
-                currentPrice: stockInfo.price,
-                priceChange24h: stockInfo.changesPercentage,
-                totalValue: item.amount * stockInfo.price
-              };
-            }
-            return item;
-          });
-          
-          setPortfolio(updatedPortfolio);
-          
-          // Calculate total values
-          const total = updatedPortfolio.reduce((sum, item) => sum + item.totalValue, 0);
-          const totalInvested = updatedPortfolio.reduce((sum, item) => sum + (item.amount * item.averagePrice), 0);
-          const change24h = ((total - totalInvested) / totalInvested) * 100;
-          
-          setTotalValue(total);
-          setTotalChange24h(change24h);
+        const { data, error } = await supabase
+          .from('withdrawals')
+          .select('*')
+          .eq('wallet_id', wallet!.id)
+          .order('created_at', { ascending: false });
+
+        if (!error && data) {
+          setWithdrawals(data);
         }
       } catch (error) {
-        console.error('Error fetching stock data:', error);
-      } finally {
-        setLoading(false);
+        console.error('Error polling withdrawals:', error);
       }
-    };
+    }, 10000); // Poll every 10 seconds
+  };
 
-    fetchStockData();
-  }, [portfolio.length]);
+  const handleTierSelection = (tier: WalletTier) => {
+    setSelectedTier(tier);
+    setShowTierSelection(false);
+    setShowNetworkSelection(true);
+  };
 
-  const getProfitLoss = (item: PortfolioItem) => {
-    if (!item.currentPrice) return { amount: 0, percentage: 0 };
-    
-    const currentValue = item.amount * item.currentPrice;
-    const investedValue = item.amount * item.averagePrice;
-    const profitLoss = currentValue - investedValue;
-    const percentage = ((profitLoss / investedValue) * 100);
-    
-    return { amount: profitLoss, percentage };
+  const handleNetworkSelection = (network: NetworkType) => {
+    setSelectedNetwork(network);
+    setShowNetworkSelection(false);
+    setShowTokenSelection(true);
+  };
+
+  const handleTokenSelection = (token: TokenType) => {
+    setSelectedToken(token);
+    setShowTokenSelection(false);
+    if (selectedTier && selectedNetwork) {
+      requestWalletAccount(selectedTier, selectedNetwork, token);
+    }
+  };
+
+  const requestWalletAccount = async (tier: WalletTier, network: NetworkType, token: TokenType) => {
+    try {
+      setGeneratingAccount(true);
+      setWaitingForAccount(true);
+      
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) throw new Error('User not authenticated');
+
+      const transactionData = {
+        email: user.email!,
+        amount: TIER_CONFIG[tier].minimum,
+        wallet_type: tier,
+        account_number: null,
+        status: false,
+        network: network,
+        token_type: token
+      };
+
+      const { data, error } = await supabase
+        .from('transactions')
+        .insert(transactionData)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setAccountRequest(data);
+      setGeneratingAccount(false);
+      
+      startAccountNumberPolling(data.id);
+
+    } catch (error) {
+      console.error('Error creating transaction:', error);
+      setGeneratingAccount(false);
+      setWaitingForAccount(false);
+      resetSelections();
+    }
+  };
+
+  const startAccountNumberPolling = (transactionId: string) => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+    }
+
+    pollingIntervalRef.current = setInterval(async () => {
+      try {
+        const { data, error } = await supabase
+          .from('transactions')
+          .select('*')
+          .eq('id', transactionId)
+          .single();
+
+        if (!error && data) {
+          setAccountRequest(data);
+          
+          if (data.account_number) {
+            clearInterval(pollingIntervalRef.current!);
+            pollingIntervalRef.current = null;
+            setWaitingForAccount(false);
+            createWallet(data.wallet_type, data.account_number, data.network, data.token_type);
+          }
+        }
+      } catch (error) {
+        console.error('Error polling for account number:', error);
+      }
+    }, 3000);
+  };
+
+  const createWallet = async (tier: WalletTier, accountNumber: string, network: NetworkType, tokenType: TokenType) => {
+    try {
+      setCreatingWallet(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
+      const walletData = {
+        user_id: user.id,
+        tier: tier,
+        email: user.email!,
+        wallet_number: accountNumber,
+        status: false,
+        balance: 0,
+        current_value: 0,
+        profit_loss: 0,
+        performance_percentage: 0,
+        network: network,
+        token_type: tokenType
+      };
+      
+      const { data, error } = await supabase
+        .from('wallets')
+        .insert(walletData)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setWallet(data);
+      resetSelections();
+      setAccountRequest(null);
+      
+    } catch (error) {
+      console.error('Error creating wallet:', error);
+    } finally {
+      setCreatingWallet(false);
+    }
+  };
+
+  const handleWithdrawalSubmit = async () => {
+    if (!wallet || !withdrawalNetwork || !withdrawalToken || !withdrawalAccount || !withdrawalAmount) {
+      alert('Please fill all fields');
+      return;
+    }
+
+    const amount = parseFloat(withdrawalAmount);
+    if (isNaN(amount) || amount <= 0) {
+      alert('Please enter a valid amount');
+      return;
+    }
+
+    if (amount > wallet.balance) {
+      alert('Insufficient balance');
+      return;
+    }
+
+    try {
+      setWithdrawing(true);
+
+      // First subtract from wallet balance
+      const { error: walletError } = await supabase
+        .from('wallets')
+        .update({ balance: wallet.balance - amount })
+        .eq('id', wallet.id);
+
+      if (walletError) throw walletError;
+
+      // Create withdrawal record
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
+      const { data, error } = await supabase
+        .from('withdrawals')
+        .insert({
+          user_id: user.id,
+          wallet_id: wallet.id,
+          email: wallet.email,
+          amount: amount,
+          network: withdrawalNetwork,
+          token_type: withdrawalToken,
+          account_number: withdrawalAccount,
+          status: false
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Update local state
+      setWithdrawals(prev => [data, ...prev]);
+      setWallet(prev => prev ? { ...prev, balance: prev.balance - amount } : null);
+      
+      // Reset form
+      setWithdrawalAmount('');
+      setWithdrawalNetwork(null);
+      setWithdrawalToken(null);
+      setWithdrawalAccount('');
+      setShowWithdrawalForm(false);
+      
+    } catch (error) {
+      console.error('Error processing withdrawal:', error);
+      alert('Failed to process withdrawal. Please try again.');
+    } finally {
+      setWithdrawing(false);
+    }
+  };
+
+  const resetSelections = () => {
+    setShowTierSelection(false);
+    setShowNetworkSelection(false);
+    setShowTokenSelection(false);
+    setSelectedTier(null);
+    setSelectedNetwork(null);
+    setSelectedToken(null);
+  };
+
+  const resetWalletCreation = () => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+    setAccountRequest(null);
+    setGeneratingAccount(false);
+    setWaitingForAccount(false);
+    setCreatingWallet(false);
+    resetSelections();
+    setShowTierSelection(true);
+  };
+
+  const goBackToTierSelection = () => {
+    setShowNetworkSelection(false);
+    setShowTokenSelection(false);
+    setSelectedNetwork(null);
+    setSelectedToken(null);
+    setShowTierSelection(true);
+  };
+
+  const goBackToNetworkSelection = () => {
+    setShowTokenSelection(false);
+    setSelectedToken(null);
+    setShowNetworkSelection(true);
+  };
+
+  const getAvailableTokens = (network: NetworkType) => {
+    return Object.entries(TOKEN_CONFIG).filter(([_, config]) => 
+      config.networks.includes(network)
+    );
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
 
   if (loading) {
@@ -490,325 +624,509 @@ const PortfolioPage = () => {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br py-9 from-slate-900 via-blue-900 to-slate-900 text-white">
-      <div className="max-w-7xl mx-auto p-4 md:p-6">
-        {/* Header Section */}
-        <div className="mb-6 md:mb-8">
-          <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 md:mb-6 gap-4">
-            <div className="flex items-center space-x-4">
-              <div className="p-3 bg-blue-600/20 rounded-xl border border-blue-500/30 ">
-                <FiPieChart className="size-6 text-blue-400" />
-              </div>
-              <div>
-                <h1 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-                  Your Stock Portfolio
-                </h1>
-                <p className="text-slate-400 text-sm md:text-base">Track your stock investments</p>
-              </div>
-            </div>
-           
+  if (showTierSelection) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-9">
+        <div className="max-w-4xl mx-auto p-4 md:p-6">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent mb-4">
+              Choose Your Investment Tier
+            </h1>
+            <p className="text-slate-400 text-lg">Select the wallet tier that matches your investment goals</p>
           </div>
 
-          {/* Portfolio Summary Card */}
-          <div className="bg-gradient-to-r from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 mb-6 md:mb-8 border border-slate-700/50 shadow-2xl">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <p className="text-slate-400 text-base md:text-lg mb-2">Total Portfolio Value</p>
-                <p className="text-2xl md:text-4xl font-bold text-white mb-2">
-                  ${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </p>
-                <div className={`flex items-center text-base md:text-lg ${
-                  totalChange24h >= 0 ? 'text-green-400' : 'text-red-400'
-                }`}>
-                  {totalChange24h >= 0 ? (
-                    <FiTrendingUp className="w-4 h-4 md:w-5 md:h-5 mr-2" />
-                  ) : (
-                    <FiTrendingDown className="w-4 h-4 md:w-5 md:h-5 mr-2" />
-                  )}
-                  {totalChange24h >= 0 ? '+' : ''}
-                  {totalChange24h.toFixed(2)}%
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {Object.entries(TIER_CONFIG).map(([tier, config]) => (
+              <div
+                key={tier}
+                className={`${config.bgColor} backdrop-blur-sm rounded-2xl p-6 border ${config.borderColor} hover:scale-105 transition-transform cursor-pointer group`}
+                onClick={() => handleTierSelection(tier as WalletTier)}
+              >
+                <div className="text-center">
+                  <div className="text-6xl mb-4">{config.icon}</div>
+                  <h3 className="text-xl font-bold mb-2">{config.name}</h3>
+                  <p className="text-slate-400 text-sm mb-4">{config.description}</p>
+                  <div className="text-2xl font-bold mb-4">
+                    ₦{config.minimum.toLocaleString()} minimum
+                  </div>
+                  <button className={`w-full bg-gradient-to-r ${config.color} text-white py-3 px-6 rounded-xl font-medium hover:opacity-90 transition-opacity group-hover:shadow-lg`}>
+                    Select {config.name}
+                  </button>
                 </div>
               </div>
-              <div className="p-3 md:p-4 bg-blue-600/20 rounded-xl">
-                <FiDollarSign className="w-6 h-6 md:w-8 md:h-8 text-blue-400" />
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-              <div className="bg-slate-800/30 rounded-xl p-3 md:p-4 border border-slate-700/30">
-                <p className="text-slate-400 text-xs md:text-sm mb-1">Total Stocks</p>
-                <p className="text-lg md:text-xl font-bold text-white">{portfolio.length}</p>
-              </div>
-              <div className="bg-slate-800/30 rounded-xl p-3 md:p-4 border border-slate-700/30">
-                <p className="text-slate-400 text-xs md:text-sm mb-1">Total Invested</p>
-                <p className="text-lg md:text-xl font-bold text-white">
-                  ${portfolio.reduce((sum, item) => sum + (item.amount * item.averagePrice), 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </p>
-              </div>
-              <div className="bg-slate-800/30 rounded-xl p-3 md:p-4 border border-slate-700/30">
-                <p className="text-slate-400 text-xs md:text-sm mb-1">Best Performer</p>
-                <p className="text-lg md:text-xl font-bold text-green-400">
-                  {portfolio.length > 0 ? 
-                    portfolio.reduce((best, item) => {
-                      const currentPL = getProfitLoss(item);
-                      const bestPL = getProfitLoss(best);
-                      return currentPL.percentage > bestPL.percentage ? item : best;
-                    }).asset : 'N/A'}
-                </p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
+      </div>
+    );
+  }
 
-        {/* Portfolio Assets Section */}
-        <div className="bg-slate-800/30 backdrop-blur-sm rounded-2xl border border-slate-700/50 overflow-hidden shadow-2xl">
-          <div className="px-4 md:px-6 py-4 border-b border-slate-700/50 bg-slate-800/50">
-            <h2 className="text-lg md:text-xl font-semibold flex items-center">
-              <FiActivity className="mr-2 text-blue-400" />
-              Your Stocks
-            </h2>
-          </div>
-          
-          {/* Desktop Table */}
-          <div className="hidden md:block overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-slate-800/30 border-b border-slate-700/50">
-                  <th className="text-left px-6 py-4 text-slate-300 font-medium text-sm uppercase tracking-wider">Stock</th>
-                  <th className="text-left px-6 py-4 text-slate-300 font-medium text-sm uppercase tracking-wider">Shares</th>
-                  <th className="text-left px-6 py-4 text-slate-300 font-medium text-sm uppercase tracking-wider">Avg. Price</th>
-                  <th className="text-left px-6 py-4 text-slate-300 font-medium text-sm uppercase tracking-wider">Current Price</th>
-                  <th className="text-left px-6 py-4 text-slate-300 font-medium text-sm uppercase tracking-wider">Market Value</th>
-                  <th className="text-left px-6 py-4 text-slate-300 font-medium text-sm uppercase tracking-wider">P&L</th>
-                  <th className="text-left px-6 py-4 text-slate-300 font-medium text-sm uppercase tracking-wider">24h Change</th>
-                </tr>
-              </thead>
-              <tbody>
-                {portfolio.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="px-6 py-12 text-center">
-                      <div className="flex flex-col items-center text-slate-400">
-                        <FiPieChart className="w-12 h-12 mb-4 opacity-50" />
-                        <p className="text-lg font-medium">No stocks in portfolio</p>
-                        <p className="text-sm">Complete some buy orders to build your portfolio</p>
-                      </div>
-                    </td>
-                  </tr>
-                ) : (
-                  portfolio.map((item, index) => {
-                    const profitLoss = getProfitLoss(item);
-                    return (
-                      <tr key={item.id} className={`hover:bg-slate-800/30 transition-colors ${index % 2 === 0 ? 'bg-slate-800/10' : ''}`}>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center">
-                            <div className="w-10 h-10 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full flex items-center justify-center mr-3 text-sm font-bold text-white">
-                              {item.asset.slice(0, 2)}
-                            </div>
-                            <div>
-                              <div className="font-semibold text-white text-lg">{item.asset}</div>
-                              <div className="text-sm text-slate-400">{item.assetName}</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="text-white font-mono font-medium">
-                            {item.amount} shares
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="text-white font-mono">
-                            ${item.averagePrice.toLocaleString(undefined, { 
-                              minimumFractionDigits: 2, 
-                              maximumFractionDigits: 2 
-                            })}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="text-white font-mono font-medium">
-                            ${(item.currentPrice || 0).toLocaleString(undefined, { 
-                              minimumFractionDigits: 2, 
-                              maximumFractionDigits: 2 
-                            })}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="text-white font-mono font-bold text-lg">
-                            ${item.totalValue.toLocaleString(undefined, { 
-                              minimumFractionDigits: 2, 
-                              maximumFractionDigits: 2 
-                            })}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className={`font-mono font-medium ${
-                            profitLoss.amount >= 0 ? 'text-green-400' : 'text-red-400'
-                          }`}>
-                            <div className="flex items-center">
-                              {profitLoss.amount >= 0 ? (
-                                <FiTrendingUp className="w-4 h-4 mr-1" />
-                              ) : (
-                                <FiTrendingDown className="w-4 h-4 mr-1" />
-                              )}
-                              <div>
-                                <div>${Math.abs(profitLoss.amount).toLocaleString(undefined, { 
-                                  minimumFractionDigits: 2, 
-                                  maximumFractionDigits: 2 
-                                })}</div>
-                                <div className="text-xs">
-                                  ({profitLoss.percentage >= 0 ? '+' : ''}{profitLoss.percentage.toFixed(2)}%)
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className={`font-mono text-sm ${
-                            (item.priceChange24h || 0) >= 0 ? 'text-green-400' : 'text-red-400'
-                          }`}>
-                            {(item.priceChange24h || 0) >= 0 ? '+' : ''}
-                            {(item.priceChange24h || 0).toFixed(2)}%
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
+  if (showNetworkSelection) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-9">
+        <div className="max-w-6xl mx-auto p-4 md:p-6">
+          <div className="text-center mb-8">
+            <button
+              onClick={goBackToTierSelection}
+              className="inline-flex items-center gap-2 text-slate-400 hover:text-white mb-4 transition-colors"
+            >
+              <FiArrowLeft className="w-4 h-4" />
+              Back to Tier Selection
+            </button>
+            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent mb-4">
+              Choose Your Network
+            </h1>
+            <p className="text-slate-400 text-lg">
+              Selected: {selectedTier && TIER_CONFIG[selectedTier].name}
+            </p>
+            <p className="text-slate-400">Select the blockchain network for your wallet</p>
           </div>
 
-          {/* Mobile Cards */}
-          <div className="md:hidden">
-            {portfolio.length === 0 ? (
-              <div className="px-4 py-12 text-center">
-                <div className="flex flex-col items-center text-slate-400">
-                  <FiPieChart className="w-12 h-12 mb-4 opacity-50" />
-                  <p className="text-lg font-medium">No stocks in portfolio</p>
-                  <p className="text-sm">Complete some buy orders to build your portfolio</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {Object.entries(NETWORK_CONFIG).map(([network, config]) => (
+              <div
+                key={network}
+                className={`${config.bgColor} backdrop-blur-sm rounded-2xl p-6 border ${config.borderColor} hover:scale-105 transition-transform cursor-pointer group`}
+                onClick={() => handleNetworkSelection(network as NetworkType)}
+              >
+                <div className="text-center">
+                  <div className="text-6xl mb-4">{config.icon}</div>
+                  <h3 className="text-xl font-bold mb-2">{config.name}</h3>
+                  <p className="text-slate-400 text-sm mb-4">{config.description}</p>
+                  <div className="text-lg font-bold mb-4 text-slate-300">
+                    {config.symbol}
+                  </div>
+                  <button className={`w-full bg-gradient-to-r ${config.color} text-white py-3 px-6 rounded-xl font-medium hover:opacity-90 transition-opacity group-hover:shadow-lg`}>
+                    Select {config.name}
+                  </button>
                 </div>
               </div>
-            ) : (
-              <div className="divide-y divide-slate-700/50">
-                {portfolio.map((item) => {
-                  const profitLoss = getProfitLoss(item);
-                  return (
-                    <div key={item.id} className="p-4 hover:bg-slate-800/30 transition-colors">
-                      <div className="flex justify-between items-start">
-                        <div className="flex items-center">
-                          <div className="w-10 h-10 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full flex items-center justify-center mr-3 text-sm font-bold text-white">
-                            {item.asset.slice(0, 2)}
-                          </div>
-                          <div>
-                            <div className="font-semibold text-white">{item.asset}</div>
-                            <div className="text-xs text-slate-400">{item.assetName}</div>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-semibold text-white">
-                            ${item.totalValue.toLocaleString(undefined, { 
-                              minimumFractionDigits: 2, 
-                              maximumFractionDigits: 2 
-                            })}
-                          </div>
-                          <div className={`text-xs ${
-                            (item.priceChange24h || 0) >= 0 ? 'text-green-400' : 'text-red-400'
-                          }`}>
-                            {(item.priceChange24h || 0) >= 0 ? '+' : ''}
-                            {(item.priceChange24h || 0).toFixed(2)}%
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="mt-3 grid grid-cols-2 gap-4">
-                        <div>
-                          <p className="text-slate-400 text-xs">Shares</p>
-                          <p className="text-white font-medium">{item.amount}</p>
-                        </div>
-                        <div>
-                          <p className="text-slate-400 text-xs">Avg. Price</p>
-                          <p className="text-white font-medium">
-                            ${item.averagePrice.toLocaleString(undefined, { 
-                              minimumFractionDigits: 2, 
-                              maximumFractionDigits: 2 
-                            })}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-slate-400 text-xs">Current Price</p>
-                          <p className="text-white font-medium">
-                            ${(item.currentPrice || 0).toLocaleString(undefined, { 
-                              minimumFractionDigits: 2, 
-                              maximumFractionDigits: 2 
-                            })}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-slate-400 text-xs">Profit/Loss</p>
-                          <div className={`font-medium ${
-                            profitLoss.amount >= 0 ? 'text-green-400' : 'text-red-400'
-                          }`}>
-                            <div className="flex items-center">
-                              {profitLoss.amount >= 0 ? (
-                                <FiTrendingUp className="w-3 h-3 mr-1" />
-                              ) : (
-                                <FiTrendingDown className="w-3 h-3 mr-1" />
-                              )}
-                              <span>
-                                ${Math.abs(profitLoss.amount).toLocaleString(undefined, { 
-                                  minimumFractionDigits: 2, 
-                                  maximumFractionDigits: 2 
-                                })}
-                              </span>
-                            </div>
-                            <div className="text-xs">
-                              ({profitLoss.percentage >= 0 ? '+' : ''}{profitLoss.percentage.toFixed(2)}%)
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (showTokenSelection) {
+    const availableTokens = getAvailableTokens(selectedNetwork!);
+    
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-9">
+        <div className="max-w-6xl mx-auto p-4 md:p-6">
+          <div className="text-center mb-8">
+            <button
+              onClick={goBackToNetworkSelection}
+              className="inline-flex items-center gap-2 text-slate-400 hover:text-white mb-4 transition-colors"
+            >
+              <FiArrowLeft className="w-4 h-4" />
+              Back to Network Selection
+            </button>
+            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent mb-4">
+              Choose Your Token
+            </h1>
+            <p className="text-slate-400 text-lg">
+              Tier: {selectedTier && TIER_CONFIG[selectedTier].name} • Network: {selectedNetwork && NETWORK_CONFIG[selectedNetwork].name}
+            </p>
+            <p className="text-slate-400">Select the token/cryptocurrency for your wallet</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {availableTokens.map(([token, config]) => (
+              <div
+                key={token}
+                className={`bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50 hover:scale-105 transition-transform cursor-pointer group hover:border-slate-600`}
+                onClick={() => handleTokenSelection(token as TokenType)}
+              >
+                <div className="text-center">
+                  <div className="text-4xl mb-4">{config.icon}</div>
+                  <h3 className="text-lg font-bold mb-2">{config.name}</h3>
+                  <p className="text-slate-400 text-sm mb-4">{config.description}</p>
+                  <div className="text-lg font-bold mb-4 text-slate-300">
+                    {config.symbol}
+                  </div>
+                  <button className={`w-full bg-gradient-to-r ${config.color} text-white py-3 px-6 rounded-xl font-medium hover:opacity-90 transition-opacity group-hover:shadow-lg`}>
+                    Select {config.symbol}
+                  </button>
+                </div>
               </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (generatingAccount || waitingForAccount || creatingWallet) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-9">
+        <div className="max-w-4xl mx-auto p-4 md:p-6">
+          <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50 text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-400 mx-auto mb-6"></div>
+            
+            {generatingAccount && (
+              <>
+                <h3 className="text-2xl font-bold mb-4">
+                  Submitting Your Request...
+                </h3>
+                <p className="text-slate-400">Creating your wallet request</p>
+              </>
+            )}
+            
+            {waitingForAccount && !generatingAccount && (
+              <>
+                <h3 className="text-2xl font-bold mb-4">
+                  Generating Account Number...
+                </h3>
+                <p className="text-slate-400 mb-2">
+                  Please wait while our admin generates your account number
+                </p>
+                <div className="bg-slate-700/50 rounded-xl p-4 mb-4">
+                  <p className="text-sm text-slate-300">
+                    <strong>Tier:</strong> {selectedTier && TIER_CONFIG[selectedTier].name}
+                  </p>
+                  <p className="text-sm text-slate-300">
+                    <strong>Network:</strong> {selectedNetwork && NETWORK_CONFIG[selectedNetwork].name}
+                  </p>
+                  <p className="text-sm text-slate-300">
+                    <strong>Token:</strong> {selectedToken && TOKEN_CONFIG[selectedToken].name} ({selectedToken && TOKEN_CONFIG[selectedToken].symbol})
+                  </p>
+                </div>
+                <p className="text-sm text-slate-500">
+                  This may take a few minutes. You can close this page and come back later.
+                </p>
+              </>
+            )}
+            
+            {creatingWallet && (
+              <>
+                <h3 className="text-2xl font-bold mb-4">
+                  Creating Your Wallet...
+                </h3>
+                <p className="text-slate-400">Setting up your investment wallet</p>
+              </>
+            )}
+            
+            {waitingForAccount && !creatingWallet && (
+              <button
+                onClick={resetWalletCreation}
+                className="mt-6 bg-slate-700 hover:bg-slate-600 text-white py-2 px-6 rounded-xl font-medium transition-colors"
+              >
+                Cancel Request
+              </button>
             )}
           </div>
         </div>
+      </div>
+    );
+  }
 
-        {/* Portfolio Allocation Chart Placeholder */}
-        {portfolio.length > 0 && (
-          <div className="mt-6 md:mt-8 bg-slate-800/30 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-4 md:p-6">
-            <h3 className="text-lg md:text-xl font-semibold mb-4 flex items-center">
-              <FiPieChart className="mr-2 text-blue-400" />
-              Portfolio Allocation
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-              {portfolio.map((item) => {
-                const percentage = (item.totalValue / totalValue) * 100;
-                return (
-                  <div key={item.id} className="bg-slate-800/50 rounded-xl p-3 md:p-4 border border-slate-700/30">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium text-white text-sm md:text-base">{item.asset}</span>
-                      <span className="text-slate-400 text-xs md:text-sm">{percentage.toFixed(1)}%</span>
-                    </div>
-                    <div className="w-full bg-slate-700 rounded-full h-2">
-                      <div 
-                        className="bg-gradient-to-r from-blue-400 to-purple-500 h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${percentage}%` }}
-                      ></div>
-                    </div>
-                    <div className="mt-2 text-xs md:text-sm text-slate-400">
-                      ${item.totalValue.toLocaleString(undefined, { 
-                        minimumFractionDigits: 2, 
-                        maximumFractionDigits: 2 
-                      })}
-                    </div>
-                  </div>
-                );
-              })}
+  if (activeTab === 'withdrawals') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-9">
+        <div className="max-w-7xl mx-auto p-4 md:p-6">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent mb-2">
+                Withdrawal History
+              </h1>
+              <p className="text-slate-400">View your past withdrawal requests</p>
+            </div>
+            <div className="flex gap-4">
+              <button
+                onClick={() => setActiveTab('portfolio')}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+              >
+                Back to Portfolio
+              </button>
+              <button
+                onClick={() => setShowWithdrawalForm(true)}
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+              >
+                <FiArrowUpRight className="w-4 h-4" />
+                New Withdrawal
+              </button>
+            </div>
+          </div>
+
+          {withdrawals.length === 0 ? (
+            <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50 text-center">
+              <div className="text-slate-400 mb-4">
+                <FiExternalLink className="w-12 h-12 mx-auto mb-2" />
+                <p>No withdrawal history yet</p>
+              </div>
+              <button
+                onClick={() => setShowWithdrawalForm(true)}
+                className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-medium transition-colors flex items-center gap-2 mx-auto"
+              >
+                <FiArrowUpRight className="w-4 h-4" />
+                Request Withdrawal
+              </button>
+            </div>
+          ) : (
+            <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700/50 overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-slate-700/50">
+                    <tr>
+                      <th className="text-left p-4 text-slate-300 font-medium">Amount</th>
+                      <th className="text-left p-4 text-slate-300 font-medium">Network</th>
+                      <th className="text-left p-4 text-slate-300 font-medium">Token</th>
+                      <th className="text-left p-4 text-slate-300 font-medium">Account</th>
+                      <th className="text-left p-4 text-slate-300 font-medium">Status</th>
+                      <th className="text-left p-4 text-slate-300 font-medium">Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {withdrawals.map((withdrawal) => (
+                      <tr key={withdrawal.id} className="border-t border-slate-700/50 hover:bg-slate-700/25">
+                        <td className="p-4">
+                          <p className="text-white font-medium">₦{withdrawal.amount.toLocaleString()}</p>
+                        </td>
+                        <td className="p-4">
+                          <p className="text-white font-medium">{NETWORK_CONFIG[withdrawal.network].name}</p>
+                        </td>
+                        <td className="p-4">
+                          <p className="text-white font-medium">{TOKEN_CONFIG[withdrawal.token_type].symbol}</p>
+                        </td>
+                        <td className="p-4">
+                          <p className="font-mono text-slate-300">{withdrawal.account_number}</p>
+                        </td>
+                        <td className="p-4">
+                          {withdrawal.status ? (
+                            <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
+                              <FiCheck className="w-3 h-3" />
+                              Completed
+                            </span>
+                          ) : (
+                            <span className="bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
+                              <FiClock className="w-3 h-3" />
+                              Pending
+                            </span>
+                          )}
+                        </td>
+                        <td className="p-4">
+                          <p className="text-slate-400 text-sm">{formatDate(withdrawal.created_at)}</p>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  if (showWithdrawalForm) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-9">
+        <div className="max-w-2xl mx-auto p-4 md:p-6">
+          <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 md:p-8 border border-slate-700/50">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold">Request Withdrawal</h2>
+              <button
+                onClick={() => setShowWithdrawalForm(false)}
+                className="text-slate-400 hover:text-white transition-colors"
+              >
+                <FiX className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-slate-400 mb-2">Amount (₦)</label>
+                <input
+                  type="number"
+                  value={withdrawalAmount}
+                  onChange={(e) => setWithdrawalAmount(e.target.value)}
+                  placeholder="Enter amount to withdraw"
+                  className="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
+                />
+                <p className="text-sm text-slate-500 mt-1">
+                  Available balance: ₦{wallet?.balance.toLocaleString() || '0'}
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-slate-400 mb-2">Network</label>
+                <select
+                  value={withdrawalNetwork || ''}
+                  onChange={(e) => setWithdrawalNetwork(e.target.value as NetworkType)}
+                  className="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+                >
+                  <option value="">Select Network</option>
+                  {Object.entries(NETWORK_CONFIG).map(([network, config]) => (
+                    <option key={network} value={network}>
+                      {config.name} ({config.symbol})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {withdrawalNetwork && (
+                <div>
+                  <label className="block text-slate-400 mb-2">Token</label>
+                  <select
+                    value={withdrawalToken || ''}
+                    onChange={(e) => setWithdrawalToken(e.target.value as TokenType)}
+                    className="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="">Select Token</option>
+                    {getAvailableTokens(withdrawalNetwork).map(([token, config]) => (
+                      <option key={token} value={token}>
+                        {config.name} ({config.symbol})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-slate-400 mb-2">Account Number</label>
+                <input
+                  type="text"
+                  value={withdrawalAccount}
+                  onChange={(e) => setWithdrawalAccount(e.target.value)}
+                  placeholder="Enter destination account number"
+                  className="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div className="pt-4">
+                <button
+                  onClick={handleWithdrawalSubmit}
+                  disabled={withdrawing}
+                  className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-6 rounded-xl font-medium hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {withdrawing ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <FiArrowUpRight className="w-4 h-4" />
+                      Request Withdrawal
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-9">
+      <div className="max-w-7xl mx-auto p-4 md:p-6">
+        {/* Wallet Status Alert */}
+        {wallet?.status === false && (
+          <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-xl p-4 mb-6">
+            <div className="flex items-center gap-3">
+              <FiClock className="w-5 h-5 text-yellow-400" />
+              <div>
+                <p className="text-yellow-400 font-medium">Wallet Setup in Progress</p>
+                <p className="text-sm text-slate-400">
+                  Send ₦{TIER_CONFIG[wallet.tier].minimum.toLocaleString()} to account number: 
+                  <span className="font-mono font-bold text-white ml-2">{wallet.wallet_number}</span>
+                </p>
+                {wallet.network && wallet.token_type && (
+                  <p className="text-sm text-slate-400 mt-1">
+                    Network: {NETWORK_CONFIG[wallet.network].name} • Token: {TOKEN_CONFIG[wallet.token_type].name}
+                  </p>
+                )}
+                <p className="text-xs text-yellow-400 mt-2">
+                  Waiting for admin to confirm payment...
+                </p>
+              </div>
             </div>
           </div>
         )}
+
+        {/* Portfolio Summary Card */}
+        <div className="bg-gradient-to-r from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 mb-6 md:mb-8 border border-slate-700/50 shadow-2xl">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <p className="text-slate-400 text-base md:text-lg mb-2">Current Portfolio Value</p>
+              <p className="text-2xl md:text-4xl font-bold text-white mb-2">
+                ₦{wallet?.current_value.toLocaleString() || '0'}
+              </p>
+              <div className={`flex items-center text-base md:text-lg ${
+                (wallet?.performance_percentage || 0) >= 0 ? 'text-green-400' : 'text-red-400'
+              }`}>
+                {(wallet?.performance_percentage || 0) >= 0 ? (
+                  <FiTrendingUp className="w-4 h-4 md:w-5 md:h-5 mr-2" />
+                ) : (
+                  <FiTrendingDown className="w-4 h-4 md:w-5 md:h-5 mr-2" />
+                )}
+                {(wallet?.performance_percentage || 0) >= 0 ? '+' : ''}
+                {wallet?.performance_percentage?.toFixed(2) || '0.00'}%
+                <span className="text-sm text-slate-400 ml-2">
+                  (₦{wallet?.profit_loss.toLocaleString() || '0'})
+                </span>
+              </div>
+            </div>
+            <div className="p-3 md:p-4 bg-blue-600/20 rounded-xl">
+              <FiDollarSign className="w-6 h-6 md:w-8 md:h-8 text-blue-400" />
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
+            <div className="bg-slate-800/30 rounded-xl p-3 md:p-4 border border-slate-700/30">
+              <p className="text-slate-400 text-xs md:text-sm mb-1">Wallet Tier</p>
+              <p className="text-lg md:text-xl font-bold text-white">
+                {wallet ? TIER_CONFIG[wallet.tier].name : 'N/A'}
+              </p>
+            </div>
+            <div className="bg-slate-800/30 rounded-xl p-3 md:p-4 border border-slate-700/30">
+              <p className="text-slate-400 text-xs md:text-sm mb-1">Network</p>
+              <p className="text-lg md:text-xl font-bold text-white">
+                {wallet?.network ? NETWORK_CONFIG[wallet.network].name : 'N/A'}
+              </p>
+            </div>
+            <div className="bg-slate-800/30 rounded-xl p-3 md:p-4 border border-slate-700/30">
+              <p className="text-slate-400 text-xs md:text-sm mb-1">Token</p>
+              <p className="text-lg md:text-xl font-bold text-white">
+                {wallet?.token_type ? TOKEN_CONFIG[wallet.token_type].symbol : 'N/A'}
+              </p>
+            </div>
+            <div className="bg-slate-800/30 rounded-xl p-3 md:p-4 border border-slate-700/30">
+              <p className="text-slate-400 text-xs md:text-sm mb-1">Account Number</p>
+              <p className="text-lg md:text-xl font-bold text-white font-mono">
+                {wallet?.wallet_number || 'N/A'}
+              </p>
+            </div>
+            <div className="bg-slate-800/30 rounded-xl p-3 md:p-4 border border-slate-700/30">
+              <p className="text-slate-400 text-xs md:text-sm mb-1">Balance</p>
+              <p className="text-lg md:text-xl font-bold text-white">
+                ₦{wallet?.balance.toLocaleString() || '0'}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex flex-wrap gap-4 mb-8">
+          <button
+            onClick={() => setShowWithdrawalForm(true)}
+            className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-xl font-medium hover:opacity-90 transition-opacity flex items-center gap-2"
+          >
+            <FiArrowUpRight className="w-4 h-4" />
+            Withdraw Funds
+          </button>
+          <button
+            onClick={() => setActiveTab('withdrawals')}
+            className="bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl font-medium transition-colors flex items-center gap-2"
+          >
+            <FiExternalLink className="w-4 h-4" />
+            View Withdrawal History
+          </button>
+        </div>
       </div>
     </div>
   );
