@@ -261,10 +261,10 @@ const AdminOrdersPage = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-white">
-                        {order.amount} @ ₦{order.price.toLocaleString()}
+                        {order.amount} @ ${order.price.toLocaleString()}
                       </div>
                       <div className="text-sm font-bold text-white">
-                        ₦{order.total.toLocaleString()}
+                        ${order.total.toLocaleString()}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">

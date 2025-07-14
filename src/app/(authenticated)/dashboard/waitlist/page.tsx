@@ -434,7 +434,7 @@ const WaitlistPage = () => {
                     Wallet Balance
                   </p>
                   <p className="text-lg md:text-2xl font-bold text-white">
-                    ₦{wallet.balance.toLocaleString()}
+                    ${wallet.balance.toLocaleString()}
                   </p>
                 </div>
                 <div className="p-2 md:p-3 bg-blue-600/20 rounded-lg">
@@ -479,7 +479,7 @@ const WaitlistPage = () => {
                     Portfolio Value
                   </p>
                   <p className="text-lg md:text-2xl font-bold text-white">
-                    ₦{portfolio.reduce((sum, item) => sum + item.current_value, 0).toLocaleString()}
+                    ${portfolio.reduce((sum, item) => sum + item.current_value, 0).toLocaleString()}
                   </p>
                 </div>
                 <div className="p-2 md:p-3 bg-purple-600/20 rounded-lg">
@@ -595,7 +595,7 @@ const WaitlistPage = () => {
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-white font-mono font-medium">
-                          ₦{order.price.toLocaleString()}
+                          ${order.price.toLocaleString()}
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -605,7 +605,7 @@ const WaitlistPage = () => {
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-white font-mono font-semibold">
-                          ₦{order.total.toLocaleString()}
+                          ${order.total.toLocaleString()}
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -670,7 +670,7 @@ const WaitlistPage = () => {
                       </div>
                       <div className="text-right">
                         <div className="font-semibold text-white">
-                          ₦{order.total.toLocaleString()}
+                        ${order.total.toLocaleString()}
                         </div>
                         <div className="text-xs text-slate-400">
                           {order.amount} @ ₦{order.price.toLocaleString()}
@@ -699,7 +699,7 @@ const WaitlistPage = () => {
                         <div>
                           <span className="text-slate-400">Total Value:</span>
                           <span className="ml-2 text-white">
-                            ₦{order.total.toLocaleString()}
+                            ${order.total.toLocaleString()}
                           </span>
                         </div>
                         <div>
@@ -711,7 +711,7 @@ const WaitlistPage = () => {
                         <div>
                           <span className="text-slate-400">Price:</span>
                           <span className="ml-2 text-white">
-                            ₦{order.price.toLocaleString()}
+                          ${order.price.toLocaleString()}
                           </span>
                         </div>
                         <div>
@@ -802,7 +802,7 @@ const WaitlistPage = () => {
                       value={stock.symbol}
                       className="bg-slate-800"
                     >
-                      {stock.symbol} - {stock.name} (₦
+                      {stock.symbol} - {stock.name} ($
                       {stock.current_price.toLocaleString()})
                     </option>
                   ))}
@@ -816,7 +816,7 @@ const WaitlistPage = () => {
                     <span className="text-slate-400">Current Market Price</span>
                     <div className="text-right">
                       <span className="font-mono font-bold text-lg text-white">
-                        ₦{selectedAsset.current_price.toLocaleString()}
+                      ${selectedAsset.current_price.toLocaleString()}
                       </span>
                       <div
                         className={`text-sm ${
@@ -838,7 +838,7 @@ const WaitlistPage = () => {
               {/* Price Input */}
               <div>
                 <label className="block text-slate-300 mb-2 font-medium">
-                  Limit Price (₦)
+                  Limit Price ($)
                 </label>
                 <div className="relative">
                   <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400">
@@ -875,7 +875,7 @@ const WaitlistPage = () => {
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-slate-400">Order Total</span>
                   <span className="font-mono font-bold text-xl text-white">
-                    ₦
+                  $
                     {(
                       parseFloat(price || "0") * parseFloat(amount || "0")
                     ).toLocaleString()}
@@ -884,14 +884,14 @@ const WaitlistPage = () => {
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-slate-400">Wallet Balance</span>
                   <span className="font-mono text-slate-300">
-                    ₦{wallet.balance.toLocaleString()}
+                    ${wallet.balance.toLocaleString()}
                   </span>
                 </div>
                 {orderType === "buy" && (
                   <div className="flex justify-between items-center text-sm mt-2">
                     <span className="text-slate-400">Remaining Balance</span>
                     <span className="font-mono text-white">
-                      ₦
+                      $
                       {(
                         wallet.balance -
                         parseFloat(price || "0") * parseFloat(amount || "0")

@@ -248,6 +248,24 @@ const Sidebar = ({ closeSidebar }: { closeSidebar?: () => void }) => {
       icon: <FiUsers />,
       rhyme: "Control user access"
     },
+    {
+      name: 'Confirm Payments',
+      href: '/dashboard/admin/confirm-payments',
+      icon: <FiUsers />,
+      rhyme: "Control Payments"
+    },
+    {
+      name: 'Portfolio Setups',
+      href: '/dashboard/admin/portfolio-setups',
+      icon: <FiUsers />,
+      rhyme: "Control Portfolio setups"
+    },
+    {
+      name: 'Stock Transactions',
+      href: '/dashboard/admin/stock-transactions',
+      icon: <FiUsers />,
+      rhyme: "Control Stocks transactions"
+    },
     
   ];
   const filteredNavItems = navItems.filter(item => {
@@ -386,10 +404,10 @@ const Sidebar = ({ closeSidebar }: { closeSidebar?: () => void }) => {
                             <Link
                               href={subItem.href}
                               onClick={handleLinkClick}
-                              className={`group flex flex-col p-3 rounded-lg transition-all duration-200 border-l-2 ${
+                              className={`group flex flex-col p-3 rounded-lg transition-all duration-200 ${
                                 pathname === subItem.href
-                                  ? 'bg-blue-600/20 border-blue-500 text-blue-300'
-                                  : 'text-gray-400 hover:bg-gray-800/30 border-gray-600 hover:border-gray-500 hover:text-white'
+                                  ? 'bg-blue-600/20  text-blue-300'
+                                  : 'text-gray-400 hover:bg-gray-800/30  hover:border-gray-500 hover:text-white'
                               }`}
                             >
                               <div className="flex items-center">

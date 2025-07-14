@@ -1,11 +1,18 @@
 
-
 "use client"
 import React, { useState, useEffect } from 'react';
 import { FiUser, FiMail, FiDollarSign, FiClock, FiEdit3, FiSave, FiX, FiCheck, FiEye, FiRefreshCw, FiExternalLink } from 'react-icons/fi';
 import { createClient } from '@/app/utils/supabase/clients';
 
-type WalletTier = 'bronze' | 'silver' | 'gold';
+type WalletTier = 
+  | 'basic' 
+  | 'standard' 
+  | 'premium' 
+  | 'gold' 
+  | 'platinum' 
+  | 'diamond' 
+  | 'elite';
+
 
 type TransactionRequest = {
   id: string;
@@ -34,32 +41,68 @@ type WithdrawalRequest = {
 };
 
 const TIER_CONFIG = {
-  bronze: {
-    name: 'Bronze Wallet',
-    minimum: 10000,
-    color: 'from-orange-400 to-orange-600',
-    bgColor: 'bg-orange-500/20',
-    borderColor: 'border-orange-500/30',
-    icon: '🟫',
-    textColor: 'text-orange-400'
+  basic: {
+    name: 'Basic Wallet',
+    minimum: 1000,
+    color: 'from-gray-300 to-gray-400',
+    bgColor: 'bg-gray-400/20',
+    borderColor: 'border-gray-400/30',
+    icon: '🟦',
+    textColor: 'text-gray-400',
   },
-  silver: {
-    name: 'Silver Wallet',
-    minimum: 50000,
-    color: 'from-gray-400 to-gray-600',
-    bgColor: 'bg-gray-500/20',
-    borderColor: 'border-gray-500/30',
-    icon: '🟡',
-    textColor: 'text-gray-400'
+  standard: {
+    name: 'Standard Wallet',
+    minimum: 10000,
+    color: 'from-blue-400 to-blue-600',
+    bgColor: 'bg-blue-500/20',
+    borderColor: 'border-blue-500/30',
+    icon: '🟪',
+    textColor: 'text-blue-400',
+  },
+  premium: {
+    name: 'Premium Wallet',
+    minimum: 20000,
+    color: 'from-purple-400 to-purple-600',
+    bgColor: 'bg-purple-500/20',
+    borderColor: 'border-purple-500/30',
+    icon: '🟣',
+    textColor: 'text-purple-400',
   },
   gold: {
     name: 'Gold Wallet',
-    minimum: 100000,
+    minimum: 50000,
     color: 'from-yellow-400 to-yellow-600',
     bgColor: 'bg-yellow-500/20',
     borderColor: 'border-yellow-500/30',
     icon: '🟨',
-    textColor: 'text-yellow-400'
+    textColor: 'text-yellow-400',
+  },
+  platinum: {
+    name: 'Platinum Wallet',
+    minimum: 100000,
+    color: 'from-slate-400 to-slate-600',
+    bgColor: 'bg-slate-500/20',
+    borderColor: 'border-slate-500/30',
+    icon: '⬜️',
+    textColor: 'text-slate-400',
+  },
+  diamond: {
+    name: 'Diamond Wallet',
+    minimum: 500000,
+    color: 'from-indigo-400 to-indigo-700',
+    bgColor: 'bg-indigo-500/20',
+    borderColor: 'border-indigo-500/30',
+    icon: '🔷',
+    textColor: 'text-indigo-400',
+  },
+  elite: {
+    name: 'Elite Wallet',
+    minimum: 1000000,
+    color: 'from-emerald-500 to-emerald-700',
+    bgColor: 'bg-emerald-500/20',
+    borderColor: 'border-emerald-500/30',
+    icon: '💎',
+    textColor: 'text-emerald-500',
   }
 };
 
@@ -147,7 +190,7 @@ const AdminTransactionsPage = () => {
     try {
       const { data, error } = await supabase
         .from('wallets')
-        .update({ status, balance: TIER_CONFIG[transactions.find(t => t.account_number === walletNumber)?.wallet_type || 'bronze'].minimum })
+        .update({ status, balance: TIER_CONFIG[transactions.find(t => t.account_number === walletNumber)?.wallet_type || 'basic'].minimum })
         .eq('wallet_number', walletNumber)
         .select()
         .single();
@@ -352,7 +395,7 @@ const AdminTransactionsPage = () => {
                 <div>
                   <p className="text-slate-400 text-sm">Total Amount</p>
                   <p className="text-2xl font-bold text-white">
-                    ₦{(activeTab === 'deposits' 
+                    ${(activeTab === 'deposits' 
                       ? transactions.reduce((sum, t) => sum + t.amount, 0) 
                       : withdrawals.reduce((sum, w) => sum + w.amount, 0)
                     ).toLocaleString()}
@@ -460,7 +503,7 @@ const AdminTransactionsPage = () => {
                         <p className="text-white font-medium">{transaction.network}</p>
                       </td>
                       <td className="p-4">
-                        <p className="text-white font-medium">₦{transaction.amount.toLocaleString()}</p>
+                        <p className="text-white font-medium">${transaction.amount.toLocaleString()}</p>
                       </td>
                       <td className="p-4">
                         {editingId === transaction.id ? (
@@ -615,7 +658,7 @@ const AdminTransactionsPage = () => {
                         </div>
                       </td>
                       <td className="p-4">
-                        <p className="text-white font-medium">₦{withdrawal.amount.toLocaleString()}</p>
+                        <p className="text-white font-medium">${withdrawal.amount.toLocaleString()}</p>
                       </td>
                       <td className="p-4">
                         <p className="text-white font-medium">{withdrawal.network}</p>

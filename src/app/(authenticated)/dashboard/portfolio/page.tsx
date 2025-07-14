@@ -6,7 +6,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FiTrendingUp, FiTrendingDown, FiDollarSign, FiPieChart, FiActivity, FiPlus, FiCreditCard, FiArrowUpRight, FiArrowDownLeft, FiCheck, FiClock, FiX, FiArrowLeft, FiExternalLink } from 'react-icons/fi';
 import { createClient } from '@/app/utils/supabase/clients';
 
-type WalletTier = 'bronze' | 'silver' | 'gold';
+type WalletTier = 
+  | 'basic' 
+  | 'standard' 
+  | 'premium' 
+  | 'gold' 
+  | 'platinum' 
+  | 'diamond' 
+  | 'elite';
+
 type NetworkType = 'bitcoin' | 'ethereum' | 'binance' | 'polygon' | 'solana' | 'cardano';
 type TokenType = 'btc' | 'eth' | 'usdt' | 'usdc' | 'bnb' | 'ada' | 'sol' | 'matic' | 'busd' | 'dai';
 
@@ -52,34 +60,82 @@ type WithdrawalRequest = {
   updated_at: string;
 };
 
+type StockPortfolioItem = {
+  id: string;
+  user_id: string;
+  asset: string;
+  asset_name: string;
+  amount: number;
+  average_price: number;
+  current_value: number;
+  image_url?: string;
+};
+
 const TIER_CONFIG = {
-  bronze: {
-    name: 'Bronze Wallet',
-    minimum: 10000,
-    color: 'from-orange-400 to-orange-600',
-    bgColor: 'bg-orange-500/20',
-    borderColor: 'border-orange-500/30',
-    icon: '🟫',
-    description: 'Perfect for beginners'
+  basic: {
+    name: 'Basic Wallet',
+    minimum: 1000,
+    color: 'from-gray-300 to-gray-400',
+    bgColor: 'bg-gray-400/20',
+    borderColor: 'border-gray-400/30',
+    icon: '🟦',
+    description: 'Entry-level access',
   },
-  silver: {
-    name: 'Silver Wallet',
-    minimum: 50000,
-    color: 'from-gray-400 to-gray-600',
-    bgColor: 'bg-gray-500/20',
-    borderColor: 'border-gray-500/30',
-    icon: '🟡',
-    description: 'For growing portfolios'
+  standard: {
+    name: 'Standard Wallet',
+    minimum: 10000,
+    color: 'from-blue-400 to-blue-600',
+    bgColor: 'bg-blue-500/20',
+    borderColor: 'border-blue-500/30',
+    icon: '🟪',
+    description: 'Ideal for consistent growth',
+  },
+  premium: {
+    name: 'Premium Wallet',
+    minimum: 20000,
+    color: 'from-purple-400 to-purple-600',
+    bgColor: 'bg-purple-500/20',
+    borderColor: 'border-purple-500/30',
+    icon: '🟣',
+    description: 'Advanced investor access',
   },
   gold: {
     name: 'Gold Wallet',
-    minimum: 100000,
+    minimum: 50000,
     color: 'from-yellow-400 to-yellow-600',
     bgColor: 'bg-yellow-500/20',
     borderColor: 'border-yellow-500/30',
     icon: '🟨',
-    description: 'Premium investment tier'
-  }
+    description: 'High-value investments',
+  },
+  platinum: {
+    name: 'Platinum Wallet',
+    minimum: 100000,
+    color: 'from-slate-400 to-slate-600',
+    bgColor: 'bg-slate-500/20',
+    borderColor: 'border-slate-500/30',
+    icon: '⬜️',
+    description: 'Exclusive investor tier',
+  },
+  diamond: {
+    name: 'Diamond Wallet',
+    minimum: 500000,
+    color: 'from-indigo-400 to-indigo-700',
+    bgColor: 'bg-indigo-500/20',
+    borderColor: 'border-indigo-500/30',
+    icon: '🔷',
+    description: 'Elite wealth package',
+  },
+  elite: {
+    name: 'Elite Wallet',
+    minimum: 1000000,
+    color: 'from-emerald-500 to-emerald-700',
+    bgColor: 'bg-emerald-500/20',
+    borderColor: 'border-emerald-500/30',
+    icon: '💎',
+    description: 'Top 1% wealth access',
+  },
+  
 };
 
 const NETWORK_CONFIG = {
@@ -243,6 +299,8 @@ const PortfolioPage = () => {
   const [withdrawing, setWithdrawing] = useState(false);
   const [withdrawals, setWithdrawals] = useState<WithdrawalRequest[]>([]);
   const [activeTab, setActiveTab] = useState<'portfolio' | 'withdrawals'>('portfolio');
+  const [stockPortfolio, setStockPortfolio] = useState<StockPortfolioItem[]>([]);
+  const [portfolioLoading, setPortfolioLoading] = useState(true);
   
   const supabase = createClient();
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -251,7 +309,7 @@ const PortfolioPage = () => {
 
   useEffect(() => {
     fetchWalletData();
-    
+    fetchStockPortfolio(); 
     return () => {
       if (pollingIntervalRef.current) {
         clearInterval(pollingIntervalRef.current);
@@ -264,6 +322,49 @@ const PortfolioPage = () => {
       }
     };
   }, []);
+
+
+  const fetchStockPortfolio = async () => {
+    try {
+      setPortfolioLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        setPortfolioLoading(false);
+        return;
+      }
+  
+      const { data, error } = await supabase
+        .from('stock_portfolio')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('current_value', { ascending: false });
+  
+      if (error) throw error;
+  
+      setStockPortfolio(data || []);
+    } catch (error) {
+      console.error('Error fetching stock portfolio:', error);
+      // You might want to add error handling here
+    } finally {
+      setPortfolioLoading(false);
+    }
+  };
+   // Calculate total portfolio value
+   const calculateTotalPortfolioValue = () => {
+    return stockPortfolio.reduce((total, item) => total + (item.current_value || 0), 0);
+  };
+
+  // Calculate total profit/loss percentage (simplified example)
+  const calculatePerformancePercentage = () => {
+    const totalInvested = stockPortfolio.reduce((total, item) => total + (item.average_price * item.amount), 0);
+    const currentValue = calculateTotalPortfolioValue();
+    
+    if (totalInvested === 0) return 0;
+    
+    return ((currentValue - totalInvested) / totalInvested) * 100;
+  };
+
 
   useEffect(() => {
     if (!wallet || wallet.status) return;
@@ -647,7 +748,7 @@ const PortfolioPage = () => {
                   <h3 className="text-xl font-bold mb-2">{config.name}</h3>
                   <p className="text-slate-400 text-sm mb-4">{config.description}</p>
                   <div className="text-2xl font-bold mb-4">
-                    ₦{config.minimum.toLocaleString()} minimum
+                  ${config.minimum.toLocaleString()} minimum
                   </div>
                   <button className={`w-full bg-gradient-to-r ${config.color} text-white py-3 px-6 rounded-xl font-medium hover:opacity-90 transition-opacity group-hover:shadow-lg`}>
                     Select {config.name}
@@ -660,6 +761,9 @@ const PortfolioPage = () => {
       </div>
     );
   }
+
+  
+  
 
   if (showNetworkSelection) {
     return (
@@ -737,7 +841,7 @@ const PortfolioPage = () => {
                 key={token}
                 className={`bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50 hover:scale-105 transition-transform cursor-pointer group hover:border-slate-600`}
                 onClick={() => handleTokenSelection(token as TokenType)}
-              >
+              > 
                 <div className="text-center">
                   <div className="text-4xl mb-4">{config.icon}</div>
                   <h3 className="text-lg font-bold mb-2">{config.name}</h3>
@@ -745,7 +849,8 @@ const PortfolioPage = () => {
                   <div className="text-lg font-bold mb-4 text-slate-300">
                     {config.symbol}
                   </div>
-                  <button className={`w-full bg-gradient-to-r ${config.color} text-white py-3 px-6 rounded-xl font-medium hover:opacity-90 transition-opacity group-hover:shadow-lg`}>
+                  <button className={`w-full bg-gradient-to-r ${config.color} text-white py-3 px-6 rounded-xl font-medium
+                   hover:opacity-90 transition-opacity group-hover:shadow-lg`}>
                     Select {config.symbol}
                   </button>
                 </div>
@@ -881,7 +986,7 @@ const PortfolioPage = () => {
                     {withdrawals.map((withdrawal) => (
                       <tr key={withdrawal.id} className="border-t border-slate-700/50 hover:bg-slate-700/25">
                         <td className="p-4">
-                          <p className="text-white font-medium">₦{withdrawal.amount.toLocaleString()}</p>
+                          <p className="text-white font-medium">${withdrawal.amount.toLocaleString()}</p>
                         </td>
                         <td className="p-4">
                           <p className="text-white font-medium">{NETWORK_CONFIG[withdrawal.network].name}</p>
@@ -937,7 +1042,7 @@ const PortfolioPage = () => {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-slate-400 mb-2">Amount (₦)</label>
+                <label className="block text-slate-400 mb-2">Amount ($)</label>
                 <input
                   type="number"
                   value={withdrawalAmount}
@@ -946,7 +1051,7 @@ const PortfolioPage = () => {
                   className="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
                 />
                 <p className="text-sm text-slate-500 mt-1">
-                  Available balance: ₦{wallet?.balance.toLocaleString() || '0'}
+                  Available balance: ${wallet?.balance.toLocaleString() || '0'}
                 </p>
               </div>
 
@@ -972,7 +1077,8 @@ const PortfolioPage = () => {
                   <select
                     value={withdrawalToken || ''}
                     onChange={(e) => setWithdrawalToken(e.target.value as TokenType)}
-                    className="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-700/50 border border-slate-600/50 
+                    rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
                   >
                     <option value="">Select Token</option>
                     {getAvailableTokens(withdrawalNetwork).map(([token, config]) => (
@@ -1032,7 +1138,7 @@ const PortfolioPage = () => {
               <div>
                 <p className="text-yellow-400 font-medium">Wallet Setup in Progress</p>
                 <p className="text-sm text-slate-400">
-                  Send ₦{TIER_CONFIG[wallet.tier].minimum.toLocaleString()} to account number: 
+                  Send ${TIER_CONFIG[wallet.tier].minimum.toLocaleString()} to account number: 
                   <span className="font-mono font-bold text-white ml-2">{wallet.wallet_number}</span>
                 </p>
                 {wallet.network && wallet.token_type && (
@@ -1054,8 +1160,9 @@ const PortfolioPage = () => {
             <div>
               <p className="text-slate-400 text-base md:text-lg mb-2">Current Portfolio Value</p>
               <p className="text-2xl md:text-4xl font-bold text-white mb-2">
-                ₦{wallet?.current_value.toLocaleString() || '0'}
+              ${calculateTotalPortfolioValue().toLocaleString()}
               </p>
+              
               <div className={`flex items-center text-base md:text-lg ${
                 (wallet?.performance_percentage || 0) >= 0 ? 'text-green-400' : 'text-red-400'
               }`}>
@@ -1067,15 +1174,21 @@ const PortfolioPage = () => {
                 {(wallet?.performance_percentage || 0) >= 0 ? '+' : ''}
                 {wallet?.performance_percentage?.toFixed(2) || '0.00'}%
                 <span className="text-sm text-slate-400 ml-2">
-                  (₦{wallet?.profit_loss.toLocaleString() || '0'})
+                  (${wallet?.profit_loss.toLocaleString() || '0'})
                 </span>
               </div>
             </div>
+           
             <div className="p-3 md:p-4 bg-blue-600/20 rounded-xl">
               <FiDollarSign className="w-6 h-6 md:w-8 md:h-8 text-blue-400" />
             </div>
           </div>
-          
+          <div className="bg-slate-800/30 my-6 rounded-xl p-3 md:p-4 border border-slate-700/30">
+              <p className="text-slate-400 text-xs md:text-sm mb-1">Account Number</p>
+              <p className="text-lg md:text-xl font-bold text-white font-mono">
+                {wallet?.wallet_number || 'N/A'}
+              </p>
+            </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
             <div className="bg-slate-800/30 rounded-xl p-3 md:p-4 border border-slate-700/30">
               <p className="text-slate-400 text-xs md:text-sm mb-1">Wallet Tier</p>
@@ -1095,20 +1208,18 @@ const PortfolioPage = () => {
                 {wallet?.token_type ? TOKEN_CONFIG[wallet.token_type].symbol : 'N/A'}
               </p>
             </div>
-            <div className="bg-slate-800/30 rounded-xl p-3 md:p-4 border border-slate-700/30">
-              <p className="text-slate-400 text-xs md:text-sm mb-1">Account Number</p>
-              <p className="text-lg md:text-xl font-bold text-white font-mono">
-                {wallet?.wallet_number || 'N/A'}
-              </p>
-            </div>
+          
             <div className="bg-slate-800/30 rounded-xl p-3 md:p-4 border border-slate-700/30">
               <p className="text-slate-400 text-xs md:text-sm mb-1">Balance</p>
               <p className="text-lg md:text-xl font-bold text-white">
-                ₦{wallet?.balance.toLocaleString() || '0'}
+              ${wallet?.balance.toLocaleString() || '0'}
               </p>
             </div>
           </div>
         </div>
+
+
+        
 
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-4 mb-8">
@@ -1127,9 +1238,128 @@ const PortfolioPage = () => {
             View Withdrawal History
           </button>
         </div>
+        <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700/50 overflow-hidden">
+  <div className="p-6 border-b border-slate-700/50">
+    <div className="flex items-center justify-between">
+      <div>
+        <h2 className="text-2xl font-bold text-white mb-2">Stock Portfolio</h2>
+        <p className="text-slate-400">Your current stock investments</p>
+      </div>
+      <div className="flex items-center gap-2">
+        <FiPieChart className="w-5 h-5 text-blue-400" />
+        <span className="text-sm text-slate-400">
+          Total Assets: {stockPortfolio.length}
+        </span>
       </div>
     </div>
+  </div>
+
+  {portfolioLoading ? (
+    <div className="p-8 text-center">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400 mx-auto mb-4"></div>
+      <p className="text-slate-400">Loading portfolio...</p>
+    </div>
+  ) : stockPortfolio.length === 0 ? (
+    <div className="p-8 text-center">
+      <div className="text-slate-400 mb-4">
+        <FiActivity className="w-12 h-12 mx-auto mb-2" />
+        <p>No stock investments yet</p>
+        <p className="text-sm mt-2">Your stock portfolio will appear here once you make investments</p>
+      </div>
+    </div>
+  ) : (
+    <div className="overflow-x-auto">
+      <table className="w-full">
+        <thead className="bg-slate-700/50">
+          <tr>
+            <th className="text-left p-4 text-slate-300 font-medium">Asset</th>
+            <th className="text-left p-4 text-slate-300 font-medium">Symbol</th>
+            <th className="text-left p-4 text-slate-300 font-medium">Amount</th>
+            <th className="text-left p-4 text-slate-300 font-medium">Avg Price</th>
+            <th className="text-left p-4 text-slate-300 font-medium">Current Value</th>
+            <th className="text-left p-4 text-slate-300 font-medium">Total Value</th>
+            <th className="text-left p-4 text-slate-300 font-medium">P&L</th>
+            <th className="text-left p-4 text-slate-300 font-medium">P&L %</th>
+          </tr>
+        </thead>
+        <tbody>
+          {stockPortfolio.map((item) => {
+            const totalInvested = item.amount * item.average_price;
+            const totalCurrentValue = item.amount * item.current_value;
+            const profitLoss = totalCurrentValue - totalInvested;
+            const profitLossPercentage = totalInvested > 0 ? (profitLoss / totalInvested) * 100 : 0;
+            
+            return (
+              <tr key={item.id} className="border-t border-slate-700/50 hover:bg-slate-700/25">
+                <td className="p-4">
+                  <div className="flex items-center gap-3">
+                    {item.image_url && (
+                      <img 
+                        src={item.image_url} 
+                        alt={item.asset_name}
+                        className="w-8 h-8 rounded-full"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    )}
+                    <div>
+                      <p className="text-white font-medium">{item.asset_name}</p>
+                    </div>
+                  </div>
+                </td>
+                <td className="p-4">
+                  <p className="text-slate-300 font-mono font-medium">{item.asset}</p>
+                </td>
+                <td className="p-4">
+                  <p className="text-white font-medium">{item.amount.toLocaleString()}</p>
+                </td>
+                <td className="p-4">
+                  <p className="text-white font-medium">${item.average_price.toLocaleString()}</p>
+                </td>
+                <td className="p-4">
+                  <p className="text-white font-medium">${item.current_value.toLocaleString()}</p>
+                </td>
+                <td className="p-4">
+                  <p className="text-white font-medium">${totalCurrentValue.toLocaleString()}</p>
+                </td>
+                <td className="p-4">
+                  <p className={`font-medium ${profitLoss >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                    {profitLoss >= 0 ? '+' : ''}${profitLoss.toLocaleString()}
+                  </p>
+                </td>
+                <td className="p-4">
+                  <div className={`flex items-center gap-1 ${profitLossPercentage >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                    {profitLossPercentage >= 0 ? (
+                      <FiTrendingUp className="w-4 h-4" />
+                    ) : (
+                      <FiTrendingDown className="w-4 h-4" />
+                    )}
+                    <span className="font-medium">
+                      {profitLossPercentage >= 0 ? '+' : ''}{profitLossPercentage.toFixed(2)}%
+                    </span>
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  )}
+</div>
+        
+      </div>
+      
+
+
+      
+    </div>
+
+    
   );
+
+  
 };
 
 export default PortfolioPage;
