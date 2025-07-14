@@ -24,33 +24,33 @@ export default function EmailPage() {
   const [authChecking, setAuthChecking] = useState(true)
   const supabase = createClient()
     const [user, setUser] = useState<User | null>(null);
-   useEffect(() => {
-      const checkAuth = async () => {
-        setAuthChecking(true); // Show loading overlay
-        const { data: { user }, error } = await supabase.auth.getUser();
+  //  useEffect(() => {
+  //     const checkAuth = async () => {
+  //       setAuthChecking(true); // Show loading overlay
+  //       const { data: { user }, error } = await supabase.auth.getUser();
         
-        // Redirect if not logged in
-        if (error || !user) {
-          return redirect('/login');
-        }
+  //       // Redirect if not logged in
+  //       if (error || !user) {
+  //         return redirect('/login');
+  //       }
         
-        // Get authorized emails from environment variable
-        const authorizedEmails = process.env.NEXT_PUBLIC_AUTHORIZED_EMAILS
-          ?.split(',')
-          .map(email => email.trim()) || [];
+  //       // Get authorized emails from environment variable
+  //       const authorizedEmails = process.env.NEXT_PUBLIC_AUTHORIZED_EMAILS
+  //         ?.split(',')
+  //         .map(email => email.trim()) || [];
         
-        // Redirect if email not in authorized list
-        if (!user.email || !authorizedEmails.includes(user.email)) {
-          return redirect('/login');
-        }
+  //       // Redirect if email not in authorized list
+  //       if (!user.email || !authorizedEmails.includes(user.email)) {
+  //         return redirect('/login');
+  //       }
         
-        setUser(user);
+  //       setUser(user);
        
-        setAuthChecking(false);
-      };
+  //       setAuthChecking(false);
+  //     };
     
-      checkAuth();
-    }, []);
+  //     checkAuth();
+  //   }, []);
 
   useEffect(() => {
     const fetchUsers = async () => {

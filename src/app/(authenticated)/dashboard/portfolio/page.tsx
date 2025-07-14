@@ -355,15 +355,7 @@ const PortfolioPage = () => {
     return stockPortfolio.reduce((total, item) => total + (item.current_value || 0), 0);
   };
 
-  // Calculate total profit/loss percentage (simplified example)
-  const calculatePerformancePercentage = () => {
-    const totalInvested = stockPortfolio.reduce((total, item) => total + (item.average_price * item.amount), 0);
-    const currentValue = calculateTotalPortfolioValue();
-    
-    if (totalInvested === 0) return 0;
-    
-    return ((currentValue - totalInvested) / totalInvested) * 100;
-  };
+
 
 
   useEffect(() => {

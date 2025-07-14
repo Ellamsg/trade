@@ -147,7 +147,7 @@ const SettingsPage = () => {
           </div>
         </div>
 
-        {/* Rest of your settings sections... */}
+    
       </div>
     </div>
   );
