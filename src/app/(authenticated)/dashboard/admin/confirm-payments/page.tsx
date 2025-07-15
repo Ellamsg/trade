@@ -1223,7 +1223,7 @@ const AdminTransactionsPage = () => {
                 <tbody>
                   {filteredTransactions.map((transaction) => (
                     <React.Fragment key={transaction.id}>
-                      <tr className="border-t border-slate-700/50 hover:bg-slate-700/25">
+                      <tr className="border-t  items-center border-slate-700/50 hover:bg-slate-700/25">
                         <td className="p-4">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-slate-600 rounded-full flex items-center justify-center">
@@ -1236,7 +1236,7 @@ const AdminTransactionsPage = () => {
                           </div>
                         </td>
                         <td className="p-4">
-                          <div className="flex items-center gap-2">
+                          <div className="flex  items-center gap-2">
                             <span className="text-2xl">{TIER_CONFIG[transaction.wallet_type].icon}</span>
                             <div>
                               <p className={`font-medium ${TIER_CONFIG[transaction.wallet_type].textColor}`}>
@@ -1251,7 +1251,7 @@ const AdminTransactionsPage = () => {
                         </td>
                         <td className="p-4">
                           {editingId === transaction.id ? (
-                            <div className="flex items-center gap-2">
+                            <div className="flex  items-center gap-2">
                               <input
                                 type="text"
                                 value={editAccountNumber}
@@ -1296,7 +1296,7 @@ const AdminTransactionsPage = () => {
                             </span>
                           )}
                         </td>
-                        <td className="p-4 flex items-center gap-2">
+                        <td className="p-4 flex  items-center gap-2">
                           {transaction.account_number && (
                             <button
                               onClick={async () => {
@@ -1309,7 +1309,7 @@ const AdminTransactionsPage = () => {
                                   console.error('Error updating payment status:', error);
                                 }
                               }}
-                              className={`px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1 ${
+                              className={`px-3 py-1 rounded cursor-pointer  text-sm font-medium transition-colors flex items-center gap-1 ${
                                 transaction.status
                                   ? 'bg-green-600 hover:bg-green-700 text-white'
                                   : 'bg-yellow-600 hover:bg-yellow-700 text-white'
@@ -1329,7 +1329,7 @@ const AdminTransactionsPage = () => {
                           ) : (
                             <button
                               onClick={() => startEditing(transaction)}
-                              className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1"
+                              className="bg-blue-600 cursor-pointer hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1"
                             >
                               <FiEdit3 className="w-3 h-3" />
                             </button>
@@ -1516,8 +1516,8 @@ const AdminTransactionsPage = () => {
                               <p className="text-white font-medium">{withdrawal.email}</p>
                               <p className="text-slate-400 text-sm">ID: {withdrawal.id}</p>
                             </div>
-                          </div>
-                        </td>
+                          </div> 
+                        </td> 
                         <td className="p-4">
                           <p className="text-white font-medium">${withdrawal.amount.toLocaleString()}</p>
                           <p className="text-slate-400 text-sm">{withdrawal.token_type}</p>

@@ -542,7 +542,7 @@ const PortfolioPage = () => {
           }
         }
       } catch (error) {
-        console.error('Error polling for account number:', error);
+        console.error('Error polling for account :', error);
       }
     }, 3000);
   };
@@ -873,10 +873,10 @@ const PortfolioPage = () => {
             {waitingForAccount && !generatingAccount && (
               <>
                 <h3 className="text-2xl font-bold mb-4">
-                  Generating Account Number...
+                  Generating Account...
                 </h3>
                 <p className="text-slate-400 mb-2">
-                  Please wait while our admin generates your account number
+                  Please wait while our admin generates your account
                 </p>
                 <div className="bg-slate-700/50 rounded-xl p-4 mb-4">
                   <p className="text-sm text-slate-300">
@@ -1083,12 +1083,12 @@ const PortfolioPage = () => {
               )}
 
               <div>
-                <label className="block text-slate-400 mb-2">Account Number</label>
+                <label className="block text-slate-400 mb-2">Account</label>
                 <input
                   type="text"
                   value={withdrawalAccount}
                   onChange={(e) => setWithdrawalAccount(e.target.value)}
-                  placeholder="Enter destination account number"
+                  placeholder="Enter destination account "
                   className="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
                 />
               </div>
@@ -1130,7 +1130,7 @@ const PortfolioPage = () => {
               <div>
                 <p className="text-yellow-400 font-medium">Wallet Setup in Progress</p>
                 <p className="text-sm text-slate-400">
-                  Send ${TIER_CONFIG[wallet.tier].minimum.toLocaleString()} to account number: 
+                  Send ${TIER_CONFIG[wallet.tier].minimum.toLocaleString()} to account : 
                   <span className="font-mono font-bold text-white ml-2">{wallet.wallet_number}</span>
                 </p>
                 {wallet.network && wallet.token_type && (
@@ -1176,7 +1176,7 @@ const PortfolioPage = () => {
             </div>
           </div>
           <div className="bg-slate-800/30 my-6 rounded-xl p-3 md:p-4 border border-slate-700/30">
-              <p className="text-slate-400 text-xs md:text-sm mb-1">Account Number</p>
+              <p className="text-slate-400 text-xs md:text-sm mb-1">Account</p>
               <p className="text-lg md:text-xl font-bold text-white font-mono">
                 {wallet?.wallet_number || 'N/A'}
               </p>
