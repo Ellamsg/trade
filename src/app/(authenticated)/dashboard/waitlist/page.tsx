@@ -386,7 +386,7 @@ const WaitlistPage = () => {
             You need to create a wallet before you can trade stocks.
           </p>
           <a
-            href="/portfolio"
+            href="/dashboard/portfolio"
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors inline-flex items-center gap-2"
           >
             <FiArrowLeft className="w-4 h-4" />
