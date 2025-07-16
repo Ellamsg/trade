@@ -1,4 +1,450 @@
 
+// "use client"
+// import React, { useState, useEffect, useRef } from 'react';
+// import { FiTrendingUp, FiTrendingDown, FiDollarSign, FiPieChart, FiActivity, FiPlus, FiCreditCard, FiArrowUpRight, FiArrowDownLeft, FiCheck, FiClock, FiX, FiArrowLeft, FiExternalLink, FiChevronDown } from 'react-icons/fi';
+// import { createClient } from '@/app/utils/supabase/clients';
+// import { WalletTier ,
+//   TokenType ,
+//   NetworkType,
+//   UserWallet ,
+//   TransactionRequest ,
+//   WithdrawalRequest,
+//   StockPortfolioItem ,
+//   TIER_CONFIG,
+//   NETWORK_CONFIG,
+//   POPULAR_TOKENS,
+
+// } from '@/app/data';
+
+
+
+// const PortfolioPage = () => {
+//   const [wallet, setWallet] = useState<UserWallet | null>(null);
+//   const [loading, setLoading] = useState(true);
+//   const [showTierSelection, setShowTierSelection] = useState(false);
+//   const [showTokenSelection, setShowTokenSelection] = useState(false);
+//   const [showNetworkSelection, setShowNetworkSelection] = useState(false);
+//   const [creatingWallet, setCreatingWallet] = useState(false);
+//   const [selectedTier, setSelectedTier] = useState<WalletTier | null>(null);
+//   const [selectedToken, setSelectedToken] = useState<TokenType | null>(null);
+//   const [selectedNetwork, setSelectedNetwork] = useState<NetworkType | null>(null);
+//   const [accountRequest, setAccountRequest] = useState<TransactionRequest | null>(null);
+//   const [generatingAccount, setGeneratingAccount] = useState(false);
+//   const [waitingForAccount, setWaitingForAccount] = useState(false);
+//   const [showWithdrawalForm, setShowWithdrawalForm] = useState(false);
+//   const [withdrawalAmount, setWithdrawalAmount] = useState('');
+//   const [withdrawalNetwork, setWithdrawalNetwork] = useState<NetworkType | null>(null);
+//   const [withdrawalToken, setWithdrawalToken] = useState<TokenType | null>(null);
+//   const [withdrawalAccount, setWithdrawalAccount] = useState('');
+//   const [withdrawing, setWithdrawing] = useState(false);
+//   const [withdrawals, setWithdrawals] = useState<WithdrawalRequest[]>([]);
+//   const [activeTab, setActiveTab] = useState<'portfolio' | 'withdrawals'>('portfolio');
+//   const [stockPortfolio, setStockPortfolio] = useState<StockPortfolioItem[]>([]);
+//   const [portfolioLoading, setPortfolioLoading] = useState(true);
+//   const [dropdownOpen, setDropdownOpen] = useState(false);
+  
+//   const supabase = createClient();
+//   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+//   const walletPollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+//   const withdrawalPollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+//   useEffect(() => {
+//     fetchWalletData();
+//     fetchStockPortfolio();
+//     return () => {
+//       if (pollingIntervalRef.current) {
+//         clearInterval(pollingIntervalRef.current);
+//       }
+//       if (walletPollingIntervalRef.current) {
+//         clearInterval(walletPollingIntervalRef.current);
+//       }
+//       if (withdrawalPollingIntervalRef.current) {
+//         clearInterval(withdrawalPollingIntervalRef.current);
+//       }
+//     };
+//   }, []);
+
+//   const fetchStockPortfolio = async () => {
+//     try {
+//       setPortfolioLoading(true);
+//       const { data: { user } } = await supabase.auth.getUser();
+      
+//       if (!user) {
+//         setPortfolioLoading(false);
+//         return;
+//       }
+  
+//       const { data, error } = await supabase
+//         .from('stock_portfolio')
+//         .select('*')
+//         .eq('user_id', user.id)
+//         .order('current_value', { ascending: false });
+  
+//       if (error) throw error;
+  
+//       setStockPortfolio(data || []);
+//     } catch (error) {
+//       console.error('Error fetching stock portfolio:', error);
+//     } finally {
+//       setPortfolioLoading(false);
+//     }
+//   };
+
+//   const calculateTotalPortfolioValue = () => {
+//     return stockPortfolio.reduce((total, item) => total + (item.current_value || 0), 0);
+//   };
+
+//   useEffect(() => {
+//     if (!wallet || wallet.status) return;
+
+//     walletPollingIntervalRef.current = setInterval(async () => {
+//       try {
+//         const { data, error } = await supabase
+//           .from('wallets')
+//           .select('*')
+//           .eq('wallet_number', wallet.wallet_number)
+//           .single();
+
+//         if (!error && data && data.status !== wallet.status) {
+//           setWallet(data);
+//           clearInterval(walletPollingIntervalRef.current!);
+//         }
+//       } catch (error) {
+//         console.error('Error polling wallet status:', error);
+//       }
+//     }, 5000);
+
+//     return () => {
+//       if (walletPollingIntervalRef.current) {
+//         clearInterval(walletPollingIntervalRef.current);
+//       }
+//     };
+//   }, [wallet]);
+
+//   useEffect(() => {
+//     if (wallet) {
+//       fetchWithdrawals();
+//       startWithdrawalPolling();
+//     }
+//   }, [wallet]);
+
+//   const fetchWalletData = async () => {
+//     try {
+//       setLoading(true);
+//       const { data: { user } } = await supabase.auth.getUser();
+      
+//       if (!user) {
+//         setLoading(false);
+//         return;
+//       }
+
+//       const { data: walletData, error: walletError } = await supabase
+//         .from('wallets')
+//         .select('*')
+//         .eq('user_id', user.id)
+//         .single();
+
+//       if (walletError && !walletData) {
+//         setShowTierSelection(true);
+//       } else if (walletData) {
+//         setWallet(walletData);
+//       }
+//     } catch (error) {
+//       console.error('Error fetching wallet data:', error);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const fetchWithdrawals = async () => {
+//     try {
+//       const { data, error } = await supabase
+//         .from('withdrawals')
+//         .select('*')
+//         .eq('wallet_id', wallet!.id)
+//         .order('created_at', { ascending: false });
+
+//       if (error) throw error;
+//       setWithdrawals(data || []);
+//     } catch (error) {
+//       console.error('Error fetching withdrawals:', error);
+//     }
+//   };
+
+//   const startWithdrawalPolling = () => {
+//     if (withdrawalPollingIntervalRef.current) {
+//       clearInterval(withdrawalPollingIntervalRef.current);
+//     }
+
+//     withdrawalPollingIntervalRef.current = setInterval(async () => {
+//       try {
+//         const { data, error } = await supabase
+//           .from('withdrawals')
+//           .select('*')
+//           .eq('wallet_id', wallet!.id)
+//           .order('created_at', { ascending: false });
+
+//         if (!error && data) {
+//           setWithdrawals(data);
+//         }
+//       } catch (error) {
+//         console.error('Error polling withdrawals:', error);
+//       }
+//     }, 10000);
+//   };
+
+//   const handleTierSelection = (tier: WalletTier) => {
+//     setSelectedTier(tier);
+//     setShowTierSelection(false);
+//     setShowTokenSelection(true);
+//   };
+
+//   const handleTokenSelection = (tokenId: string) => {
+//     setSelectedToken(tokenId);
+//     setShowTokenSelection(false);
+//     setShowNetworkSelection(true);
+//   };
+
+//   const handleNetworkSelection = (network: NetworkType) => {
+//     setSelectedNetwork(network);
+//     setShowNetworkSelection(false);
+//     if (selectedTier && selectedToken) {
+//       requestWalletAccount(selectedTier, network, selectedToken);
+//     }
+//   };
+
+//   const requestWalletAccount = async (tier: WalletTier, network: NetworkType, token: TokenType) => {
+//     try {
+//       setGeneratingAccount(true);
+//       setWaitingForAccount(true);
+      
+//       const { data: { user } } = await supabase.auth.getUser();
+      
+//       if (!user) throw new Error('User not authenticated');
+
+//       const transactionData = {
+//         email: user.email!,
+//         amount: TIER_CONFIG[tier].minimum,
+//         wallet_type: tier,
+//         account_number: null,
+//         status: false,
+//         network: network,
+//         token_type: token
+//       };
+
+//       const { data, error } = await supabase
+//         .from('transactions')
+//         .insert(transactionData)
+//         .select()
+//         .single();
+
+//       if (error) throw error;
+
+//       setAccountRequest(data);
+//       setGeneratingAccount(false);
+      
+//       startAccountNumberPolling(data.id);
+
+//     } catch (error) {
+//       console.error('Error creating transaction:', error);
+//       setGeneratingAccount(false);
+//       setWaitingForAccount(false);
+//       resetSelections();
+//     }
+//   };
+
+//   const startAccountNumberPolling = (transactionId: string) => {
+//     if (pollingIntervalRef.current) {
+//       clearInterval(pollingIntervalRef.current);
+//     }
+
+//     pollingIntervalRef.current = setInterval(async () => {
+//       try {
+//         const { data, error } = await supabase
+//           .from('transactions')
+//           .select('*')
+//           .eq('id', transactionId)
+//           .single();
+
+//         if (!error && data) {
+//           setAccountRequest(data);
+          
+//           if (data.account_number) {
+//             clearInterval(pollingIntervalRef.current!);
+//             pollingIntervalRef.current = null;
+//             setWaitingForAccount(false);
+//             createWallet(data.wallet_type, data.account_number, data.network, data.token_type);
+//           }
+//         }
+//       } catch (error) {
+//         console.error('Error polling for account:', error);
+//       }
+//     }, 3000);
+//   };
+
+//   const createWallet = async (tier: WalletTier, accountNumber: string, network: NetworkType, tokenType: TokenType) => {
+//     try {
+//       setCreatingWallet(true);
+//       const { data: { user } } = await supabase.auth.getUser();
+//       if (!user) throw new Error('User not authenticated');
+
+//       const walletData = {
+//         user_id: user.id,
+//         tier: tier,
+//         email: user.email!,
+//         wallet_number: accountNumber,
+//         status: false,
+//         balance: 0,
+//         current_value: 0,
+//         profit_loss: 0,
+//         performance_percentage: 0,
+//         network: network,
+//         token_type: tokenType
+//       };
+      
+//       const { data, error } = await supabase
+//         .from('wallets')
+//         .insert(walletData)
+//         .select()
+//         .single();
+
+//       if (error) throw error;
+
+//       setWallet(data);
+//       resetSelections();
+//       setAccountRequest(null);
+      
+//     } catch (error) {
+//       console.error('Error creating wallet:', error);
+//     } finally {
+//       setCreatingWallet(false);
+//     }
+//   };
+
+//   const handleWithdrawalSubmit = async () => {
+//     if (!wallet || !withdrawalNetwork || !withdrawalToken || !withdrawalAccount || !withdrawalAmount) {
+//       alert('Please fill all fields');
+//       return;
+//     }
+
+//     const amount = parseFloat(withdrawalAmount);
+//     if (isNaN(amount) || amount <= 0) {
+//       alert('Please enter a valid amount');
+//       return;
+//     }
+
+//     if (amount > wallet.balance) {
+//       alert('Insufficient balance');
+//       return;
+//     }
+
+//     try {
+//       setWithdrawing(true);
+
+//       const { error: walletError } = await supabase
+//         .from('wallets')
+//         .update({ balance: wallet.balance - amount })
+//         .eq('id', wallet.id);
+
+//       if (walletError) throw walletError;
+
+//       const { data: { user } } = await supabase.auth.getUser();
+//       if (!user) throw new Error('User not authenticated');
+
+//       const { data, error } = await supabase
+//         .from('withdrawals')
+//         .insert({
+//           user_id: user.id,
+//           wallet_id: wallet.id,
+//           email: wallet.email,
+//           amount: amount,
+//           network: withdrawalNetwork,
+//           token_type: withdrawalToken,
+//           account_number: withdrawalAccount,
+//           status: false
+//         })
+//         .select()
+//         .single();
+
+//       if (error) throw error;
+
+//       setWithdrawals(prev => [data, ...prev]);
+//       setWallet(prev => prev ? { ...prev, balance: prev.balance - amount } : null);
+      
+//       setWithdrawalAmount('');
+//       setWithdrawalNetwork(null);
+//       setWithdrawalToken(null);
+//       setWithdrawalAccount('');
+//       setShowWithdrawalForm(false);
+      
+//     } catch (error) {
+//       console.error('Error processing withdrawal:', error);
+//       alert('Failed to process withdrawal. Please try again.');
+//     } finally {
+//       setWithdrawing(false);
+//     }
+//   };
+
+//   const resetSelections = () => {
+//     setShowTierSelection(false);
+//     setShowTokenSelection(false);
+//     setShowNetworkSelection(false);
+//     setSelectedTier(null);
+//     setSelectedToken(null);
+//     setSelectedNetwork(null);
+//   };
+
+//   const resetWalletCreation = () => {
+//     if (pollingIntervalRef.current) {
+//       clearInterval(pollingIntervalRef.current);
+//       pollingIntervalRef.current = null;
+//     }
+//     setAccountRequest(null);
+//     setGeneratingAccount(false);
+//     setWaitingForAccount(false);
+//     setCreatingWallet(false);
+//     resetSelections();
+//     setShowTierSelection(true);
+//   };
+
+//   const goBackToTierSelection = () => {
+//     setShowTokenSelection(false);
+//     setShowNetworkSelection(false);
+//     setSelectedToken(null);
+//     setSelectedNetwork(null);
+//     setShowTierSelection(true);
+//   };
+
+//   const goBackToTokenSelection = () => {
+//     setShowNetworkSelection(false);
+//     setSelectedNetwork(null);
+//     setShowTokenSelection(true);
+//   };
+
+//   const formatDate = (dateString: string) => {
+//     return new Date(dateString).toLocaleDateString('en-US', {
+//       year: 'numeric',
+//       month: 'short',
+//       day: 'numeric',
+//       hour: '2-digit',
+//       minute: '2-digit'
+//     });
+//   };
+
+//   const getTokenById = (tokenId: string) => {
+//     return POPULAR_TOKENS.find(token => token.id === tokenId);
+//   };
+
+//   if (loading) {
+//     return (
+//       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white flex items-center justify-center">
+//         <div className="text-center">
+//           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-4"></div>
+//           <p className="text-slate-400">Loading portfolio...</p>
+
+
+
+
 "use client"
 import React, { useState, useEffect, useRef } from 'react';
 import { FiTrendingUp, FiTrendingDown, FiDollarSign, FiPieChart, FiActivity, FiPlus, FiCreditCard, FiArrowUpRight, FiArrowDownLeft, FiCheck, FiClock, FiX, FiArrowLeft, FiExternalLink, FiChevronDown } from 'react-icons/fi';
@@ -13,10 +459,65 @@ import { WalletTier ,
   TIER_CONFIG,
   NETWORK_CONFIG,
   POPULAR_TOKENS,
-
 } from '@/app/data';
 
+const ContinueAccountGeneration = ({ onContinue, onCancel, accountRequest }: { 
+  onContinue: () => void, 
+  onCancel: () => void,
+  accountRequest: TransactionRequest | null
+}) => {
+  const token = accountRequest?.token_type ? POPULAR_TOKENS.find(t => t.id === accountRequest.token_type) : null;
+  const network = accountRequest?.network ? NETWORK_CONFIG[accountRequest.network] : null;
+  const tier = accountRequest?.wallet_type ? TIER_CONFIG[accountRequest.wallet_type] : null;
 
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-9">
+      <div className="max-w-4xl mx-auto p-4 md:p-6">
+        <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50 text-center">
+          <div className="text-6xl mb-6">🔍</div>
+          <h3 className="text-2xl font-bold mb-4">
+            Continue Account Generation
+          </h3>
+          <p className="text-slate-400 mb-6">
+            We found an ongoing account generation process. Would you like to continue?
+          </p>
+
+          {accountRequest && (
+            <div className="bg-slate-700/50 rounded-xl p-4 mb-6">
+              <p className="text-sm text-slate-300">
+                <strong>Tier:</strong> {tier?.name || 'N/A'}
+              </p>
+              <p className="text-sm text-slate-300">
+                <strong>Token:</strong> {token?.name || 'N/A'} ({token?.symbol || 'N/A'})
+              </p>
+              <p className="text-sm text-slate-300">
+                <strong>Network:</strong> {network?.name || 'N/A'}
+              </p>
+              <p className="text-sm text-slate-500 mt-2">
+                Started: {new Date(accountRequest.created_at).toLocaleString()}
+              </p>
+            </div>
+          )}
+
+          <div className="flex gap-4 justify-center">
+            <button
+              onClick={onContinue}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-colors"
+            >
+              Continue Process
+            </button>
+            <button
+              onClick={onCancel}
+              className="bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl font-medium transition-colors"
+            >
+              Cancel Process
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const PortfolioPage = () => {
   const [wallet, setWallet] = useState<UserWallet | null>(null);
@@ -42,6 +543,7 @@ const PortfolioPage = () => {
   const [stockPortfolio, setStockPortfolio] = useState<StockPortfolioItem[]>([]);
   const [portfolioLoading, setPortfolioLoading] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [showContinuePrompt, setShowContinuePrompt] = useState(false);
   
   const supabase = createClient();
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -49,6 +551,25 @@ const PortfolioPage = () => {
   const withdrawalPollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    // Check for existing account request in localStorage
+    const savedRequest = localStorage.getItem('accountRequest');
+    if (savedRequest) {
+      const parsedRequest = JSON.parse(savedRequest);
+      setAccountRequest(parsedRequest);
+      
+      if (!parsedRequest.account_number) {
+        setShowContinuePrompt(true);
+      } else {
+        // If account number exists but wallet wasn't created
+        createWallet(
+          parsedRequest.wallet_type,
+          parsedRequest.account_number,
+          parsedRequest.network,
+          parsedRequest.token_type
+        );
+      }
+    }
+
     fetchWalletData();
     fetchStockPortfolio();
     return () => {
@@ -63,6 +584,20 @@ const PortfolioPage = () => {
       }
     };
   }, []);
+
+  const handleContinue = () => {
+    if (!accountRequest) return;
+    
+    setWaitingForAccount(true);
+    startAccountNumberPolling(accountRequest.id);
+    setShowContinuePrompt(false);
+  };
+
+  const handleCancel = () => {
+    localStorage.removeItem('accountRequest');
+    setAccountRequest(null);
+    setShowContinuePrompt(false);
+  };
 
   const fetchStockPortfolio = async () => {
     try {
@@ -241,8 +776,10 @@ const PortfolioPage = () => {
       if (error) throw error;
 
       setAccountRequest(data);
-      setGeneratingAccount(false);
+      // Store in localStorage
+      localStorage.setItem('accountRequest', JSON.stringify(data));
       
+      setGeneratingAccount(false);
       startAccountNumberPolling(data.id);
 
     } catch (error) {
@@ -267,12 +804,16 @@ const PortfolioPage = () => {
           .single();
 
         if (!error && data) {
+          // Update localStorage with latest data
+          localStorage.setItem('accountRequest', JSON.stringify(data));
           setAccountRequest(data);
           
           if (data.account_number) {
             clearInterval(pollingIntervalRef.current!);
             pollingIntervalRef.current = null;
             setWaitingForAccount(false);
+            // Remove from localStorage since we're done
+            localStorage.removeItem('accountRequest');
             createWallet(data.wallet_type, data.account_number, data.network, data.token_type);
           }
         }
@@ -313,6 +854,8 @@ const PortfolioPage = () => {
       setWallet(data);
       resetSelections();
       setAccountRequest(null);
+      // Clean up localStorage
+      localStorage.removeItem('accountRequest');
       
     } catch (error) {
       console.error('Error creating wallet:', error);
@@ -399,6 +942,7 @@ const PortfolioPage = () => {
       clearInterval(pollingIntervalRef.current);
       pollingIntervalRef.current = null;
     }
+    localStorage.removeItem('accountRequest');
     setAccountRequest(null);
     setGeneratingAccount(false);
     setWaitingForAccount(false);
@@ -434,6 +978,10 @@ const PortfolioPage = () => {
   const getTokenById = (tokenId: string) => {
     return POPULAR_TOKENS.find(token => token.id === tokenId);
   };
+
+  if (showContinuePrompt) {
+    return <ContinueAccountGeneration onContinue={handleContinue} onCancel={handleCancel} accountRequest={accountRequest} />;
+  }
 
   if (loading) {
     return (
