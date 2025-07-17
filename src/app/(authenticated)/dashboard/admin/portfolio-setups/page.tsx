@@ -1174,7 +1174,7 @@ const AdminWalletsPage = () => {
                             <div className="font-medium text-white">{wallet.wallet_number}</div>
                             <div className="text-xs text-slate-400">
                              <p className=" uppercase">{wallet.network} </p> 
-                             ( {wallet.token_type} )
+                           <p className="uppercase">( {wallet.token_type} )</p>  
                             </div>
                           </div>
                         </div>
