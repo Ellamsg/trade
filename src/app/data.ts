@@ -65,6 +65,21 @@ export interface TransactionRequest {
   readonly token_type?: TokenType;
 }
 
+// Add this to data.ts
+export interface WalletUpgradeRequest {
+  readonly id: string;
+  readonly user_id: string;
+  readonly wallet_id: string;
+  readonly current_tier: WalletTier;
+  readonly target_tier: WalletTier;
+  readonly status: boolean; // false=pending, true=approved
+  readonly balance: number;
+  readonly wallet_number: string;
+  readonly email: string;
+  readonly created_at: string;
+  readonly updated_at: string;
+}
+
 export interface WithdrawalRequest {
   readonly id: string;
   readonly user_id: string;
