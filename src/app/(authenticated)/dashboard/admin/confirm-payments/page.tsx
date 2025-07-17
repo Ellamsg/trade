@@ -1,110 +1,17 @@
 
 // "use client"
 // import React, { useState, useEffect } from 'react';
-// import { FiUser, FiMail, FiDollarSign, FiClock, FiEdit3, FiSave, FiX, FiCheck, FiEye, FiRefreshCw, FiExternalLink } from 'react-icons/fi';
+// import { FiUser, FiMail, FiDollarSign, FiClock, FiEdit3, FiSave, FiX, FiCheck, FiEye, FiRefreshCw, FiExternalLink, FiChevronDown, FiChevronUp } from 'react-icons/fi';
 // import { createClient } from '@/app/utils/supabase/clients';
-
-// type WalletTier = 
-//   | 'basic' 
-//   | 'standard' 
-//   | 'premium' 
-//   | 'gold' 
-//   | 'platinum' 
-//   | 'diamond' 
-//   | 'elite';
+// import { TIER_CONFIG ,
+//   TransactionRequest,
+//  WithdrawalRequest,
 
 
-// type TransactionRequest = {
-//   id: string;
-//   email: string;
-//   amount: number;
-//   wallet_type: WalletTier;
-//   account_number: string | null;
-//   status: boolean;
-//   created_at: string;
-//   network: string;
-//   token_type: string;
-// };
 
-// type WithdrawalRequest = {
-//   id: string;
-//   user_id: string;
-//   wallet_id: string;
-//   email: string;
-//   amount: number;
-//   network: string;
-//   token_type: string;
-//   account_number: string;
-//   status: boolean;
-//   created_at: string;
-//   updated_at: string;
-// };
+// } from '@/app/data';
 
-// const TIER_CONFIG = {
-//   basic: {
-//     name: 'Basic Wallet',
-//     minimum: 1000,
-//     color: 'from-gray-300 to-gray-400',
-//     bgColor: 'bg-gray-400/20',
-//     borderColor: 'border-gray-400/30',
-//     icon: '🟦',
-//     textColor: 'text-gray-400',
-//   },
-//   standard: {
-//     name: 'Standard Wallet',
-//     minimum: 10000,
-//     color: 'from-blue-400 to-blue-600',
-//     bgColor: 'bg-blue-500/20',
-//     borderColor: 'border-blue-500/30',
-//     icon: '🟪',
-//     textColor: 'text-blue-400',
-//   },
-//   premium: {
-//     name: 'Premium Wallet',
-//     minimum: 20000,
-//     color: 'from-purple-400 to-purple-600',
-//     bgColor: 'bg-purple-500/20',
-//     borderColor: 'border-purple-500/30',
-//     icon: '🟣',
-//     textColor: 'text-purple-400',
-//   },
-//   gold: {
-//     name: 'Gold Wallet',
-//     minimum: 50000,
-//     color: 'from-yellow-400 to-yellow-600',
-//     bgColor: 'bg-yellow-500/20',
-//     borderColor: 'border-yellow-500/30',
-//     icon: '🟨',
-//     textColor: 'text-yellow-400',
-//   },
-//   platinum: {
-//     name: 'Platinum Wallet',
-//     minimum: 100000,
-//     color: 'from-slate-400 to-slate-600',
-//     bgColor: 'bg-slate-500/20',
-//     borderColor: 'border-slate-500/30',
-//     icon: '⬜️',
-//     textColor: 'text-slate-400',
-//   },
-//   diamond: {
-//     name: 'Diamond Wallet',
-//     minimum: 500000,
-//     color: 'from-indigo-400 to-indigo-700',
-//     bgColor: 'bg-indigo-500/20',
-//     borderColor: 'border-indigo-500/30',
-//     icon: '🔷',
-//     textColor: 'text-indigo-400',
-//   },
-//   elite: {
-//     name: 'Elite Wallet',
-//     minimum: 1000000,
-//     color: 'from-emerald-500 to-emerald-700',
-//     bgColor: 'bg-emerald-500/20',
-//     borderColor: 'border-emerald-500/30',
-//     icon: '💎',
-//     textColor: 'text-emerald-500',
-//   }
-// };
+
 
 // const AdminTransactionsPage = () => {
 //   const [transactions, setTransactions] = useState<TransactionRequest[]>([]);
@@ -116,6 +23,7 @@
 //   const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('all');
 //   const [searchEmail, setSearchEmail] = useState('');
 //   const [activeTab, setActiveTab] = useState<'deposits' | 'withdrawals'>('deposits');
+//   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
   
 //   const supabase = createClient();
 
@@ -197,7 +105,6 @@
 
 //       if (error) throw error;
 
-//       // Also update the transaction status
 //       const { error: transactionError } = await supabase
 //         .from('transactions')
 //         .update({ status })
@@ -205,7 +112,6 @@
 
 //       if (transactionError) throw transactionError;
 
-//       // Update local state
 //       setTransactions(prev =>
 //         prev.map(t =>
 //           t.account_number === walletNumber ? { ...t, status } : t
@@ -267,6 +173,13 @@
 //       hour: '2-digit',
 //       minute: '2-digit'
 //     });
+//   };
+
+//   const toggleRowExpand = (id: string) => {
+//     setExpandedRows(prev => ({
+//       ...prev,
+//       [id]: !prev[id]
+//     }));
 //   };
 
 //   const filteredTransactions = transactions.filter(transaction => {
@@ -454,66 +367,202 @@
 //         </div>
 
 //         {activeTab === 'deposits' ? (
-//           /* Deposits Table */
+//           /* Deposits Table - Mobile Friendly */
 //           <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 overflow-hidden">
-//             <div className="overflow-x-auto">
+//             <div className="hidden md:block overflow-x-auto">
 //               <table className="w-full">
 //                 <thead className="bg-slate-700/50">
 //                   <tr>
 //                     <th className="text-left p-4 text-slate-300 font-medium">User</th>
 //                     <th className="text-left p-4 text-slate-300 font-medium">Wallet Type</th>
-//                     <th className="text-left p-4 text-slate-300 font-medium">Token Type</th>
-//                     <th className="text-left p-4 text-slate-300 font-medium">Network</th>
 //                     <th className="text-left p-4 text-slate-300 font-medium">Amount</th>
-//                     <th className="text-left p-4 text-slate-300 font-medium">Account Number</th>
+//                     <th className="text-left p-4 text-slate-300 font-medium">Account</th>
 //                     <th className="text-left p-4 text-slate-300 font-medium">Status</th>
-//                     <th className="text-left p-4 text-slate-300 font-medium">Payment Status</th>
-//                     <th className="text-left p-4 text-slate-300 font-medium">Created</th>
 //                     <th className="text-left p-4 text-slate-300 font-medium">Actions</th>
 //                   </tr>
 //                 </thead>
 //                 <tbody>
 //                   {filteredTransactions.map((transaction) => (
-//                     <tr key={transaction.id} className="border-t border-slate-700/50 hover:bg-slate-700/25">
-//                       <td className="p-4">
-//                         <div className="flex items-center gap-3">
-//                           <div className="w-10 h-10 bg-slate-600 rounded-full flex items-center justify-center">
-//                             <FiUser className="w-5 h-5 text-slate-300" />
+//                     <React.Fragment key={transaction.id}>
+//                       <tr className="border-t  items-center border-slate-700/50 hover:bg-slate-700/25">
+//                         <td className="p-4">
+//                           <div className="flex items-center gap-3">
+//                             <div className="w-10 h-10 bg-slate-600 rounded-full flex items-center justify-center">
+//                               <FiUser className="w-5 h-5 text-slate-300" />
+//                             </div>
+//                             <div>
+//                               <p className="text-white font-medium">{transaction.email}</p>
+//                               <p className="text-slate-400 text-sm">ID: {transaction.id}</p>
+//                             </div>
 //                           </div>
-//                           <div>
-//                             <p className="text-white font-medium">{transaction.email}</p>
-//                             <p className="text-slate-400 text-sm">ID: {transaction.id}</p>
+//                         </td>
+//                         <td className="p-4">
+//                           <div className="flex  items-center gap-2">
+//                             <span className="text-2xl">{TIER_CONFIG[transaction.wallet_type].icon}</span>
+//                             <div>
+//                               <p className={`font-medium `}>
+//                                 {TIER_CONFIG[transaction.wallet_type].name}
+//                               </p>
+//                               <p className="text-slate-400 text-sm">{transaction.token_type} ({transaction.network})</p>
+//                             </div>
 //                           </div>
-//                         </div>
-//                       </td>
-//                       <td className="p-4">
+//                         </td>
+//                         <td className="p-4">
+//                           <p className="text-white font-medium">${transaction.amount.toLocaleString()}</p>
+//                         </td>
+//                         <td className="p-4">
+//                           {editingId === transaction.id ? (
+//                             <div className="flex  items-center gap-2">
+//                               <input
+//                                 type="text"
+//                                 value={editAccountNumber}
+//                                 onChange={(e) => setEditAccountNumber(e.target.value)}
+//                                 placeholder="Enter account number"
+//                                 className="bg-slate-700 border border-slate-600 rounded px-3 py-1 text-white text-sm focus:outline-none focus:border-blue-500"
+//                               />
+//                               <button
+//                                 onClick={() => handleSave(transaction.id)}
+//                                 disabled={updatingId === transaction.id}
+//                                 className="bg-green-600 hover:bg-green-700 text-white p-1 rounded disabled:opacity-50"
+//                               >
+//                                 <FiSave className="w-4 h-4" />
+//                               </button>
+//                               <button
+//                                 onClick={cancelEditing}
+//                                 className="bg-slate-600 hover:bg-slate-700 text-white p-1 rounded"
+//                               >
+//                                 <FiX className="w-4 h-4" />
+//                               </button>
+//                             </div>
+//                           ) : (
+//                             <div className="flex items-center gap-2">
+//                               {transaction.account_number ? (
+//                                 <span className="font-mono text-green-400 font-medium">
+//                                   {transaction.account_number}
+//                                 </span>
+//                               ) : (
+//                                 <span className="text-slate-400">Not assigned</span>
+//                               )}
+//                             </div>
+//                           )}
+//                         </td>
+//                         <td className="p-4">
+//                           {transaction.account_number ? (
+//                             <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded-full text-sm font-medium">
+//                               Completed
+//                             </span>
+//                           ) : (
+//                             <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full text-sm font-medium">
+//                               Pending
+//                             </span>
+//                           )}
+//                         </td>
+//                         <td className="p-4 flex  items-center gap-2">
+//                           {transaction.account_number && (
+//                             <button
+//                               onClick={async () => {
+//                                 try {
+//                                   await updateWalletStatus(
+//                                     transaction.account_number!,
+//                                     !transaction.status
+//                                   );
+//                                 } catch (error) {
+//                                   console.error('Error updating payment status:', error);
+//                                 }
+//                               }}
+//                               className={`px-3 py-1 rounded cursor-pointer  text-sm font-medium transition-colors flex items-center gap-1 ${
+//                                 transaction.status
+//                                   ? 'bg-green-600 hover:bg-green-700 text-white'
+//                                   : 'bg-yellow-600 hover:bg-yellow-700 text-white'
+//                               }`}
+//                             >
+//                               {transaction.status ? (
+//                                 <FiCheck className="w-3 h-3" />
+//                               ) : (
+//                                 <FiClock className="w-3 h-3" />
+//                               )}
+//                             </button>
+//                           )}
+//                           {editingId === transaction.id ? (
+//                             <div className="text-sm text-slate-400">
+//                               {updatingId === transaction.id ? 'Saving...' : 'Editing...'}
+//                             </div>
+//                           ) : (
+//                             <button
+//                               onClick={() => startEditing(transaction)}
+//                               className="bg-blue-600 cursor-pointer hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1"
+//                             >
+//                               <FiEdit3 className="w-3 h-3" />
+//                             </button>
+//                           )}
+//                         </td>
+//                       </tr>
+//                     </React.Fragment>
+//                   ))}
+//                 </tbody>
+//               </table>
+//             </div>
+
+//             {/* Mobile View */}
+//             <div className="md:hidden">
+//               {filteredTransactions.map((transaction) => (
+//                 <div key={transaction.id} className="border-t border-slate-700/50 p-4">
+//                   <div 
+//                     className="flex justify-between items-center cursor-pointer"
+//                     onClick={() => toggleRowExpand(transaction.id)}
+//                   >
+//                     <div className="flex items-center gap-3">
+//                       <div className="w-10 h-10 bg-slate-600 rounded-full flex items-center justify-center">
+//                         <FiUser className="w-5 h-5 text-slate-300" />
+//                       </div>
+//                       <div>
+//                         <p className="text-white font-medium">{transaction.email}</p>
+//                         <p className="text-slate-400 text-sm">${transaction.amount.toLocaleString()}</p>
+//                       </div>
+//                     </div>
+//                     <div className="flex items-center gap-2">
+//                       {transaction.account_number ? (
+//                         <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded-full text-xs">
+//                           Completed
+//                         </span>
+//                       ) : (
+//                         <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full text-xs">
+//                           Pending
+//                         </span>
+//                       )}
+//                       {expandedRows[transaction.id] ? (
+//                         <FiChevronUp className="text-slate-400" />
+//                       ) : (
+//                         <FiChevronDown className="text-slate-400" />
+//                       )}
+//                     </div>
+//                   </div>
+
+//                   {expandedRows[transaction.id] && (
+//                     <div className="mt-4 pl-14 space-y-3">
+//                       <div>
+//                         <p className="text-slate-400 text-sm">Wallet Type</p>
 //                         <div className="flex items-center gap-2">
 //                           <span className="text-2xl">{TIER_CONFIG[transaction.wallet_type].icon}</span>
-//                           <div>
-//                             <p className={`font-medium ${TIER_CONFIG[transaction.wallet_type].textColor}`}>
-//                               {TIER_CONFIG[transaction.wallet_type].name}
-//                             </p>
-//                           </div>
+//                           <p className={`font-medium `}>
+//                             {TIER_CONFIG[transaction.wallet_type].name}
+//                           </p>
 //                         </div>
-//                       </td>
-//                       <td className="p-4">
-//                         <p className="text-white font-medium">{transaction.token_type}</p>
-//                       </td>
-//                       <td className="p-4">
-//                         <p className="text-white font-medium">{transaction.network}</p>
-//                       </td>
-//                       <td className="p-4">
-//                         <p className="text-white font-medium">${transaction.amount.toLocaleString()}</p>
-//                       </td>
-//                       <td className="p-4">
+//                       </div>
+//                       <div>
+//                         <p className="text-slate-400 text-sm">Token/Network</p>
+//                         <p className="text-white">{transaction.token_type} ({transaction.network})</p>
+//                       </div>
+//                       <div>
+//                         <p className="text-slate-400 text-sm">Account Number</p>
 //                         {editingId === transaction.id ? (
-//                           <div className="flex items-center gap-2">
+//                           <div className="flex items-center gap-2 mt-1">
 //                             <input
 //                               type="text"
 //                               value={editAccountNumber}
 //                               onChange={(e) => setEditAccountNumber(e.target.value)}
 //                               placeholder="Enter account number"
-//                               className="bg-slate-700 border border-slate-600 rounded px-3 py-1 text-white text-sm focus:outline-none focus:border-blue-500"
+//                               className="flex-1 bg-slate-700 border border-slate-600 rounded px-3 py-1 text-white text-sm focus:outline-none focus:border-blue-500"
 //                             />
 //                             <button
 //                               onClick={() => handleSave(transaction.id)}
@@ -538,22 +587,17 @@
 //                             ) : (
 //                               <span className="text-slate-400">Not assigned</span>
 //                             )}
+//                             <button
+//                               onClick={() => startEditing(transaction)}
+//                               className="ml-auto bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm"
+//                             >
+//                               <FiEdit3 className="w-3 h-3" />
+//                             </button>
 //                           </div>
 //                         )}
-//                       </td>
-//                       <td className="p-4">
-//                         {transaction.account_number ? (
-//                           <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded-full text-sm font-medium">
-//                             Completed
-//                           </span>
-//                         ) : (
-//                           <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full text-sm font-medium">
-//                             Pending
-//                           </span>
-//                         )}
-//                       </td>
-//                       <td className="p-4">
-//                         {transaction.account_number ? (
+//                       </div>
+//                       <div className="flex gap-2 pt-2">
+//                         {transaction.account_number && (
 //                           <button
 //                             onClick={async () => {
 //                               try {
@@ -565,7 +609,7 @@
 //                                 console.error('Error updating payment status:', error);
 //                               }
 //                             }}
-//                             className={`px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1 ${
+//                             className={`flex-1 px-3 py-2 rounded text-sm font-medium transition-colors flex items-center justify-center gap-1 ${
 //                               transaction.status
 //                                 ? 'bg-green-600 hover:bg-green-700 text-white'
 //                                 : 'bg-yellow-600 hover:bg-yellow-700 text-white'
@@ -574,41 +618,21 @@
 //                             {transaction.status ? (
 //                               <>
 //                                 <FiCheck className="w-3 h-3" />
-//                                 Paid
+//                                 <span>Mark as Pending</span>
 //                               </>
 //                             ) : (
 //                               <>
 //                                 <FiClock className="w-3 h-3" />
-//                                 Mark as Paid
+//                                 <span>Mark as Paid</span>
 //                               </>
 //                             )}
 //                           </button>
-//                         ) : (
-//                           <span className="text-slate-400 text-sm">N/A</span>
 //                         )}
-//                       </td>
-//                       <td className="p-4">
-//                         <p className="text-slate-400 text-sm">{formatDate(transaction.created_at)}</p>
-//                       </td>
-//                       <td className="p-4">
-//                         {editingId === transaction.id ? (
-//                           <div className="text-sm text-slate-400">
-//                             {updatingId === transaction.id ? 'Saving...' : 'Editing...'}
-//                           </div>
-//                         ) : (
-//                           <button
-//                             onClick={() => startEditing(transaction)}
-//                             className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1"
-//                           >
-//                             <FiEdit3 className="w-3 h-3" />
-//                             {transaction.account_number ? 'Edit' : 'Assign'}
-//                           </button>
-//                         )}
-//                       </td>
-//                     </tr>
-//                   ))}
-//                 </tbody>
-//               </table>
+//                       </div>
+//                     </div>
+//                   )}
+//                 </div>
+//               ))}
 //             </div>
             
 //             {filteredTransactions.length === 0 && (
@@ -626,67 +650,142 @@
 //             )}
 //           </div>
 //         ) : (
-//           /* Withdrawals Table */
+//           /* Withdrawals Table - Mobile Friendly */
 //           <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 overflow-hidden">
-//             <div className="overflow-x-auto">
+//             <div className="hidden md:block overflow-x-auto">
 //               <table className="w-full">
 //                 <thead className="bg-slate-700/50">
 //                   <tr>
 //                     <th className="text-left p-4 text-slate-300 font-medium">User</th>
 //                     <th className="text-left p-4 text-slate-300 font-medium">Amount</th>
 //                     <th className="text-left p-4 text-slate-300 font-medium">Network</th>
-//                     <th className="text-left p-4 text-slate-300 font-medium">Token</th>
 //                     <th className="text-left p-4 text-slate-300 font-medium">Account</th>
 //                     <th className="text-left p-4 text-slate-300 font-medium">Status</th>
-//                     <th className="text-left p-4 text-slate-300 font-medium">Created</th>
-//                     <th className="text-left p-4 text-slate-300 font-medium">Updated</th>
 //                     <th className="text-left p-4 text-slate-300 font-medium">Actions</th>
 //                   </tr>
 //                 </thead>
 //                 <tbody>
 //                   {filteredWithdrawals.map((withdrawal) => (
-//                     <tr key={withdrawal.id} className="border-t border-slate-700/50 hover:bg-slate-700/25">
-//                       <td className="p-4">
-//                         <div className="flex items-center gap-3">
-//                           <div className="w-10 h-10 bg-slate-600 rounded-full flex items-center justify-center">
-//                             <FiUser className="w-5 h-5 text-slate-300" />
-//                           </div>
-//                           <div>
-//                             <p className="text-white font-medium">{withdrawal.email}</p>
-//                             <p className="text-slate-400 text-sm">ID: {withdrawal.id}</p>
-//                           </div>
-//                         </div>
-//                       </td>
-//                       <td className="p-4">
-//                         <p className="text-white font-medium">${withdrawal.amount.toLocaleString()}</p>
-//                       </td>
-//                       <td className="p-4">
-//                         <p className="text-white font-medium">{withdrawal.network}</p>
-//                       </td>
-//                       <td className="p-4">
-//                         <p className="text-white font-medium">{withdrawal.token_type}</p>
-//                       </td>
-//                       <td className="p-4">
+//                     <React.Fragment key={withdrawal.id}>
+//                       <tr className="border-t border-slate-700/50 hover:bg-slate-700/25">
+//                         <td className="p-4">
+//                           <div className="flex items-center gap-3">
+//                             <div className="w-10 h-10 bg-slate-600 rounded-full flex items-center justify-center">
+//                               <FiUser className="w-5 h-5 text-slate-300" />
+//                             </div>
+//                             <div>
+//                               <p className="text-white font-medium">{withdrawal.email}</p>
+//                               <p className="text-slate-400 text-sm">ID: {withdrawal.id}</p>
+//                             </div>
+//                           </div> 
+//                         </td> 
+//                         <td className="p-4">
+//                           <p className="text-white font-medium">${withdrawal.amount.toLocaleString()}</p>
+//                           <p className="text-slate-400 text-sm">{withdrawal.token_type}</p>
+//                         </td>
+//                         <td className="p-4">
+//                           <p className="text-white font-medium">{withdrawal.network}</p>
+//                         </td>
+//                         <td className="p-4 ">
+//                           <p className="font-mono text-slate-300">{withdrawal.account_number}</p>
+//                         </td>
+//                         <td className="p-4">
+//                           {withdrawal.status ? (
+//                             <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded-full text-sm font-medium">
+//                               Completed
+//                             </span>
+//                           ) : (
+//                             <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full text-sm font-medium">
+//                               Pending
+//                             </span>
+//                           )}
+//                         </td>
+//                         <td className="p-4">
+//                           <button
+//                             onClick={async () => {
+//                               try {
+//                                 await updateWithdrawalStatus(
+//                                   withdrawal.id,
+//                                   !withdrawal.status
+//                                 );
+//                               } catch (error) {
+//                                 console.error('Error updating withdrawal status:', error);
+//                               }
+//                             }}
+//                             className={`px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1 ${
+//                               withdrawal.status
+//                                 ? 'bg-green-600 hover:bg-green-700 text-white'
+//                                 : 'bg-yellow-600 hover:bg-yellow-700 text-white'
+//                             }`}
+//                           >
+//                             {withdrawal.status ? (
+//                               <FiCheck className="w-3 h-3" />
+//                             ) : (
+//                               <FiClock className="w-3 h-3" />
+//                             )}
+//                           </button>
+//                         </td>
+//                       </tr>
+//                     </React.Fragment>
+//                   ))}
+//                 </tbody>
+//               </table>
+//             </div>
+
+//             {/* Mobile View */}
+//             <div className="md:hidden">
+//               {filteredWithdrawals.map((withdrawal) => (
+//                 <div key={withdrawal.id} className="border-t border-slate-700/50 p-4">
+//                   <div 
+//                     className="flex justify-between items-center cursor-pointer"
+//                     onClick={() => toggleRowExpand(withdrawal.id)}
+//                   >
+//                     <div className="flex items-center gap-3">
+//                       <div className="w-10 h-10 bg-slate-600 rounded-full flex items-center justify-center">
+//                         <FiUser className="w-5 h-5 text-slate-300" />
+//                       </div>
+//                       <div>
+//                         <p className="text-white font-medium">{withdrawal.email}</p>
+//                         <p className="text-slate-400 text-sm">${withdrawal.amount.toLocaleString()}</p>
+//                       </div>
+//                     </div>
+//                     <div className="flex items-center gap-2">
+//                       {withdrawal.status ? (
+//                         <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded-full text-xs">
+//                           Completed
+//                         </span>
+//                       ) : (
+//                         <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full text-xs">
+//                           Pending
+//                         </span>
+//                       )}
+//                       {expandedRows[withdrawal.id] ? (
+//                         <FiChevronUp className="text-slate-400" />
+//                       ) : (
+//                         <FiChevronDown className="text-slate-400" />
+//                       )}
+//                     </div>
+//                   </div>
+
+//                   {expandedRows[withdrawal.id] && (
+//                     <div className="mt-4 pl-14 space-y-3">
+//                       <div>
+//                         <p className="text-slate-400 text-sm">Token/Network</p>
+//                         <p className="text-white">{withdrawal.token_type} ({withdrawal.network})</p>
+//                       </div>
+//                       <div>
+//                         <p className="text-slate-400 text-sm">Account Number</p>
 //                         <p className="font-mono text-slate-300">{withdrawal.account_number}</p>
-//                       </td>
-//                       <td className="p-4">
-//                         {withdrawal.status ? (
-//                           <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded-full text-sm font-medium">
-//                             Completed
-//                           </span>
-//                         ) : (
-//                           <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full text-sm font-medium">
-//                             Pending
-//                           </span>
-//                         )}
-//                       </td>
-//                       <td className="p-4">
-//                         <p className="text-slate-400 text-sm">{formatDate(withdrawal.created_at)}</p>
-//                       </td>
-//                       <td className="p-4">
-//                         <p className="text-slate-400 text-sm">{formatDate(withdrawal.updated_at)}</p>
-//                       </td>
-//                       <td className="p-4">
+//                       </div>
+//                       <div>
+//                         <p className="text-slate-400 text-sm">Created</p>
+//                         <p className="text-slate-300 text-sm">{formatDate(withdrawal.created_at)}</p>
+//                       </div>
+//                       <div>
+//                         <p className="text-slate-400 text-sm">Updated</p>
+//                         <p className="text-slate-300 text-sm">{formatDate(withdrawal.updated_at)}</p>
+//                       </div>
+//                       <div className="pt-2">
 //                         <button
 //                           onClick={async () => {
 //                             try {
@@ -698,7 +797,7 @@
 //                               console.error('Error updating withdrawal status:', error);
 //                             }
 //                           }}
-//                           className={`px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1 ${
+//                           className={`w-full px-3 py-2 rounded text-sm font-medium transition-colors flex items-center justify-center gap-1 ${
 //                             withdrawal.status
 //                               ? 'bg-green-600 hover:bg-green-700 text-white'
 //                               : 'bg-yellow-600 hover:bg-yellow-700 text-white'
@@ -707,20 +806,20 @@
 //                           {withdrawal.status ? (
 //                             <>
 //                               <FiCheck className="w-3 h-3" />
-//                               Mark as Pending
+//                               <span>Mark as Pending</span>
 //                             </>
 //                           ) : (
 //                             <>
 //                               <FiClock className="w-3 h-3" />
-//                               Mark as Paid
+//                               <span>Mark as Paid</span>
 //                             </>
 //                           )}
 //                         </button>
-//                       </td>
-//                     </tr>
-//                   ))}
-//                 </tbody>
-//               </table>
+//                       </div>
+//                     </div>
+//                   )}
+//                 </div>
+//               ))}
 //             </div>
             
 //             {filteredWithdrawals.length === 0 && (
@@ -746,111 +845,12 @@
 // export default AdminTransactionsPage;
 
 
+
 "use client"
 import React, { useState, useEffect } from 'react';
 import { FiUser, FiMail, FiDollarSign, FiClock, FiEdit3, FiSave, FiX, FiCheck, FiEye, FiRefreshCw, FiExternalLink, FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import { createClient } from '@/app/utils/supabase/clients';
-
-type WalletTier = 
-  | 'basic' 
-  | 'standard' 
-  | 'premium' 
-  | 'gold' 
-  | 'platinum' 
-  | 'diamond' 
-  | 'elite';
-
-type TransactionRequest = {
-  id: string;
-  email: string;
-  amount: number;
-  wallet_type: WalletTier;
-  account_number: string | null;
-  status: boolean;
-  created_at: string;
-  network: string;
-  token_type: string;
-};
-
-type WithdrawalRequest = {
-  id: string;
-  user_id: string;
-  wallet_id: string;
-  email: string;
-  amount: number;
-  network: string;
-  token_type: string;
-  account_number: string;
-  status: boolean;
-  created_at: string;
-  updated_at: string;
-};
-
-const TIER_CONFIG = {
-  basic: {
-    name: 'Basic Wallet',
-    minimum: 1000,
-    color: 'from-gray-300 to-gray-400',
-    bgColor: 'bg-gray-400/20',
-    borderColor: 'border-gray-400/30',
-    icon: '🟦',
-    textColor: 'text-gray-400',
-  },
-  standard: {
-    name: 'Standard Wallet',
-    minimum: 10000,
-    color: 'from-blue-400 to-blue-600',
-    bgColor: 'bg-blue-500/20',
-    borderColor: 'border-blue-500/30',
-    icon: '🟪',
-    textColor: 'text-blue-400',
-  },
-  premium: {
-    name: 'Premium Wallet',
-    minimum: 20000,
-    color: 'from-purple-400 to-purple-600',
-    bgColor: 'bg-purple-500/20',
-    borderColor: 'border-purple-500/30',
-    icon: '🟣',
-    textColor: 'text-purple-400',
-  },
-  gold: {
-    name: 'Gold Wallet',
-    minimum: 50000,
-    color: 'from-yellow-400 to-yellow-600',
-    bgColor: 'bg-yellow-500/20',
-    borderColor: 'border-yellow-500/30',
-    icon: '🟨',
-    textColor: 'text-yellow-400',
-  },
-  platinum: {
-    name: 'Platinum Wallet',
-    minimum: 100000,
-    color: 'from-slate-400 to-slate-600',
-    bgColor: 'bg-slate-500/20',
-    borderColor: 'border-slate-500/30',
-    icon: '⬜️',
-    textColor: 'text-slate-400',
-  },
-  diamond: {
-    name: 'Diamond Wallet',
-    minimum: 500000,
-    color: 'from-indigo-400 to-indigo-700',
-    bgColor: 'bg-indigo-500/20',
-    borderColor: 'border-indigo-500/30',
-    icon: '🔷',
-    textColor: 'text-indigo-400',
-  },
-  elite: {
-    name: 'Elite Wallet',
-    minimum: 1000000,
-    color: 'from-emerald-500 to-emerald-700',
-    bgColor: 'bg-emerald-500/20',
-    borderColor: 'border-emerald-500/30',
-    icon: '💎',
-    textColor: 'text-emerald-500',
-  }
-};
+import { TIER_CONFIG, TransactionRequest, WithdrawalRequest } from '@/app/data';
 
 const AdminTransactionsPage = () => {
   const [transactions, setTransactions] = useState<TransactionRequest[]>([]);
@@ -862,7 +862,7 @@ const AdminTransactionsPage = () => {
   const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('all');
   const [searchEmail, setSearchEmail] = useState('');
   const [activeTab, setActiveTab] = useState<'deposits' | 'withdrawals'>('deposits');
-  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   
   const supabase = createClient();
 
@@ -1015,10 +1015,13 @@ const AdminTransactionsPage = () => {
   };
 
   const toggleRowExpand = (id: string) => {
-    setExpandedRows(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
+    const newExpanded = new Set(expandedRows);
+    if (newExpanded.has(id)) {
+      newExpanded.delete(id);
+    } else {
+      newExpanded.add(id);
+    }
+    setExpandedRows(newExpanded);
   };
 
   const filteredTransactions = transactions.filter(transaction => {
@@ -1206,272 +1209,175 @@ const AdminTransactionsPage = () => {
         </div>
 
         {activeTab === 'deposits' ? (
-          /* Deposits Table - Mobile Friendly */
+          /* Deposits Table with Expandable Rows */
           <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 overflow-hidden">
-            <div className="hidden md:block overflow-x-auto">
+            <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-slate-700/50">
                   <tr>
                     <th className="text-left p-4 text-slate-300 font-medium">User</th>
                     <th className="text-left p-4 text-slate-300 font-medium">Wallet Type</th>
                     <th className="text-left p-4 text-slate-300 font-medium">Amount</th>
-                    <th className="text-left p-4 text-slate-300 font-medium">Account</th>
                     <th className="text-left p-4 text-slate-300 font-medium">Status</th>
                     <th className="text-left p-4 text-slate-300 font-medium">Actions</th>
+                    <th className="text-left p-4 text-slate-300 font-medium"></th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredTransactions.map((transaction) => (
-                    <React.Fragment key={transaction.id}>
-                      <tr className="border-t  items-center border-slate-700/50 hover:bg-slate-700/25">
-                        <td className="p-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-slate-600 rounded-full flex items-center justify-center">
-                              <FiUser className="w-5 h-5 text-slate-300" />
+                  {filteredTransactions.map((transaction) => {
+                    const isExpanded = expandedRows.has(transaction.id);
+                    return (
+                      <React.Fragment key={transaction.id}>
+                        <tr className="border-t border-slate-700/50 hover:bg-slate-700/25">
+                          <td className="p-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-slate-600 rounded-full flex items-center justify-center">
+                                <FiUser className="w-5 h-5 text-slate-300" />
+                              </div>
+                              <div>
+                                <p className="text-white font-medium">{transaction.email}</p>
+                                <p className="text-slate-400 text-sm">ID: {transaction.id}</p>
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-white font-medium">{transaction.email}</p>
-                              <p className="text-slate-400 text-sm">ID: {transaction.id}</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="p-4">
-                          <div className="flex  items-center gap-2">
-                            <span className="text-2xl">{TIER_CONFIG[transaction.wallet_type].icon}</span>
-                            <div>
-                              <p className={`font-medium ${TIER_CONFIG[transaction.wallet_type].textColor}`}>
-                                {TIER_CONFIG[transaction.wallet_type].name}
-                              </p>
-                              <p className="text-slate-400 text-sm">{transaction.token_type} ({transaction.network})</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="p-4">
-                          <p className="text-white font-medium">${transaction.amount.toLocaleString()}</p>
-                        </td>
-                        <td className="p-4">
-                          {editingId === transaction.id ? (
-                            <div className="flex  items-center gap-2">
-                              <input
-                                type="text"
-                                value={editAccountNumber}
-                                onChange={(e) => setEditAccountNumber(e.target.value)}
-                                placeholder="Enter account number"
-                                className="bg-slate-700 border border-slate-600 rounded px-3 py-1 text-white text-sm focus:outline-none focus:border-blue-500"
-                              />
-                              <button
-                                onClick={() => handleSave(transaction.id)}
-                                disabled={updatingId === transaction.id}
-                                className="bg-green-600 hover:bg-green-700 text-white p-1 rounded disabled:opacity-50"
-                              >
-                                <FiSave className="w-4 h-4" />
-                              </button>
-                              <button
-                                onClick={cancelEditing}
-                                className="bg-slate-600 hover:bg-slate-700 text-white p-1 rounded"
-                              >
-                                <FiX className="w-4 h-4" />
-                              </button>
-                            </div>
-                          ) : (
+                          </td>
+                          <td className="p-4">
                             <div className="flex items-center gap-2">
-                              {transaction.account_number ? (
-                                <span className="font-mono text-green-400 font-medium">
-                                  {transaction.account_number}
-                                </span>
-                              ) : (
-                                <span className="text-slate-400">Not assigned</span>
-                              )}
+                              <span className="text-2xl">{TIER_CONFIG[transaction.wallet_type].icon}</span>
+                              <div>
+                                <p className={`font-medium`}>
+                                  {TIER_CONFIG[transaction.wallet_type].name}
+                                </p>
+                              </div>
                             </div>
-                          )}
-                        </td>
-                        <td className="p-4">
-                          {transaction.account_number ? (
-                            <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded-full text-sm font-medium">
-                              Completed
-                            </span>
-                          ) : (
-                            <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full text-sm font-medium">
-                              Pending
-                            </span>
-                          )}
-                        </td>
-                        <td className="p-4 flex  items-center gap-2">
-                          {transaction.account_number && (
-                            <button
-                              onClick={async () => {
-                                try {
-                                  await updateWalletStatus(
-                                    transaction.account_number!,
-                                    !transaction.status
-                                  );
-                                } catch (error) {
-                                  console.error('Error updating payment status:', error);
-                                }
-                              }}
-                              className={`px-3 py-1 rounded cursor-pointer  text-sm font-medium transition-colors flex items-center gap-1 ${
-                                transaction.status
-                                  ? 'bg-green-600 hover:bg-green-700 text-white'
-                                  : 'bg-yellow-600 hover:bg-yellow-700 text-white'
-                              }`}
-                            >
-                              {transaction.status ? (
-                                <FiCheck className="w-3 h-3" />
-                              ) : (
-                                <FiClock className="w-3 h-3" />
-                              )}
-                            </button>
-                          )}
-                          {editingId === transaction.id ? (
-                            <div className="text-sm text-slate-400">
-                              {updatingId === transaction.id ? 'Saving...' : 'Editing...'}
-                            </div>
-                          ) : (
-                            <button
-                              onClick={() => startEditing(transaction)}
-                              className="bg-blue-600 cursor-pointer hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1"
-                            >
-                              <FiEdit3 className="w-3 h-3" />
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                    </React.Fragment>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Mobile View */}
-            <div className="md:hidden">
-              {filteredTransactions.map((transaction) => (
-                <div key={transaction.id} className="border-t border-slate-700/50 p-4">
-                  <div 
-                    className="flex justify-between items-center cursor-pointer"
-                    onClick={() => toggleRowExpand(transaction.id)}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-slate-600 rounded-full flex items-center justify-center">
-                        <FiUser className="w-5 h-5 text-slate-300" />
-                      </div>
-                      <div>
-                        <p className="text-white font-medium">{transaction.email}</p>
-                        <p className="text-slate-400 text-sm">${transaction.amount.toLocaleString()}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {transaction.account_number ? (
-                        <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded-full text-xs">
-                          Completed
-                        </span>
-                      ) : (
-                        <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full text-xs">
-                          Pending
-                        </span>
-                      )}
-                      {expandedRows[transaction.id] ? (
-                        <FiChevronUp className="text-slate-400" />
-                      ) : (
-                        <FiChevronDown className="text-slate-400" />
-                      )}
-                    </div>
-                  </div>
-
-                  {expandedRows[transaction.id] && (
-                    <div className="mt-4 pl-14 space-y-3">
-                      <div>
-                        <p className="text-slate-400 text-sm">Wallet Type</p>
-                        <div className="flex items-center gap-2">
-                          <span className="text-2xl">{TIER_CONFIG[transaction.wallet_type].icon}</span>
-                          <p className={`font-medium ${TIER_CONFIG[transaction.wallet_type].textColor}`}>
-                            {TIER_CONFIG[transaction.wallet_type].name}
-                          </p>
-                        </div>
-                      </div>
-                      <div>
-                        <p className="text-slate-400 text-sm">Token/Network</p>
-                        <p className="text-white">{transaction.token_type} ({transaction.network})</p>
-                      </div>
-                      <div>
-                        <p className="text-slate-400 text-sm">Account Number</p>
-                        {editingId === transaction.id ? (
-                          <div className="flex items-center gap-2 mt-1">
-                            <input
-                              type="text"
-                              value={editAccountNumber}
-                              onChange={(e) => setEditAccountNumber(e.target.value)}
-                              placeholder="Enter account number"
-                              className="flex-1 bg-slate-700 border border-slate-600 rounded px-3 py-1 text-white text-sm focus:outline-none focus:border-blue-500"
-                            />
-                            <button
-                              onClick={() => handleSave(transaction.id)}
-                              disabled={updatingId === transaction.id}
-                              className="bg-green-600 hover:bg-green-700 text-white p-1 rounded disabled:opacity-50"
-                            >
-                              <FiSave className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={cancelEditing}
-                              className="bg-slate-600 hover:bg-slate-700 text-white p-1 rounded"
-                            >
-                              <FiX className="w-4 h-4" />
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2">
+                          </td>
+                          <td className="p-4">
+                            <p className="text-white font-medium">${transaction.amount.toLocaleString()}</p>
+                          </td>
+                          <td className="p-4">
                             {transaction.account_number ? (
-                              <span className="font-mono text-green-400 font-medium">
-                                {transaction.account_number}
+                              <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded-full text-sm font-medium">
+                                Completed
                               </span>
                             ) : (
-                              <span className="text-slate-400">Not assigned</span>
+                              <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full text-sm font-medium">
+                                Pending
+                              </span>
                             )}
-                            <button
-                              onClick={() => startEditing(transaction)}
-                              className="ml-auto bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm"
-                            >
-                              <FiEdit3 className="w-3 h-3" />
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex gap-2 pt-2">
-                        {transaction.account_number && (
-                          <button
-                            onClick={async () => {
-                              try {
-                                await updateWalletStatus(
-                                  transaction.account_number!,
-                                  !transaction.status
-                                );
-                              } catch (error) {
-                                console.error('Error updating payment status:', error);
-                              }
-                            }}
-                            className={`flex-1 px-3 py-2 rounded text-sm font-medium transition-colors flex items-center justify-center gap-1 ${
-                              transaction.status
-                                ? 'bg-green-600 hover:bg-green-700 text-white'
-                                : 'bg-yellow-600 hover:bg-yellow-700 text-white'
-                            }`}
-                          >
-                            {transaction.status ? (
-                              <>
-                                <FiCheck className="w-3 h-3" />
-                                <span>Mark as Pending</span>
-                              </>
+                          </td>
+                          <td className="p-4">
+                            {transaction.account_number ? (
+                              <button
+                                onClick={async () => {
+                                  try {
+                                    await updateWalletStatus(
+                                      transaction.account_number!,
+                                      !transaction.status
+                                    );
+                                  } catch (error) {
+                                    console.error('Error updating payment status:', error);
+                                  }
+                                }}
+                                className={`px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1 ${
+                                  transaction.status
+                                    ? 'bg-green-600 hover:bg-green-700 text-white'
+                                    : 'bg-yellow-600 hover:bg-yellow-700 text-white'
+                                }`}
+                              >
+                                {transaction.status ? (
+                                  <FiCheck className="w-3 h-3" />
+                                ) : (
+                                  <FiClock className="w-3 h-3" />
+                                )}
+                              </button>
                             ) : (
-                              <>
-                                <FiClock className="w-3 h-3" />
-                                <span>Mark as Paid</span>
-                              </>
+                              <button
+                                onClick={() => startEditing(transaction)}
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1"
+                              >
+                                <FiEdit3 className="w-3 h-3" />
+                              </button>
                             )}
-                          </button>
+                          </td>
+                          <td className="p-4">
+                            <button
+                              onClick={() => toggleRowExpand(transaction.id)}
+                              className="text-slate-400 hover:text-white transition-colors"
+                            >
+                              {isExpanded ? (
+                                <FiChevronUp className="w-4 h-4" />
+                              ) : (
+                                <FiChevronDown className="w-4 h-4" />
+                              )}
+                            </button>
+                          </td>
+                        </tr>
+                        {isExpanded && (
+                          <tr className="bg-slate-700/10 border-b border-slate-700/30">
+                            <td colSpan={6} className="p-4">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-16">
+                                <div className="space-y-2">
+                                  <h4 className="font-medium text-slate-300">Transaction Details</h4>
+                                  <div className="space-y-1">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-slate-400">Token/Network:</span>
+                                      <span className="text-white">
+                                        {transaction.token_type} ({transaction.network})
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-slate-400">Created:</span>
+                                      <span className="text-slate-300">
+                                        {formatDate(transaction.created_at)}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="space-y-2">
+                                  <h4 className="font-medium text-slate-300">Wallet Assignment</h4>
+                                  {editingId === transaction.id ? (
+                                    <div className="flex items-center gap-2">
+                                      <input
+                                        type="text"
+                                        value={editAccountNumber}
+                                        onChange={(e) => setEditAccountNumber(e.target.value)}
+                                        placeholder="Enter wallet address"
+                                        className="flex-1 bg-slate-700 border border-slate-600 rounded px-3 py-1 text-white text-sm focus:outline-none focus:border-blue-500"
+                                      />
+                                      <button
+                                        onClick={() => handleSave(transaction.id)}
+                                        disabled={updatingId === transaction.id}
+                                        className="bg-green-600 hover:bg-green-700 text-white p-1 rounded disabled:opacity-50"
+                                      >
+                                        <FiSave className="w-4 h-4" />
+                                      </button>
+                                      <button
+                                        onClick={cancelEditing}
+                                        className="bg-slate-600 hover:bg-slate-700 text-white p-1 rounded"
+                                      >
+                                        <FiX className="w-4 h-4" />
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    <div className="flex items-center gap-2">
+                                      {transaction.account_number ? (
+                                        <span className="font-mono text-green-400 break-all">
+                                          {transaction.account_number}
+                                        </span>
+                                      ) : (
+                                        <span className="text-slate-400">Not assigned</span>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
                         )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
+                      </React.Fragment>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
             
             {filteredTransactions.length === 0 && (
@@ -1489,176 +1395,134 @@ const AdminTransactionsPage = () => {
             )}
           </div>
         ) : (
-          /* Withdrawals Table - Mobile Friendly */
+          /* Withdrawals Table with Expandable Rows */
           <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 overflow-hidden">
-            <div className="hidden md:block overflow-x-auto">
+            <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-slate-700/50">
                   <tr>
                     <th className="text-left p-4 text-slate-300 font-medium">User</th>
                     <th className="text-left p-4 text-slate-300 font-medium">Amount</th>
-                    <th className="text-left p-4 text-slate-300 font-medium">Network</th>
-                    <th className="text-left p-4 text-slate-300 font-medium">Account</th>
                     <th className="text-left p-4 text-slate-300 font-medium">Status</th>
                     <th className="text-left p-4 text-slate-300 font-medium">Actions</th>
+                    <th className="text-left p-4 text-slate-300 font-medium"></th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredWithdrawals.map((withdrawal) => (
-                    <React.Fragment key={withdrawal.id}>
-                      <tr className="border-t border-slate-700/50 hover:bg-slate-700/25">
-                        <td className="p-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-slate-600 rounded-full flex items-center justify-center">
-                              <FiUser className="w-5 h-5 text-slate-300" />
+                  {filteredWithdrawals.map((withdrawal) => {
+                    const isExpanded = expandedRows.has(withdrawal.id);
+                    return (
+                      <React.Fragment key={withdrawal.id}>
+                        <tr className="border-t border-slate-700/50 hover:bg-slate-700/25">
+                          <td className="p-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-slate-600 rounded-full flex items-center justify-center">
+                                <FiUser className="w-5 h-5 text-slate-300" />
+                              </div>
+                              <div>
+                                <p className="text-white font-medium">{withdrawal.email}</p>
+                                <p className="text-slate-400 text-sm">ID: {withdrawal.id}</p>
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-white font-medium">{withdrawal.email}</p>
-                              <p className="text-slate-400 text-sm">ID: {withdrawal.id}</p>
-                            </div>
-                          </div> 
-                        </td> 
-                        <td className="p-4">
-                          <p className="text-white font-medium">${withdrawal.amount.toLocaleString()}</p>
-                          <p className="text-slate-400 text-sm">{withdrawal.token_type}</p>
-                        </td>
-                        <td className="p-4">
-                          <p className="text-white font-medium">{withdrawal.network}</p>
-                        </td>
-                        <td className="p-4">
-                          <p className="font-mono text-slate-300">{withdrawal.account_number}</p>
-                        </td>
-                        <td className="p-4">
-                          {withdrawal.status ? (
-                            <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded-full text-sm font-medium">
-                              Completed
-                            </span>
-                          ) : (
-                            <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full text-sm font-medium">
-                              Pending
-                            </span>
-                          )}
-                        </td>
-                        <td className="p-4">
-                          <button
-                            onClick={async () => {
-                              try {
-                                await updateWithdrawalStatus(
-                                  withdrawal.id,
-                                  !withdrawal.status
-                                );
-                              } catch (error) {
-                                console.error('Error updating withdrawal status:', error);
-                              }
-                            }}
-                            className={`px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1 ${
-                              withdrawal.status
-                                ? 'bg-green-600 hover:bg-green-700 text-white'
-                                : 'bg-yellow-600 hover:bg-yellow-700 text-white'
-                            }`}
-                          >
+                          </td>
+                          <td className="p-4">
+                            <p className="text-white font-medium">${withdrawal.amount.toLocaleString()}</p>
+                          </td>
+                          <td className="p-4">
                             {withdrawal.status ? (
-                              <FiCheck className="w-3 h-3" />
+                              <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded-full text-sm font-medium">
+                                Completed
+                              </span>
                             ) : (
-                              <FiClock className="w-3 h-3" />
+                              <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full text-sm font-medium">
+                                Pending
+                              </span>
                             )}
-                          </button>
-                        </td>
-                      </tr>
-                    </React.Fragment>
-                  ))}
+                          </td>
+                          <td className="p-4">
+                            <button
+                              onClick={async () => {
+                                try {
+                                  await updateWithdrawalStatus(
+                                    withdrawal.id,
+                                    !withdrawal.status
+                                  );
+                                } catch (error) {
+                                  console.error('Error updating withdrawal status:', error);
+                                }
+                              }}
+                              className={`px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1 ${
+                                withdrawal.status
+                                  ? 'bg-green-600 hover:bg-green-700 text-white'
+                                  : 'bg-yellow-600 hover:bg-yellow-700 text-white'
+                              }`}
+                            >
+                              {withdrawal.status ? (
+                                <FiCheck className="w-3 h-3" />
+                              ) : (
+                                <FiClock className="w-3 h-3" />
+                              )}
+                            </button>
+                          </td>
+                          <td className="p-4">
+                            <button
+                              onClick={() => toggleRowExpand(withdrawal.id)}
+                              className="text-slate-400 hover:text-white transition-colors"
+                            >
+                              {isExpanded ? (
+                                <FiChevronUp className="w-4 h-4" />
+                              ) : (
+                                <FiChevronDown className="w-4 h-4" />
+                              )}
+                            </button>
+                          </td>
+                        </tr>
+                        {isExpanded && (
+                          <tr className="bg-slate-700/10 border-b border-slate-700/30">
+                            <td colSpan={5} className="p-4">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-16">
+                                <div className="space-y-2">
+                                  <h4 className="font-medium text-slate-300">Withdrawal Details</h4>
+                                  <div className="space-y-1">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-slate-400">Token/Network:</span>
+                                      <span className="text-white">
+                                        {withdrawal.token_type} ({withdrawal.network})
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-slate-400">Created:</span>
+                                      <span className="text-slate-300">
+                                        {formatDate(withdrawal.created_at)}
+                                      </span>
+                                    </div>
+                                    {withdrawal.status && (
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-slate-400">Completed:</span>
+                                        <span className="text-slate-300">
+                                          {formatDate(withdrawal.updated_at)}
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="space-y-2">
+                                  <h4 className="font-medium text-slate-300">Wallet Address</h4>
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-mono text-slate-300 break-all">
+                                      {withdrawal.account_number}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
                 </tbody>
               </table>
-            </div>
-
-            {/* Mobile View */}
-            <div className="md:hidden">
-              {filteredWithdrawals.map((withdrawal) => (
-                <div key={withdrawal.id} className="border-t border-slate-700/50 p-4">
-                  <div 
-                    className="flex justify-between items-center cursor-pointer"
-                    onClick={() => toggleRowExpand(withdrawal.id)}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-slate-600 rounded-full flex items-center justify-center">
-                        <FiUser className="w-5 h-5 text-slate-300" />
-                      </div>
-                      <div>
-                        <p className="text-white font-medium">{withdrawal.email}</p>
-                        <p className="text-slate-400 text-sm">${withdrawal.amount.toLocaleString()}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {withdrawal.status ? (
-                        <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded-full text-xs">
-                          Completed
-                        </span>
-                      ) : (
-                        <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full text-xs">
-                          Pending
-                        </span>
-                      )}
-                      {expandedRows[withdrawal.id] ? (
-                        <FiChevronUp className="text-slate-400" />
-                      ) : (
-                        <FiChevronDown className="text-slate-400" />
-                      )}
-                    </div>
-                  </div>
-
-                  {expandedRows[withdrawal.id] && (
-                    <div className="mt-4 pl-14 space-y-3">
-                      <div>
-                        <p className="text-slate-400 text-sm">Token/Network</p>
-                        <p className="text-white">{withdrawal.token_type} ({withdrawal.network})</p>
-                      </div>
-                      <div>
-                        <p className="text-slate-400 text-sm">Account Number</p>
-                        <p className="font-mono text-slate-300">{withdrawal.account_number}</p>
-                      </div>
-                      <div>
-                        <p className="text-slate-400 text-sm">Created</p>
-                        <p className="text-slate-300 text-sm">{formatDate(withdrawal.created_at)}</p>
-                      </div>
-                      <div>
-                        <p className="text-slate-400 text-sm">Updated</p>
-                        <p className="text-slate-300 text-sm">{formatDate(withdrawal.updated_at)}</p>
-                      </div>
-                      <div className="pt-2">
-                        <button
-                          onClick={async () => {
-                            try {
-                              await updateWithdrawalStatus(
-                                withdrawal.id,
-                                !withdrawal.status
-                              );
-                            } catch (error) {
-                              console.error('Error updating withdrawal status:', error);
-                            }
-                          }}
-                          className={`w-full px-3 py-2 rounded text-sm font-medium transition-colors flex items-center justify-center gap-1 ${
-                            withdrawal.status
-                              ? 'bg-green-600 hover:bg-green-700 text-white'
-                              : 'bg-yellow-600 hover:bg-yellow-700 text-white'
-                          }`}
-                        >
-                          {withdrawal.status ? (
-                            <>
-                              <FiCheck className="w-3 h-3" />
-                              <span>Mark as Pending</span>
-                            </>
-                          ) : (
-                            <>
-                              <FiClock className="w-3 h-3" />
-                              <span>Mark as Paid</span>
-                            </>
-                          )}
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
             </div>
             
             {filteredWithdrawals.length === 0 && (
