@@ -2492,7 +2492,7 @@ const PortfolioPage = () => {
                   <div key={req.id}>
                     <p className="text-sm text-slate-400">
                       Upgrade to {TIER_CONFIG[req.target_tier].name}: Please send 
-                      <span className="font-bold text-white"> ${req.balance.toLocaleString()}</span> to account: 
+                      <span className="font-bold text-white"> ${(TIER_CONFIG[req.target_tier].minimum).toLocaleString()}</span> to account: 
                       <span className="font-mono font-bold text-white ml-2">{wallet?.wallet_number}</span>
                     </p>
                     <p className="text-sm text-slate-400 mt-1">
