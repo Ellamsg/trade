@@ -78,6 +78,7 @@ export interface WalletUpgradeRequest {
   readonly email: string;
   readonly created_at: string;
   readonly updated_at: string;
+ 
 }
 
 export interface WithdrawalRequest {
