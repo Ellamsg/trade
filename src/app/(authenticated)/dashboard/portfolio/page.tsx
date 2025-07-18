@@ -1,23 +1,10 @@
 
 
-
 // "use client"
 // import React, { useState, useEffect, useRef } from 'react';
 // import { FiTrendingUp, FiTrendingDown, FiDollarSign, FiPieChart, FiActivity, FiPlus, FiCreditCard, FiArrowUpRight, FiArrowDownLeft, FiCheck, FiClock, FiX, FiArrowLeft, FiExternalLink, FiChevronDown } from 'react-icons/fi';
 // import { createClient } from '@/app/utils/supabase/clients';
-// import { WalletTier ,
-//   TokenType ,
-//   NetworkType,
-//   UserWallet ,
-//   TransactionRequest ,
-//   WithdrawalRequest,
-//   StockPortfolioItem ,
-//   TIER_CONFIG,
-//   NETWORK_CONFIG,
-//   POPULAR_TOKENS,
-//   WALLET_TIERS,
-//   WalletUpgradeRequest
-// } from '@/app/data';
+// import { WalletTier, TokenType, NetworkType, UserWallet, TransactionRequest, WithdrawalRequest, StockPortfolioItem, TIER_CONFIG, NETWORK_CONFIG, POPULAR_TOKENS, WALLET_TIERS, WalletUpgradeRequest } from '@/app/data';
 
 // const ContinueAccountGeneration = ({ onContinue, onCancel, accountRequest }: { 
 //   onContinue: () => void, 
@@ -102,14 +89,10 @@
 //   const [portfolioLoading, setPortfolioLoading] = useState(true);
 //   const [dropdownOpen, setDropdownOpen] = useState(false);
 //   const [showContinuePrompt, setShowContinuePrompt] = useState(false);
-  
-
-// // Add these states to the component
-// const [showUpgradeForm, setShowUpgradeForm] = useState(false);
-// const [selectedUpgradeTier, setSelectedUpgradeTier] = useState<WalletTier | null>(null);
-// const [upgrading, setUpgrading] = useState(false);
-// const [upgradeRequests, setUpgradeRequests] = useState<WalletUpgradeRequest[]>([]);
-
+//   const [showUpgradeForm, setShowUpgradeForm] = useState(false);
+//   const [selectedUpgradeTier, setSelectedUpgradeTier] = useState<WalletTier | null>(null);
+//   const [upgrading, setUpgrading] = useState(false);
+//   const [upgradeRequests, setUpgradeRequests] = useState<WalletUpgradeRequest[]>([]);
 
 //   const supabase = createClient();
 //   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -117,16 +100,13 @@
 //   const withdrawalPollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
 //   useEffect(() => {
-//     // Check for existing account request in localStorage
 //     const savedRequest = localStorage.getItem('accountRequest');
 //     if (savedRequest) {
 //       const parsedRequest = JSON.parse(savedRequest);
 //       setAccountRequest(parsedRequest);
-      
 //       if (!parsedRequest.account_number) {
 //         setShowContinuePrompt(true);
 //       } else {
-//         // If account number exists but wallet wasn't created
 //         createWallet(
 //           parsedRequest.wallet_type,
 //           parsedRequest.account_number,
@@ -139,21 +119,14 @@
 //     fetchWalletData();
 //     fetchStockPortfolio();
 //     return () => {
-//       if (pollingIntervalRef.current) {
-//         clearInterval(pollingIntervalRef.current);
-//       }
-//       if (walletPollingIntervalRef.current) {
-//         clearInterval(walletPollingIntervalRef.current);
-//       }
-//       if (withdrawalPollingIntervalRef.current) {
-//         clearInterval(withdrawalPollingIntervalRef.current);
-//       }
+//       if (pollingIntervalRef.current) clearInterval(pollingIntervalRef.current);
+//       if (walletPollingIntervalRef.current) clearInterval(walletPollingIntervalRef.current);
+//       if (withdrawalPollingIntervalRef.current) clearInterval(withdrawalPollingIntervalRef.current);
 //     };
 //   }, []);
 
 //   const handleContinue = () => {
 //     if (!accountRequest) return;
-    
 //     setWaitingForAccount(true);
 //     startAccountNumberPolling(accountRequest.id);
 //     setShowContinuePrompt(false);
@@ -169,20 +142,18 @@
 //     try {
 //       setPortfolioLoading(true);
 //       const { data: { user } } = await supabase.auth.getUser();
-      
 //       if (!user) {
 //         setPortfolioLoading(false);
 //         return;
 //       }
-  
+
 //       const { data, error } = await supabase
 //         .from('stock_portfolio')
 //         .select('*')
 //         .eq('user_id', user.id)
 //         .order('current_value', { ascending: false });
-  
+
 //       if (error) throw error;
-  
 //       setStockPortfolio(data || []);
 //     } catch (error) {
 //       console.error('Error fetching stock portfolio:', error);
@@ -195,85 +166,69 @@
 //     return stockPortfolio.reduce((total, item) => total + (item.current_value || 0), 0);
 //   };
 
-
-
-
-
-// //upgrade account
-
-// // Add this useEffect for polling upgrade requests
-// useEffect(() => {
-//   if (wallet) {
-//     fetchUpgradeRequests();
-//     const interval = setInterval(fetchUpgradeRequests, 10000);
-//     return () => clearInterval(interval);
-//   }
-// }, [wallet]);
-
-// // Add this function to fetch upgrade requests
-// const fetchUpgradeRequests = async () => {
-//   try {
-//     const { data, error } = await supabase
-//       .from('wallet_upgrades')
-//       .select('*')
-//       .eq('wallet_id', wallet!.id)
-//       .order('created_at', { ascending: false });
-
-//     if (!error && data) {
-//       setUpgradeRequests(data);
+//   useEffect(() => {
+//     if (wallet) {
+//       fetchUpgradeRequests();
+//       const interval = setInterval(fetchUpgradeRequests, 10000);
+//       return () => clearInterval(interval);
 //     }
-//   } catch (error) {
-//     console.error('Error fetching upgrade requests:', error);
-//   }
-// };
+//   }, [wallet]);
 
-// // Add this function to handle tier upgrade
-// const handleTierUpgrade = async () => {
-//   if (!wallet || !selectedUpgradeTier) return;
+//   const fetchUpgradeRequests = async () => {
+//     try {
+//       const { data, error } = await supabase
+//         .from('wallet_upgrades')
+//         .select('*')
+//         .eq('wallet_id', wallet!.id)
+//         .order('created_at', { ascending: false });
 
-//   try {
-//     setUpgrading(true);
-//     const { data: { user } } = await supabase.auth.getUser();
-//     if (!user) throw new Error('User not authenticated');
+//       if (!error && data) {
+//         setUpgradeRequests(data);
+//       }
+//     } catch (error) {
+//       console.error('Error fetching upgrade requests:', error);
+//     }
+//   };
 
-//     const { data, error } = await supabase
-//       .from('wallet_upgrades')
-//       .insert({
-//         user_id: user.id,
-//         email: user.email!,
-//         wallet_id: wallet.id,
-//         balance: wallet.balance,
-//         wallet_number : wallet.wallet_number,
-//         current_tier: wallet.tier,
-//         target_tier: selectedUpgradeTier,
-//         status: false
-//       })
-//       .select()
-//       .single();
+//   const handleTierUpgrade = async () => {
+//     if (!wallet || !selectedUpgradeTier) return;
 
-//     if (error) throw error;
+//     try {
+//       setUpgrading(true);
+//       const { data: { user } } = await supabase.auth.getUser();
+//       if (!user) throw new Error('User not authenticated');
 
-//     setUpgradeRequests(prev => [data, ...prev]);
-//     setShowUpgradeForm(false);
-//     setSelectedUpgradeTier(null);
-    
-//   } catch (error) {
-//     console.error('Error requesting tier upgrade:', error);
-//     alert('Failed to request upgrade. Please try again.');
-//   } finally {
-//     setUpgrading(false);
-//   }
-// };
+//       const upgradeAmount = TIER_CONFIG[selectedUpgradeTier].minimum - wallet.balance;
 
+//       const { data, error } = await supabase
+//         .from('wallet_upgrades')
+//         .insert({
+//           user_id: user.id,
+//           email: user.email!,
+//           wallet_id: wallet.id,
+//           balance: wallet.balance,
+//           wallet_number: wallet.wallet_number,
+//           current_tier: wallet.tier,
+//           target_tier: selectedUpgradeTier,
+//           status: false,
+          
+//         })
+//         .select()
+//         .single();
 
+//       if (error) throw error;
 
+//       setUpgradeRequests(prev => [data, ...prev]);
+//       setShowUpgradeForm(false);
+//       setSelectedUpgradeTier(null);
 
-
-
-
-
-
-
+//     } catch (error) {
+//       console.error('Error requesting tier upgrade:', error);
+//       alert('Failed to request upgrade. Please try again.');
+//     } finally {
+//       setUpgrading(false);
+//     }
+//   };
 
 //   useEffect(() => {
 //     if (!wallet || wallet.status) return;
@@ -313,7 +268,6 @@
 //     try {
 //       setLoading(true);
 //       const { data: { user } } = await supabase.auth.getUser();
-      
 //       if (!user) {
 //         setLoading(false);
 //         return;
@@ -400,7 +354,6 @@
 //       setWaitingForAccount(true);
       
 //       const { data: { user } } = await supabase.auth.getUser();
-      
 //       if (!user) throw new Error('User not authenticated');
 
 //       const transactionData = {
@@ -422,9 +375,7 @@
 //       if (error) throw error;
 
 //       setAccountRequest(data);
-//       // Store in localStorage
 //       localStorage.setItem('accountRequest', JSON.stringify(data));
-      
 //       setGeneratingAccount(false);
 //       startAccountNumberPolling(data.id);
 
@@ -450,7 +401,6 @@
 //           .single();
 
 //         if (!error && data) {
-//           // Update localStorage with latest data
 //           localStorage.setItem('accountRequest', JSON.stringify(data));
 //           setAccountRequest(data);
           
@@ -458,7 +408,6 @@
 //             clearInterval(pollingIntervalRef.current!);
 //             pollingIntervalRef.current = null;
 //             setWaitingForAccount(false);
-//             // Remove from localStorage since we're done
 //             localStorage.removeItem('accountRequest');
 //             createWallet(data.wallet_type, data.account_number, data.network, data.token_type);
 //           }
@@ -500,7 +449,6 @@
 //       setWallet(data);
 //       resetSelections();
 //       setAccountRequest(null);
-//       // Clean up localStorage
 //       localStorage.removeItem('accountRequest');
       
 //     } catch (error) {
@@ -663,7 +611,7 @@
 //                   <h3 className="text-xl font-bold mb-2">{config.name}</h3>
 //                   <p className="text-slate-400 text-sm mb-4">{config.description}</p>
 //                   <div className="text-2xl font-bold mb-4">
-//                   ${config.minimum.toLocaleString()} minimum
+//                     ${config.minimum.toLocaleString()} minimum
 //                   </div>
 //                   <button className={`w-full bg-gradient-to-r ${config.color} text-white py-3 px-6 rounded-xl font-medium hover:opacity-90 transition-opacity group-hover:shadow-lg`}>
 //                     Select {config.name}
@@ -1078,8 +1026,6 @@
 //                     </>
 //                   )}
 //                 </button>
-
-
 //               </div>
 //             </div>
 //           </div>
@@ -1115,13 +1061,33 @@
 //           </div>
 //         )}
 
-
-
-
-
-
-
-
+//         {/* Upgrade Request Alert */}
+//         {upgradeRequests.some(req => !req.status) && (
+//           <div className="bg-purple-500/20 border border-purple-500/30 rounded-xl p-4 mb-6">
+//             <div className="flex items-center gap-3">
+//               <FiTrendingUp className="w-5 h-5 text-purple-400" />
+//               <div>
+//                 <p className="text-purple-400 font-medium">Tier Upgrade Requested</p>
+//                 {upgradeRequests.filter(req => !req.status).map(req => (
+//                   <div key={req.id}>
+//                     <p className="text-sm text-slate-400">
+//                       Upgrade to {TIER_CONFIG[req.target_tier].name}: Please send 
+//                       <span className="font-bold text-white"> ${(TIER_CONFIG[req.target_tier].minimum).toLocaleString()}</span> to account: 
+//                       <span className="font-mono font-bold text-white ml-2">{wallet?.wallet_number}</span>
+//                     </p>
+//                     <p className="text-sm text-slate-400 mt-1">
+//                       Network: {wallet?.network && NETWORK_CONFIG[wallet.network].name} • 
+//                       Token: {wallet?.token_type && getTokenById(wallet.token_type)?.name}
+//                     </p>
+//                     <p className="text-xs text-purple-400 mt-2">
+//                       Requested on {formatDate(req.created_at)} - Waiting for admin confirmation...
+//                     </p>
+//                   </div>
+//                 ))}
+//               </div>
+//             </div>
+//           </div>
+//         )}
 
 //         {/* Portfolio Summary Card */}
 //         <div className="bg-gradient-to-r from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 mb-6 md:mb-8 border border-slate-700/50 shadow-2xl">
@@ -1132,17 +1098,16 @@
 //                 ${wallet?.balance.toLocaleString() || '0'}
 //               </p>
 //             </div>
-           
 //             <div className="p-3 md:p-4 bg-blue-600/20 rounded-xl">
 //               <FiDollarSign className="w-6 h-6 md:w-8 md:h-8 text-blue-400" />
 //             </div>
 //           </div>
 //           <div className="bg-slate-800/30 my-6 rounded-xl p-3 md:p-4 border border-slate-700/30">
-//               <p className="text-slate-400 text-xs md:text-sm mb-1">Account</p>
-//               <p className="text-lg md:text-xl font-bold text-white font-mono">
-//                 {wallet?.wallet_number || 'N/A'}
-//               </p>
-//             </div>
+//             <p className="text-slate-400 text-xs md:text-sm mb-1">Account</p>
+//             <p className="text-lg md:text-xl font-bold text-white font-mono">
+//               {wallet?.wallet_number || 'N/A'}
+//             </p>
+//           </div>
 //           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
 //             <div className="bg-slate-800/30 rounded-xl p-3 md:p-4 border border-slate-700/30">
 //               <p className="text-slate-400 text-xs md:text-sm mb-1">Wallet Tier</p>
@@ -1160,10 +1125,7 @@
 //               <p className="text-slate-400 text-xs md:text-sm mb-1">Token</p>
 //               <p className="text-lg md:text-xl font-bold text-white">
 //                 {wallet?.token_type ? getTokenById(wallet.token_type)?.symbol : 'N/A'}
-                
-
 //               </p>
-//               <p>{wallet?.token_type}</p>
 //             </div>
 //           </div>
 //         </div>
@@ -1184,16 +1146,14 @@
 //             <FiExternalLink className="w-4 h-4" />
 //             View Withdrawal History
 //           </button>
-
 //           <button
-//   onClick={() => setShowUpgradeForm(true)}
-//   className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-6 py-3 rounded-xl font-medium hover:opacity-90 transition-opacity flex items-center gap-2"
-//   disabled={!wallet}
-// >
-//   <FiTrendingUp className="w-4 h-4" />
-//   Upgrade Tier
-// </button>
-          
+//             onClick={() => setShowUpgradeForm(true)}
+//             className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-6 py-3 rounded-xl font-medium hover:opacity-90 transition-opacity flex items-center gap-2"
+//             disabled={!wallet}
+//           >
+//             <FiTrendingUp className="w-4 h-4" />
+//             Upgrade Tier
+//           </button>
 //         </div>
 
 //         {/* Stock Portfolio Table */}
@@ -1308,117 +1268,110 @@
 //           )}
 //         </div>
 
-
-
-// {showUpgradeForm && (
-//   <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
-//     <div className="bg-slate-800 rounded-2xl p-6 max-w-md w-full border border-slate-700">
-//       <div className="flex justify-between items-center mb-4">
-//         <h3 className="text-xl font-bold">Upgrade Wallet Tier</h3>
-//         <button onClick={() => setShowUpgradeForm(false)} className="text-slate-400 hover:text-white">
-//           <FiX className="w-6 h-6" />
-//         </button>
-//       </div>
-      
-//       <div className="mb-6">
-//         <p className="text-slate-400 mb-2">Current Tier: {wallet && TIER_CONFIG[wallet.tier].name}</p>
-//         <p className="text-slate-400 mb-4">Minimum for upgrade: ${wallet && TIER_CONFIG[wallet.tier].minimum * 2}</p>
-        
-//         <label className="block text-slate-400 mb-2">Select New Tier</label>
-//         <div className="space-y-2">
-//           {WALLET_TIERS.filter(tier => 
-//             TIER_CONFIG[tier].minimum > TIER_CONFIG[wallet!.tier].minimum
-//           ).map(tier => (
-//             <div 
-//               key={tier}
-//               className={`p-3 rounded-lg border cursor-pointer ${
-//                 selectedUpgradeTier === tier 
-//                   ? 'border-purple-500 bg-purple-500/10' 
-//                   : 'border-slate-700 hover:bg-slate-700/50'
-//               }`}
-//               onClick={() => setSelectedUpgradeTier(tier)}
-//             >
-//               <div className="flex justify-between items-center">
-//                 <div>
-//                   <p className="font-medium">{TIER_CONFIG[tier].name}</p>
-//                   <p className="text-sm text-slate-400">Min: ${TIER_CONFIG[tier].minimum.toLocaleString()}</p>
-//                 </div>
-//                 {selectedUpgradeTier === tier && <FiCheck className="text-purple-400" />}
+//         {showUpgradeForm && (
+//           <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+//             <div className="bg-slate-800 rounded-2xl p-6 max-w-md w-full border border-slate-700">
+//               <div className="flex justify-between items-center mb-4">
+//                 <h3 className="text-xl font-bold">Upgrade Wallet Tier</h3>
+//                 <button onClick={() => setShowUpgradeForm(false)} className="text-slate-400 hover:text-white">
+//                   <FiX className="w-6 h-6" />
+//                 </button>
 //               </div>
-//             </div>
-//           ))}
-//         </div>
-//       </div>
-      
-//       <button
-//         onClick={handleTierUpgrade}
-//         disabled={!selectedUpgradeTier || upgrading}
-//         className="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white py-3 rounded-lg font-medium disabled:opacity-50 flex items-center justify-center gap-2"
-//       >
-//         {upgrading ? (
-//           <>
-//             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-//             Processing...
-//           </>
-//         ) : (
-//           <>
-//             <FiTrendingUp className="w-4 h-4" />
-//             Request Upgrade
-//           </>
-//         )}
-//       </button>
-//     </div>
-//   </div>
-// )}
-
-
-
-// {upgradeRequests.length > 0 && (
-//   <div className="mt-8">
-//     <h3 className="text-xl font-bold mb-4">Pending Tier Upgrades</h3>
-//     <div className="bg-slate-800/50 rounded-xl border border-slate-700/50 overflow-hidden">
-//       <table className="w-full">
-//         <thead className="bg-slate-700/50">
-//           <tr>
-//             <th className="p-3 text-left text-slate-300">Current Tier</th>
-//             <th className="p-3 text-left text-slate-300">Target Tier</th>
-//             <th className="p-3 text-left text-slate-300">Requested</th>
-//             <th className="p-3 text-left text-slate-300">Status</th>
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {upgradeRequests.map(request => (
-//             <tr key={request.id} className="border-t border-slate-700/50 hover:bg-slate-700/25">
-//               <td className="p-3">{TIER_CONFIG[request.current_tier].name}</td>
-//               <td className="p-3">{TIER_CONFIG[request.target_tier].name}</td>
-//               <td className="p-3 text-slate-400">{formatDate(request.created_at)}</td>
-//               <td className="p-3">
-//                 {request.status ? (
-//                   <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm flex items-center gap-1 w-fit">
-//                     <FiCheck className="w-3 h-3" /> Approved
-//                   </span>
+              
+//               <div className="mb-6">
+//                 <p className="text-slate-400 mb-2">Current Tier: {wallet && TIER_CONFIG[wallet.tier].name}</p>
+//                 <p className="text-slate-400 mb-4">Minimum for upgrade: ${wallet && TIER_CONFIG[wallet.tier].minimum * 2}</p>
+                
+//                 <label className="block text-slate-400 mb-2">Select New Tier</label>
+//                 <div className="space-y-2">
+//                   {WALLET_TIERS.filter(tier => 
+//                     TIER_CONFIG[tier].minimum > TIER_CONFIG[wallet!.tier].minimum
+//                   ).map(tier => (
+//                     <div 
+//                       key={tier}
+//                       className={`p-3 rounded-lg border cursor-pointer ${
+//                         selectedUpgradeTier === tier 
+//                           ? 'border-purple-500 bg-purple-500/10' 
+//                           : 'border-slate-700 hover:bg-slate-700/50'
+//                       }`}
+//                       onClick={() => setSelectedUpgradeTier(tier)}
+//                     >
+//                       <div className="flex justify-between items-center">
+//                         <div>
+//                           <p className="font-medium">{TIER_CONFIG[tier].name}</p>
+//                           <p className="text-sm text-slate-400">Min: ${TIER_CONFIG[tier].minimum.toLocaleString()}</p>
+//                         </div>
+//                         {selectedUpgradeTier === tier && <FiCheck className="text-purple-400" />}
+//                       </div>
+//                     </div>
+//                   ))}
+//                 </div>
+//               </div>
+              
+//               <button
+//                 onClick={handleTierUpgrade}
+//                 disabled={!selectedUpgradeTier || upgrading}
+//                 className="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white py-3 rounded-lg font-medium disabled:opacity-50 flex items-center justify-center gap-2"
+//               >
+//                 {upgrading ? (
+//                   <>
+//                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+//                     Processing...
+//                   </>
 //                 ) : (
-//                   <span className="bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full text-sm flex items-center gap-1 w-fit">
-//                     <FiClock className="w-3 h-3" /> Pending
-//                   </span>
+//                   <>
+//                     <FiTrendingUp className="w-4 h-4" />
+//                     Request Upgrade
+//                   </>
 //                 )}
-//               </td>
-//             </tr>
-//           ))}
-//         </tbody>
-//       </table>
-//     </div>
-//   </div>
-// )}
+//               </button>
+//             </div>
+//           </div>
+//         )}
 
+//         {upgradeRequests.length > 0 && (
+//           <div className="mt-8">
+//             <h3 className="text-xl font-bold mb-4">Pending Tier Upgrades</h3>
+//             <div className="bg-slate-800/50 rounded-xl border border-slate-700/50 overflow-hidden">
+//               <table className="w-full">
+//                 <thead className="bg-slate-700/50">
+//                   <tr>
+//                     <th className="p-3 text-left text-slate-300">Current Tier</th>
+//                     <th className="p-3 text-left text-slate-300">Target Tier</th>
+//                     <th className="p-3 text-left text-slate-300">Requested</th>
+//                     <th className="p-3 text-left text-slate-300">Status</th>
+//                   </tr>
+//                 </thead>
+//                 <tbody>
+//                   {upgradeRequests.map(request => (
+//                     <tr key={request.id} className="border-t border-slate-700/50 hover:bg-slate-700/25">
+//                       <td className="p-3">{TIER_CONFIG[request.current_tier].name}</td>
+//                       <td className="p-3">{TIER_CONFIG[request.target_tier].name}</td>
+//                       <td className="p-3 text-slate-400">{formatDate(request.created_at)}</td>
+//                       <td className="p-3">
+//                         {request.status ? (
+//                           <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm flex items-center gap-1 w-fit">
+//                             <FiCheck className="w-3 h-3" /> Approved
+//                           </span>
+//                         ) : (
+//                           <span className="bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full text-sm flex items-center gap-1 w-fit">
+//                             <FiClock className="w-3 h-3" /> Pending
+//                           </span>
+//                         )}
+//                       </td>
+//                     </tr>
+//                   ))}
+//                 </tbody>
+//               </table>
+//             </div>
+//           </div>
+//         )}
 //       </div>
 //     </div>
 //   );
 // };
 
 // export default PortfolioPage;
-
-
 
 "use client"
 import React, { useState, useEffect, useRef } from 'react';
@@ -1520,24 +1473,47 @@ const PortfolioPage = () => {
   const withdrawalPollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    const savedRequest = localStorage.getItem('accountRequest');
-    if (savedRequest) {
-      const parsedRequest = JSON.parse(savedRequest);
-      setAccountRequest(parsedRequest);
-      if (!parsedRequest.account_number) {
-        setShowContinuePrompt(true);
-      } else {
-        createWallet(
-          parsedRequest.wallet_type,
-          parsedRequest.account_number,
-          parsedRequest.network,
-          parsedRequest.token_type
-        );
-      }
-    }
+    const fetchPendingTransaction = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
 
-    fetchWalletData();
-    fetchStockPortfolio();
+        // Fetch the latest pending transaction for the user
+        const { data, error } = await supabase
+          .from('transactions')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('status', false)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single();
+
+        if (error && error.code !== 'PGRST116') {
+          console.error('Error fetching pending transaction:', error);
+          return;
+        }
+
+        if (data) {
+          setAccountRequest(data);
+          if (data.account_number) {
+            // If account_number exists, proceed to create wallet
+            setWaitingForAccount(false);
+            createWallet(data.wallet_type, data.account_number, data.network, data.token_type);
+          } else {
+            // Show continue prompt if no account_number
+            setShowContinuePrompt(true);
+          }
+        }
+
+        await fetchWalletData();
+        await fetchStockPortfolio();
+      } catch (error) {
+        console.error('Error in initial fetch:', error);
+      }
+    };
+
+    fetchPendingTransaction();
+
     return () => {
       if (pollingIntervalRef.current) clearInterval(pollingIntervalRef.current);
       if (walletPollingIntervalRef.current) clearInterval(walletPollingIntervalRef.current);
@@ -1548,12 +1524,32 @@ const PortfolioPage = () => {
   const handleContinue = () => {
     if (!accountRequest) return;
     setWaitingForAccount(true);
-    startAccountNumberPolling(accountRequest.id);
-    setShowContinuePrompt(false);
+    if (accountRequest.account_number) {
+      // If account_number exists, create wallet immediately
+      setShowContinuePrompt(false);
+      createWallet(accountRequest.wallet_type, 
+        accountRequest.account_number, 
+        accountRequest.network as NetworkType,
+        accountRequest.token_type as TokenType);
+    } else {
+      // Start polling if no account_number
+      startAccountNumberPolling(accountRequest.id);
+      setShowContinuePrompt(false);
+    }
   };
 
-  const handleCancel = () => {
-    localStorage.removeItem('accountRequest');
+  const handleCancel = async () => {
+    if (!accountRequest) return;
+
+    try {
+      await supabase
+        .from('transactions')
+        .delete()
+        .eq('id', accountRequest.id);
+    } catch (error) {
+      console.error('Error canceling transaction:', error);
+    }
+
     setAccountRequest(null);
     setShowContinuePrompt(false);
   };
@@ -1618,8 +1614,6 @@ const PortfolioPage = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
-      const upgradeAmount = TIER_CONFIG[selectedUpgradeTier].minimum - wallet.balance;
-
       const { data, error } = await supabase
         .from('wallet_upgrades')
         .insert({
@@ -1631,7 +1625,6 @@ const PortfolioPage = () => {
           current_tier: wallet.tier,
           target_tier: selectedUpgradeTier,
           status: false,
-          
         })
         .select()
         .single();
@@ -1641,7 +1634,6 @@ const PortfolioPage = () => {
       setUpgradeRequests(prev => [data, ...prev]);
       setShowUpgradeForm(false);
       setSelectedUpgradeTier(null);
-
     } catch (error) {
       console.error('Error requesting tier upgrade:', error);
       alert('Failed to request upgrade. Please try again.');
@@ -1777,13 +1769,15 @@ const PortfolioPage = () => {
       if (!user) throw new Error('User not authenticated');
 
       const transactionData = {
+        user_id: user.id,
         email: user.email!,
         amount: TIER_CONFIG[tier].minimum,
         wallet_type: tier,
         account_number: null,
         status: false,
         network: network,
-        token_type: token
+        token_type: token,
+        created_at: new Date().toISOString(),
       };
 
       const { data, error } = await supabase
@@ -1795,10 +1789,8 @@ const PortfolioPage = () => {
       if (error) throw error;
 
       setAccountRequest(data);
-      localStorage.setItem('accountRequest', JSON.stringify(data));
       setGeneratingAccount(false);
       startAccountNumberPolling(data.id);
-
     } catch (error) {
       console.error('Error creating transaction:', error);
       setGeneratingAccount(false);
@@ -1821,14 +1813,12 @@ const PortfolioPage = () => {
           .single();
 
         if (!error && data) {
-          localStorage.setItem('accountRequest', JSON.stringify(data));
           setAccountRequest(data);
           
           if (data.account_number) {
             clearInterval(pollingIntervalRef.current!);
             pollingIntervalRef.current = null;
             setWaitingForAccount(false);
-            localStorage.removeItem('accountRequest');
             createWallet(data.wallet_type, data.account_number, data.network, data.token_type);
           }
         }
@@ -1843,6 +1833,18 @@ const PortfolioPage = () => {
       setCreatingWallet(true);
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
+
+      const { data: existingWallet, error: walletError } = await supabase
+        .from('wallets')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (existingWallet) {
+        setWallet(existingWallet);
+        setCreatingWallet(false);
+        return;
+      }
 
       const walletData = {
         user_id: user.id,
@@ -1869,10 +1871,9 @@ const PortfolioPage = () => {
       setWallet(data);
       resetSelections();
       setAccountRequest(null);
-      localStorage.removeItem('accountRequest');
-      
     } catch (error) {
       console.error('Error creating wallet:', error);
+      alert('Failed to create wallet. Please try again.');
     } finally {
       setCreatingWallet(false);
     }
@@ -1933,7 +1934,6 @@ const PortfolioPage = () => {
       setWithdrawalToken(null);
       setWithdrawalAccount('');
       setShowWithdrawalForm(false);
-      
     } catch (error) {
       console.error('Error processing withdrawal:', error);
       alert('Failed to process withdrawal. Please try again.');
@@ -1956,7 +1956,6 @@ const PortfolioPage = () => {
       clearInterval(pollingIntervalRef.current);
       pollingIntervalRef.current = null;
     }
-    localStorage.removeItem('accountRequest');
     setAccountRequest(null);
     setGeneratingAccount(false);
     setWaitingForAccount(false);
@@ -2034,7 +2033,7 @@ const PortfolioPage = () => {
                     ${config.minimum.toLocaleString()} minimum
                   </div>
                   <button className={`w-full bg-gradient-to-r ${config.color} text-white py-3 px-6 rounded-xl font-medium hover:opacity-90 transition-opacity group-hover:shadow-lg`}>
-                    Select {config.name}
+                    Select ${config.name}
                   </button>
                 </div>
               </div>
@@ -2081,7 +2080,7 @@ const PortfolioPage = () => {
                     {token.symbol}
                   </div>
                   <button className={`w-full bg-gradient-to-r ${token.color} text-white py-3 px-6 rounded-xl font-medium hover:opacity-90 transition-opacity group-hover:shadow-lg`}>
-                    Select {token.symbol}
+                    Select ${token.symbol}
                   </button>
                 </div>
               </div>
@@ -2133,7 +2132,7 @@ const PortfolioPage = () => {
                       {network.symbol}
                     </div>
                     <button className={`w-full bg-gradient-to-r ${network.color} text-white py-3 px-6 rounded-xl font-medium hover:opacity-90 transition-opacity group-hover:shadow-lg`}>
-                      Select {network.name}
+                      Select ${network.name}
                     </button>
                   </div>
                 </div>
@@ -2457,7 +2456,6 @@ const PortfolioPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-9">
       <div className="max-w-7xl mx-auto p-4 md:p-6">
-        {/* Wallet Status Alert */}
         {wallet?.status === false && (
           <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-xl p-4 mb-6">
             <div className="flex items-center gap-3">
@@ -2481,7 +2479,6 @@ const PortfolioPage = () => {
           </div>
         )}
 
-        {/* Upgrade Request Alert */}
         {upgradeRequests.some(req => !req.status) && (
           <div className="bg-purple-500/20 border border-purple-500/30 rounded-xl p-4 mb-6">
             <div className="flex items-center gap-3">
@@ -2509,7 +2506,6 @@ const PortfolioPage = () => {
           </div>
         )}
 
-        {/* Portfolio Summary Card */}
         <div className="bg-gradient-to-r from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 mb-6 md:mb-8 border border-slate-700/50 shadow-2xl">
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -2550,7 +2546,6 @@ const PortfolioPage = () => {
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex flex-wrap gap-4 mb-8">
           <button
             onClick={() => setShowWithdrawalForm(true)}
@@ -2576,7 +2571,6 @@ const PortfolioPage = () => {
           </button>
         </div>
 
-        {/* Stock Portfolio Table */}
         <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700/50 overflow-hidden">
           <div className="p-6 border-b border-slate-700/50">
             <div className="flex items-center justify-between">
@@ -2675,7 +2669,7 @@ const PortfolioPage = () => {
                               <FiTrendingDown className="w-4 h-4" />
                             )}
                             <span className="font-medium">
-                              {profitLossPercentage >= 0 ? '+' : ''}{profitLossPercentage.toFixed(2)}%
+                              {profitLossPercentage >= 0 ? '+' : ''}${profitLossPercentage.toFixed(2)}%
                             </span>
                           </div>
                         </td>
