@@ -2,7 +2,7 @@
 
 "use client"
 import React, { useState, useEffect } from 'react';
-import { FiUser, FiMail, FiDollarSign, FiClock, FiEdit3, FiSave, FiX, FiCheck, FiEye, FiRefreshCw, FiExternalLink, FiChevronDown, FiChevronUp } from 'react-icons/fi';
+import { FiUser, FiMail, FiDollarSign, FiClock, FiEdit3, FiSave, FiX, FiCheck, FiEye, FiRefreshCw, FiExternalLink, FiChevronDown, FiChevronUp, FiTrash2 } from 'react-icons/fi';
 import { createClient } from '@/app/utils/supabase/clients';
 import { TIER_CONFIG, TransactionRequest, WithdrawalRequest } from '@/app/data';
 
@@ -139,6 +139,27 @@ const AdminTransactionsPage = () => {
     } catch (error) {
       console.error('Error updating withdrawal status:', error);
       throw error;
+    }
+  };
+
+  const deleteItem = async (id: string) => {
+    if (!confirm(`Are you sure you want to delete this ${activeTab.slice(0, -1)}?`)) return;
+
+    try {
+      setLoading(true);
+      if (activeTab === 'deposits') {
+        const { error } = await supabase.from('transactions').delete().eq('id', id);
+        if (error) throw error;
+        setTransactions(prev => prev.filter(transaction => transaction.id !== id));
+      } else {
+        const { error } = await supabase.from('withdrawals').delete().eq('id', id);
+        if (error) throw error;
+        setWithdrawals(prev => prev.filter(withdrawal => withdrawal.id !== id));
+      }
+    } catch (error) {
+      console.error(`Error deleting ${activeTab.slice(0, -1)}:`, error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -419,38 +440,46 @@ const AdminTransactionsPage = () => {
                             )}
                           </td>
                           <td className="p-4">
-                            {transaction.account_number ? (
+                            <div className="flex items-center gap-2">
+                              {transaction.account_number ? (
+                                <button
+                                  onClick={async () => {
+                                    try {
+                                      await updateWalletStatus(
+                                        transaction.account_number!,
+                                        !transaction.status
+                                      );
+                                    } catch (error) {
+                                      console.error('Error updating payment status:', error);
+                                    }
+                                  }}
+                                  className={`px-3 py-1 rounded cursor-pointer text-sm font-medium transition-colors flex items-center gap-1 ${
+                                    transaction.status
+                                      ? 'bg-green-600 hover:bg-green-700 text-white'
+                                      : 'bg-yellow-600 hover:bg-yellow-700 text-white'
+                                  }`}
+                                >
+                                  {transaction.status ? (
+                                    <FiCheck className="w-3 h-3" />
+                                  ) : (
+                                    <FiClock className="w-3 h-3" />
+                                  )}
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() => startEditing(transaction)}
+                                  className="bg-blue-600 cursor-pointer hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1"
+                                >
+                                  <FiEdit3 className="w-3 h-3" />
+                                </button>
+                              )}
                               <button
-                                onClick={async () => {
-                                  try {
-                                    await updateWalletStatus(
-                                      transaction.account_number!,
-                                      !transaction.status
-                                    );
-                                  } catch (error) {
-                                    console.error('Error updating payment status:', error);
-                                  }
-                                }}
-                                className={`px-3 py-1 rounded cursor-pointer text-sm font-medium transition-colors flex items-center gap-1 ${
-                                  transaction.status
-                                    ? 'bg-green-600 hover:bg-green-700 text-white'
-                                    : 'bg-yellow-600 hover:bg-yellow-700 text-white'
-                                }`}
+                                onClick={() => deleteItem(transaction.id)}
+                                className="flex cursor-pointer items-center gap-1 px-3 py-1 bg-red-600/90 hover:bg-red-600 text-white rounded-lg text-sm transition-colors border border-red-500/30"
                               >
-                                {transaction.status ? (
-                                  <FiCheck className="w-3 h-3" />
-                                ) : (
-                                  <FiClock className="w-3 h-3" />
-                                )}
+                                <FiTrash2 className="w-3 h-3" />
                               </button>
-                            ) : (
-                              <button
-                                onClick={() => startEditing(transaction)}
-                                className="bg-blue-600 cursor-pointer hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1"
-                              >
-                                <FiEdit3 className="w-3 h-3" />
-                              </button>
-                            )}
+                            </div>
                           </td>
                           <td className="p-4">
                             <button
@@ -594,29 +623,37 @@ const AdminTransactionsPage = () => {
                             )}
                           </td>
                           <td className="p-4">
-                            <button
-                              onClick={async () => {
-                                try {
-                                  await updateWithdrawalStatus(
-                                    withdrawal.id,
-                                    !withdrawal.status
-                                  );
-                                } catch (error) {
-                                  console.error('Error updating withdrawal status:', error);
-                                }
-                              }}
-                              className={`px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1 ${
-                                withdrawal.status
-                                  ? 'bg-green-600 hover:bg-green-700 text-white'
-                                  : 'bg-yellow-600 hover:bg-yellow-700 text-white'
-                              }`}
-                            >
-                              {withdrawal.status ? (
-                                <FiCheck className="w-3 h-3" />
-                              ) : (
-                                <FiClock className="w-3 h-3" />
-                              )}
-                            </button>
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={async () => {
+                                  try {
+                                    await updateWithdrawalStatus(
+                                      withdrawal.id,
+                                      !withdrawal.status
+                                    );
+                                  } catch (error) {
+                                    console.error('Error updating withdrawal status:', error);
+                                  }
+                                }}
+                                className={`px-3 py-1 rounded text-sm font-medium transition-colors flex items-center gap-1 ${
+                                  withdrawal.status
+                                    ? 'bg-green-600 hover:bg-green-700 text-white'
+                                    : 'bg-yellow-600 hover:bg-yellow-700 text-white'
+                                }`}
+                              >
+                                {withdrawal.status ? (
+                                  <FiCheck className="w-3 h-3" />
+                                ) : (
+                                  <FiClock className="w-3 h-3" />
+                                )}
+                              </button>
+                              <button
+                                onClick={() => deleteItem(withdrawal.id)}
+                                className="flex cursor-pointer items-center gap-1 px-3 py-1 bg-red-600/90 hover:bg-red-600 text-white rounded-lg text-sm transition-colors border border-red-500/30"
+                              >
+                                <FiTrash2 className="w-3 h-3" />
+                              </button>
+                            </div>
                           </td>
                           <td className="p-4">
                             <button
