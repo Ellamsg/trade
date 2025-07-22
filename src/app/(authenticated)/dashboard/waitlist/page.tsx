@@ -418,7 +418,7 @@ const WaitlistPage = () => {
             </div>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="flex items-center justify-center bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2 md:px-6 md:py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 border border-blue-500/30 text-sm md:text-base"
+              className="flex items-center cursor-pointer justify-center bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2 md:px-6 md:py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 border border-blue-500/30 text-sm md:text-base"
             >
               <FiPlus className="mr-2" />
               New Order
@@ -755,7 +755,7 @@ const WaitlistPage = () => {
               </h2>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200"
+                className="text-slate-400 cursor-pointer hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200"
               >
                 <FiX size={20} />
               </button>
@@ -792,6 +792,7 @@ const WaitlistPage = () => {
                   Select Stock
                 </label>
                 <select
+                
                   value={selectedAsset?.symbol || ""}
                   onChange={(e) => handleAssetChange(e.target.value)}
                   className="w-full bg-slate-800/50 border border-slate-600/50 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none backdrop-blur-sm"
@@ -837,7 +838,7 @@ const WaitlistPage = () => {
 
               {/* Price Input */}
               <div>
-                <label className="block text-slate-300 mb-2 font-medium">
+                <label className="block text-slate-300 mb-1 font-medium">
                   Limit Price ($)
                 </label>
                 <div className="relative">
@@ -850,14 +851,14 @@ const WaitlistPage = () => {
                     onChange={(e) => setPrice(e.target.value)}
                     placeholder="0.00"
                     step="0.01"
-                    className="w-full bg-slate-800/50 border border-slate-600/50 rounded-xl pl-12 pr-4 py-3 text-white font-mono focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none backdrop-blur-sm"
+                    className="w-full bg-slate-800/50 border border-slate-600/50 rounded-xl pl-12 pr-4 py-2 text-white font-mono focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none backdrop-blur-sm"
                   />
                 </div>
               </div>
 
               {/* Amount Input */}
               <div>
-                <label className="block text-slate-300 mb-2 font-medium">
+                <label className="block text-slate-300 mb-1 font-medium">
                   Shares
                 </label>
                 <input
@@ -866,7 +867,7 @@ const WaitlistPage = () => {
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="0"
                   step="1"
-                  className="w-full bg-slate-800/50 border border-slate-600/50 rounded-xl px-4 py-3 text-white font-mono focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none backdrop-blur-sm"
+                  className="w-full bg-slate-800/50 border border-slate-600/50 rounded-xl px-4 py-2 text-white font-mono focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none backdrop-blur-sm"
                 />
               </div>
 
