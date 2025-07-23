@@ -271,6 +271,10 @@ useEffect(() => {
 
   return () => clearInterval(interval);
 }, [wallet, upgradeRequests]);
+
+
+
+
 // Add this function to handle tier upgrade
 const handleTierUpgrade = async () => {
   if (!wallet || !selectedUpgradeTier) return;
