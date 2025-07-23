@@ -102,6 +102,7 @@ export interface StockPortfolioItem {
   readonly asset: string;
   readonly asset_name: string;
   readonly amount: number;
+  readonly price_change :string;
   readonly average_price: number;
   readonly current_value: number;
   readonly image_url?: string;

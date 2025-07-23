@@ -1306,9 +1306,8 @@ const handleTierUpgrade = async () => {
                     <th className="text-left p-4 text-slate-300 font-medium">Amount</th>
                     <th className="text-left p-4 text-slate-300 font-medium">Avg Price</th>
                     <th className="text-left p-4 text-slate-300 font-medium">Current Value</th>
-                
                     <th className="text-left p-4 text-slate-300 font-medium">P&L</th>
-                    <th className="text-left p-4 text-slate-300 font-medium">P&L %</th>
+                  
                   </tr>
                 </thead>
                 <tbody>
@@ -1350,23 +1349,12 @@ const handleTierUpgrade = async () => {
                           <p className="text-white font-medium">${item.current_value.toLocaleString()}</p>
                         </td>
                       
-                        <td className="p-4">
-                          <p className={`font-medium ${profitLoss >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                            {profitLoss >= 0 ? '+' : ''}${profitLoss.toLocaleString()}
+                        <td className={`${item.price_change.includes('+') ? 'text-green-700': 'text-red-800'}`}>
+                          <p>
+                            {item.price_change}
                           </p>
                         </td>
-                        <td className="p-4">
-                          <div className={`flex items-center gap-1 ${profitLossPercentage >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                            {profitLossPercentage >= 0 ? (
-                              <FiTrendingUp className="w-4 h-4" />
-                            ) : (
-                              <FiTrendingDown className="w-4 h-4" />
-                            )}
-                            <span className="font-medium">
-                              {profitLossPercentage >= 0 ? '+' : ''}{profitLossPercentage.toFixed(2)}%
-                            </span>
-                          </div>
-                        </td>
+                        
                       </tr>
                     );
                   })}

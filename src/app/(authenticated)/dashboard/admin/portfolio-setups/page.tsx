@@ -7,14 +7,6 @@ import { createClient } from "@/app/utils/supabase/clients";
 import { FiEdit, FiSave, FiRefreshCw, FiTrash2, FiSearch, FiUser, FiDollarSign, FiTrendingUp, FiCreditCard, FiActivity, FiChevronDown, FiChevronUp, FiEye, FiCalendar, FiTrendingDown, FiArrowUp, FiArrowDown, FiCheck, FiX } from "react-icons/fi";
 import { TIER_CONFIG, UserWallet, WalletTier, TokenType } from "@/app/data";
 
-type StockAsset = {
-  id: string;
-  symbol: string;
-  name: string;
-  current_price: number;
-  percentage_change: string;
-  image_url?: string;
-};
 
 type PortfolioItem = {
   id: string;
@@ -24,6 +16,7 @@ type PortfolioItem = {
   asset_name: string;
   email: string;
   amount: number;
+  price_change:string;
   average_price: number;
   current_value: number;
   created_at: string;
@@ -46,6 +39,7 @@ const AdminWalletsPage = () => {
     profit_loss?: string | number;
     performance_percentage?: string | number;
     status?: boolean;
+    price_change? :string;
     amount?: string | number;
     average_price?: string | number;
   }>({});
@@ -104,6 +98,7 @@ const AdminWalletsPage = () => {
       // Portfolio editing
       setEditForm({
         amount: item.amount.toString(),
+        price_change: item.price_change.toString(),
         average_price: item.average_price.toString(),
         current_value: item.current_value.toString(),
       });
@@ -149,6 +144,7 @@ const AdminWalletsPage = () => {
           .from("stock_portfolio")
           .update({
             amount: Number(editForm.amount) || 0,
+            price_change: editForm.price_change,
             average_price: Number(editForm.average_price) || 0,
             current_value: Number(editForm.current_value) || 0,
           })
@@ -162,6 +158,7 @@ const AdminWalletsPage = () => {
               ? {
                   ...portfolio,
                   amount: Number(editForm.amount) || 0,
+                  price_change: String(editForm.price_change) || "0" ,
                   average_price: Number(editForm.average_price) || 0,
                   current_value: Number(editForm.current_value) || 0,
                 }
@@ -900,6 +897,27 @@ const AdminWalletsPage = () => {
                                   />
                                 ) : (
                                   <span>${portfolio.current_value.toLocaleString()}</span>
+                                )}
+                              </div>
+                            </div>
+
+                            <div>
+                              <label className="text-xs text-slate-400">Price Change</label>
+                              <div className="text-sm text-white">
+                                {editingId === portfolio.id ? (
+                                  <input
+                                    type="text"
+                                    value={editForm.price_change || ""}
+                                    onChange={(e) =>
+                                      setEditForm({ ...editForm, price_change: e.target.value })
+                                    }
+                                    className="w-full px-2 py-1 bg-slate-800/50 border border-slate-700/50 rounded text-white text-sm"
+                                  />
+                                ) : (
+<span className={`${portfolio?.price_change?.toString().includes('+') ? "text-green-600" : "text-red-700"}`}>
+  {portfolio?.price_change?.toLocaleString?.() ?? 'N/A'}
+</span>
+
                                 )}
                               </div>
                             </div>

@@ -15,6 +15,7 @@ type Order = {
   email:string;
   amount: number;
   total: number;
+  price_change:string;
   status: "pending" | "approved" | "cancelled";
   created_at: string;
   image_url?: string;
@@ -77,6 +78,7 @@ const AdminOrdersPage = () => {
               wallet_id: order.wallet_id,
               asset: order.asset,
               email: order.email,
+              price_change: order.price_change,
               asset_name: order.asset_name,
               amount: order.amount,
               average_price: order.price,

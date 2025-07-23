@@ -24,6 +24,7 @@ type StockAsset = {
   current_price: number;
   percentage_change: string;
   image_url?: string;
+  price_change?:string;
 };
 
 type Order = {
@@ -37,6 +38,7 @@ type Order = {
   price: number;
   amount: number;
   total: number;
+  price_change?:string;
   status: "pending" | "approved" | "cancelled";
   created_at: string;
   approved_at?: string;
@@ -51,6 +53,7 @@ type PortfolioItem = {
   asset_name: string;
   email: string;
   amount: number;
+  price_change?:string;
   average_price: number;
   current_value: number;
   created_at: string;
@@ -101,7 +104,7 @@ const WaitlistPage = () => {
         // Fetch stock assets
         const { data: stocksData, error: stocksError } = await supabase
           .from("posts")
-          .select("id, symbol, name, current_price, percentage_change, image_url")
+          .select("id, symbol, name,price_change, current_price, percentage_change, image_url")
           .order("created_at", { ascending: false });
 
         if (stocksError) throw stocksError;
@@ -207,6 +210,7 @@ const WaitlistPage = () => {
         .from("stock_orders")
         .insert({
           user_id: user.id,
+          price_change:selectedAsset.price_change,
           wallet_id: wallet.id,
           asset: selectedAsset.symbol.toUpperCase(),
           asset_name: selectedAsset.name,
