@@ -719,6 +719,7 @@ const AdminWalletsPage = () => {
                       <div className="col-span-6 md:col-span-2">
                         <div className="space-y-2">
                           <div className="text-sm text-white">
+                         
                             {editingId === portfolio.id ? (
                               <input
                                 type="number"

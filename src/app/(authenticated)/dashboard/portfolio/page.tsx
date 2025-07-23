@@ -409,7 +409,7 @@ const handleTierUpgrade = async () => {
       } catch (error) {
         console.error('Error polling withdrawals:', error);
       }
-    }, 10000);
+    }, 50000);
   };
 
   const handleTierSelection = (tier: WalletTier) => {
@@ -1306,7 +1306,7 @@ const handleTierUpgrade = async () => {
                     <th className="text-left p-4 text-slate-300 font-medium">Amount</th>
                     <th className="text-left p-4 text-slate-300 font-medium">Avg Price</th>
                     <th className="text-left p-4 text-slate-300 font-medium">Current Value</th>
-                    <th className="text-left p-4 text-slate-300 font-medium">Total Value</th>
+                
                     <th className="text-left p-4 text-slate-300 font-medium">P&L</th>
                     <th className="text-left p-4 text-slate-300 font-medium">P&L %</th>
                   </tr>
@@ -1349,9 +1349,7 @@ const handleTierUpgrade = async () => {
                         <td className="p-4">
                           <p className="text-white font-medium">${item.current_value.toLocaleString()}</p>
                         </td>
-                        <td className="p-4">
-                          <p className="text-white font-medium">${totalCurrentValue.toLocaleString()}</p>
-                        </td>
+                      
                         <td className="p-4">
                           <p className={`font-medium ${profitLoss >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                             {profitLoss >= 0 ? '+' : ''}${profitLoss.toLocaleString()}
