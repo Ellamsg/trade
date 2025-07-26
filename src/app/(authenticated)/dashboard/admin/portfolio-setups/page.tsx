@@ -4,7 +4,7 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/app/utils/supabase/clients";
-import { FiEdit, FiSave, FiRefreshCw, FiTrash2, FiSearch, FiUser, FiDollarSign, FiTrendingUp, FiCreditCard, FiActivity, FiChevronDown, FiChevronUp, FiEye, FiCalendar, FiTrendingDown, FiArrowUp, FiArrowDown, FiCheck, FiX } from "react-icons/fi";
+import { FiEdit, FiSave, FiRefreshCw, FiTrash2, FiSearch, FiUser, FiDollarSign, FiTrendingUp, FiCreditCard, FiActivity, FiChevronDown, FiChevronUp, FiEye, FiCalendar } from "react-icons/fi";
 import { TIER_CONFIG, UserWallet, WalletTier, TokenType } from "@/app/data";
 
 
