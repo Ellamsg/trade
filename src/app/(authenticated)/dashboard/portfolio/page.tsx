@@ -180,7 +180,7 @@ const [upgradeRequests, setUpgradeRequests] = useState<WalletUpgradeRequest[]>([
         setPortfolioLoading(false);
         return;
       }
-  
+  //added
       const { data, error } = await supabase
         .from('stock_portfolio')
         .select('*')
