@@ -180,7 +180,7 @@ const [upgradeRequests, setUpgradeRequests] = useState<WalletUpgradeRequest[]>([
         setPortfolioLoading(false);
         return;
       }
-  //added
+
       const { data, error } = await supabase
         .from('stock_portfolio')
         .select('*')
@@ -695,7 +695,7 @@ const handleTierUpgrade = async () => {
       </div>
     );
   }
-
+//restrict
   if (showTierSelection) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-9">
