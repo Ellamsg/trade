@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html className="blvck" lang="en">
       <head>
-      <link rel="icon" href="/assets/pentalogo4.png" sizes="any" />
+      <link rel="icon" href="https://www.financialprofessionals.org/images/default-source/article-images/bonds-vs-stocks.jpg?sfvrsn=8b80fd6b_0" sizes="any" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
