@@ -68,7 +68,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "https://www.financialprofessionals.org/images/default-source/article-images/bonds-vs-stocks.jpg?sfvrsn=8b80fd6b_0", // Path to your image in the `public` folder or an absolute URL
+        url: "/assets/charts.jpeg", // Path to your image in the `public` folder or an absolute URL
         width: 1200,
         height: 630,
         alt: "Penta Stocks Preview Image",
@@ -79,7 +79,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Penta Stocks",
     description: "All Trading Made Possible",
-    images: ["/images/preview-image.jpg"], // Twitter-specific image
+    images: ["/assets/charts.jpeg"], // Twitter-specific image
   },
 };
 
