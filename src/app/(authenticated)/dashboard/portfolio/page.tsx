@@ -84,18 +84,21 @@ const PortfolioPage = () => {
   const [showTierSelection, setShowTierSelection] = useState(false);
   const [showTokenSelection, setShowTokenSelection] = useState(false);
   const [showNetworkSelection, setShowNetworkSelection] = useState(false);
+ 
   const [creatingWallet, setCreatingWallet] = useState(false);
   const [selectedTier, setSelectedTier] = useState<WalletTier | null>(null);
   const [selectedToken, setSelectedToken] = useState<TokenType | null>(null);
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkType | null>(null);
   const [accountRequest, setAccountRequest] = useState<TransactionRequest | null>(null);
   const [generatingAccount, setGeneratingAccount] = useState(false);
+ 
   const [waitingForAccount, setWaitingForAccount] = useState(false);
   const [showWithdrawalForm, setShowWithdrawalForm] = useState(false);
   const [withdrawalAmount, setWithdrawalAmount] = useState('');
   const [withdrawalNetwork, setWithdrawalNetwork] = useState<NetworkType | null>(null);
   const [withdrawalToken, setWithdrawalToken] = useState<TokenType | null>(null);
   const [withdrawalAccount, setWithdrawalAccount] = useState('');
+ 
   const [withdrawing, setWithdrawing] = useState(false);
   const [withdrawals, setWithdrawals] = useState<WithdrawalRequest[]>([]);
   const [activeTab, setActiveTab] = useState<'portfolio' | 'withdrawals'>('portfolio');
@@ -167,7 +170,7 @@ const [upgradeRequests, setUpgradeRequests] = useState<WalletUpgradeRequest[]>([
     localStorage.removeItem('accountRequest');
     setAccountRequest(null);
     setShowContinuePrompt(false);
-    // Fetch wallet data after canceling to check if user has existing wallet
+  
     fetchWalletData();
   };
 

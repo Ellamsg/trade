@@ -47,10 +47,23 @@ const Sidebar = ({ closeSidebar }: { closeSidebar?: () => void }) => {
       rhyme: "Count your gains, feel divine"
     },
     { 
+      name: 'Transactions', 
+      href: '/dashboard/trade-transactions', 
+      icon: <FiPieChart />,
+      rhyme: "Check your history"
+    },
+  
+    { 
       name: 'Watchlist', 
       href: '/dashboard/waitlist', 
       icon: <FiList />,
       rhyme: "Orders wait, don't be late"
+    },
+    { 
+      name: 'Trade Requests', 
+      href: '/dashboard/trade-requests', 
+      icon: <FiBarChart />,
+      rhyme: "Request trades, track your gains"
     },
     { 
       name: 'Trends', 
@@ -98,6 +111,12 @@ const Sidebar = ({ closeSidebar }: { closeSidebar?: () => void }) => {
       href: '/dashboard/admin/stock-transactions',
       icon: <FiUsers />,
       rhyme: "Control Stocks transactions"
+    },
+    {
+      name: 'Trade Requests',
+      href: '/dashboard/admin/trade-requests',
+      icon: <FiBarChart />,
+      rhyme: "Manage manual trade requests"
     },
     {
       name: 'Account Upgrades',
