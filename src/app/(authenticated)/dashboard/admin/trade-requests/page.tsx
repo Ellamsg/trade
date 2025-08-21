@@ -900,39 +900,46 @@ const displayNumberOfStocks = () => {
                 <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 overflow-hidden divide-y divide-slate-700/50">
                   {filteredPortfolios.map((portfolio) => (
                     <div key={portfolio.id}>
-                      <div className="flex flex-col md:flex-row items-start md:items-center justify-between p-4 md:p-6 gap-4 hover:bg-slate-700/30">
-                        <div className="flex items-center gap-4">
-                          <StockImage imageUrl={portfolio.image_url} symbol={portfolio.asset} />
-                          <div>
-                            <h3 className="font-bold text-white">{portfolio.asset_name}</h3>
-                            <p className="text-sm text-slate-400 font-mono">{portfolio.asset}</p>
+                      <div className="grid grid-cols-12 items-center p-4 md:p-6 gap-4 hover:bg-slate-700/30">
+                        {/* User & Asset Info */}
+                        <div className="col-span-12 md:col-span-4 flex items-center gap-4">
+                          <div className="flex items-center gap-4">
+                            <StockImage imageUrl={portfolio.image_url} symbol={portfolio.asset} />
+                            <div>
+                              <h3 className="font-bold text-white">{portfolio.asset_name}</h3>
+                              <p className="text-sm text-slate-400 font-mono">{portfolio.asset}</p>
+                            </div>
                           </div>
                         </div>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                          <div className="text-right">
-                            <p className="text-white font-medium">{portfolio.amount} shares</p>
-                            <p className="text-slate-400">Shares</p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-white font-medium">${portfolio.average_price.toLocaleString()}</p>
-                            <p className="text-slate-400">Avg Price</p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-white font-medium">${portfolio.current_value.toLocaleString()}</p>
-                            <p className="text-slate-400">Current Value</p>
-                          </div>
-                          <div className="text-right">
-                            <p
-                              className={`${
-                                portfolio.price_change?.includes("+") ? "text-green-600" : "text-red-700"
-                              } font-medium`}
-                            >
-                              {portfolio.price_change ?? "N/A"}
-                            </p>
-                            <p className="text-slate-400">Price Change</p>
-                          </div>
+
+                        {/* Shares & Avg Price */}
+                        <div className="col-span-6 md:col-span-2 text-right">
+                          <p className="text-white font-medium">{portfolio.amount} shares</p>
+                          <p className="text-slate-400">Shares</p>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="col-span-6 md:col-span-2 text-right">
+                          <p className="text-white font-medium">${portfolio.average_price.toLocaleString()}</p>
+                          <p className="text-slate-400">Avg Price</p>
+                        </div>
+
+                        {/* Current Value & Price Change */}
+                        <div className="col-span-6 md:col-span-2 text-right">
+                          <p className="text-white font-medium">${portfolio.current_value.toLocaleString()}</p>
+                          <p className="text-slate-400">Current Value</p>
+                        </div>
+                        <div className="col-span-6 md:col-span-2 text-right">
+                          <p
+                            className={`${
+                              portfolio.price_change?.includes("+") ? "text-green-600" : "text-red-700"
+                            } font-medium`}
+                          >
+                            {portfolio.price_change ?? "N/A"}
+                          </p>
+                          <p className="text-slate-400">Price Change</p>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="col-span-12 flex justify-end items-center gap-2">
                           <button
                             onClick={() => toggleRowExpansion(portfolio.id)}
                             className="flex items-center gap-1 px-3 py-1 bg-slate-700/50 hover:bg-slate-700 rounded-lg text-sm transition-colors"
