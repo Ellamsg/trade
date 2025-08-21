@@ -136,12 +136,12 @@ const PortfolioPage = () => {
                     ${totalPortfolioValue.toLocaleString()}
                   </p>
                   <p className="text-sm">
-                    <span className="text-red-500 font-bold">Encrypted Balance: </span>
-                    <span className="text-white">${wallet?.encrypted_balance?.toLocaleString() || 'N/A'}</span>
+                    <span className="text-white font-bold">Encrypted Balance: </span>
+                    <span className="text-red-500">${wallet?.encrypted_balance?.toLocaleString() || 'N/A'}</span>
                   </p>
                     <p className="text-sm">
-                    <span className="text-green-600 font-bold">Percentage: </span>
-                    <span className="text-white">{wallet?.percent?.toLocaleString() || 'N/A'}%</span>
+                    <span className="text-white font-bold">Percentage: </span>
+                    <span className="text-yellow-300">{wallet?.percent?.toLocaleString() || 'N/A'}%</span>
                   </p>
                 </div>
                 <div className="p-2 md:p-3 bg-purple-600/20 rounded-lg">
