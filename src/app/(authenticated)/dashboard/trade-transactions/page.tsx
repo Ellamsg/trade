@@ -194,9 +194,7 @@ const PortfolioPage = () => {
                 </thead>
                 <tbody>
                   {stockPortfolio.map((item) => {
-                    const profitLoss = item.current_value - item.average_price;
-                    const isProfit = profitLoss >= 0;
-                    const profitLossDisplay = `${isProfit ? '+' : '-'}$${Math.abs(profitLoss).toLocaleString()}`;
+                 
                     const displayTime = item.updated_at ? item.updated_at : item.created_at;
 
                     return (
@@ -222,8 +220,8 @@ const PortfolioPage = () => {
                         <td className="p-4">
                           <p className="text-white font-medium">{formatDate(displayTime)}</p>
                         </td>
-                        <td className={`p-4 ${isProfit ? 'text-green-400' : 'text-red-400'}`}>
-                          <p>{profitLossDisplay}</p>
+                        <td className={`p-4 ${item.price_change.includes('+') ? 'text-green-400' : 'text-red-400'}`}>
+                          <p>{item.price_change}</p>
                         </td>
                       </tr>
                     );
