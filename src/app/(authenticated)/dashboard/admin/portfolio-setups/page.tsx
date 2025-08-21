@@ -697,7 +697,7 @@ const AdminWalletsPage = () => {
                                     />
                                   ) : (
                                     <span>
-                                      ${wallet.percent.toLocaleString()}
+                                      {wallet.percent}
                                     </span>
                                   )}
                                 </div>
