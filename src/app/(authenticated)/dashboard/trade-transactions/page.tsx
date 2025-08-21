@@ -118,7 +118,7 @@ const PortfolioPage = () => {
                   Trades Summary
                 </h1>
                 <p className="text-slate-400 text-sm md:text-base">
-                  Your current stock and wallet overview
+                  Your current stock Trades
                 </p>
               </div>
             </div>
@@ -157,14 +157,14 @@ const PortfolioPage = () => {
           <div className="p-6 border-b border-slate-700/50">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-2xl font-bold text-white mb-2">Stock Portfolio</h2>
-                <p className="text-slate-400">Your current stock investments</p>
+                <h2 className="text-2xl font-bold text-white mb-2">Trade Assets</h2>
+                <p className="text-slate-400">Your current stock trades</p>
               </div>
               <div className="flex items-center gap-2">
                 <FiPieChart className="w-5 h-5 text-blue-400" />
-                <span className="text-sm text-slate-400">
+                {/* <span className="text-sm text-slate-400">
                   Total Assets: {stockPortfolio.length}
-                </span>
+                </span> */}
               </div>
             </div>
           </div>
