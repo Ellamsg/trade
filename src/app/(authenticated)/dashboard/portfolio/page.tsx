@@ -18,7 +18,7 @@ import { WalletTier ,
   WALLET_TIERS,
   WalletUpgradeRequest
 } from '@/app/data';
-
+import Link from 'next/link';
 const ContinueAccountGeneration = ({ onContinue, onCancel, accountRequest }: { 
   onContinue: () => void, 
   onCancel: () => void,
@@ -1154,14 +1154,20 @@ const handleTierUpgrade = async () => {
             <div className="flex items-center gap-3">
               <FiClock className="w-5 h-5 text-yellow-400" />
               <div>
-                <p className="text-yellow-400 font-medium">Wallet Setup in Progress</p>
+                <p className="text-yellow-400 font-medium">
+                  Wallet Setup in Progress
+                </p>
                 <p className="text-sm text-slate-400">
-                  Send ${TIER_CONFIG[wallet.tier].minimum.toLocaleString()} to account: 
-                  <span className="font-mono font-bold text-white ml-2">{wallet.wallet_number}</span>
+                  Send ${TIER_CONFIG[wallet.tier].minimum.toLocaleString()} to
+                  account:
+                  <span className="font-mono font-bold text-white ml-2">
+                    {wallet.wallet_number}
+                  </span>
                 </p>
                 {wallet.network && wallet.token_type && (
                   <p className="text-sm text-slate-400 mt-1">
-                    Network: {NETWORK_CONFIG[wallet.network].name} • Token: {getTokenById(wallet.token_type)?.name}
+                    Network: {NETWORK_CONFIG[wallet.network].name} • Token:{" "}
+                    {getTokenById(wallet.token_type)?.name}
                   </p>
                 )}
                 <p className="text-xs text-yellow-400 mt-2">
@@ -1172,28 +1178,46 @@ const handleTierUpgrade = async () => {
           </div>
         )}
 
-        {upgradeRequests.some(req => !req.status) && (
+        {upgradeRequests.some((req) => !req.status) && (
           <div className="bg-purple-500/20 border border-purple-500/30 rounded-xl p-4 mb-6">
             <div className="flex items-center gap-3">
               <FiTrendingUp className="w-5 h-5 text-purple-400" />
               <div>
-                <p className="text-purple-400 font-medium">Tier Upgrade Requested</p>
-                {upgradeRequests.filter(req => !req.status).map(req => (
-                  <div key={req.id}>
-                    <p className="text-sm text-slate-400">
-                      Upgrade to {TIER_CONFIG[req.target_tier].name}: Please send 
-                      <span className="font-bold text-white"> ${(TIER_CONFIG[req.target_tier].minimum).toLocaleString()}</span> to account: 
-                      <span className="font-mono font-bold text-white ml-2">{wallet?.wallet_number}</span>
-                    </p>
-                    <p className="text-sm text-slate-400 mt-1">
-                      Network: {wallet?.network && NETWORK_CONFIG[wallet.network].name} • 
-                      Token: {wallet?.token_type && getTokenById(wallet.token_type)?.name}
-                    </p>
-                    <p className="text-xs text-purple-400 mt-2">
-                      Requested on {formatDate(req.created_at)} - Waiting for admin confirmation...
-                    </p>
-                  </div>
-                ))}
+                <p className="text-purple-400 font-medium">
+                  Tier Upgrade Requested
+                </p>
+                {upgradeRequests
+                  .filter((req) => !req.status)
+                  .map((req) => (
+                    <div key={req.id}>
+                      <p className="text-sm text-slate-400">
+                        Upgrade to {TIER_CONFIG[req.target_tier].name}: Please
+                        send
+                        <span className="font-bold text-white">
+                          {" "}
+                          $
+                          {TIER_CONFIG[
+                            req.target_tier
+                          ].minimum.toLocaleString()}
+                        </span>{" "}
+                        to account:
+                        <span className="font-mono font-bold text-white ml-2">
+                          {wallet?.wallet_number}
+                        </span>
+                      </p>
+                      <p className="text-sm text-slate-400 mt-1">
+                        Network:{" "}
+                        {wallet?.network && NETWORK_CONFIG[wallet.network].name}{" "}
+                        • Token:{" "}
+                        {wallet?.token_type &&
+                          getTokenById(wallet.token_type)?.name}
+                      </p>
+                      <p className="text-xs text-purple-400 mt-2">
+                        Requested on {formatDate(req.created_at)} - Waiting for
+                        admin confirmation...
+                      </p>
+                    </div>
+                  ))}
               </div>
             </div>
           </div>
@@ -1203,39 +1227,45 @@ const handleTierUpgrade = async () => {
         <div className="bg-gradient-to-r from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 mb-6 md:mb-8 border border-slate-700/50 shadow-2xl">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <p className="text-slate-400 text-base md:text-lg mb-2">Current Wallet Value</p>
+              <p className="text-slate-400 text-base md:text-lg mb-2">
+                Current Wallet Value
+              </p>
               <p className="text-2xl md:text-4xl font-bold text-white mb-2">
-                ${wallet?.balance.toLocaleString() || '0'}
+                ${wallet?.balance.toLocaleString() || "0"}
               </p>
             </div>
-           
+
             <div className="p-3 md:p-4 bg-blue-600/20 rounded-xl">
               <FiDollarSign className="w-6 h-6 md:w-8 md:h-8 text-blue-400" />
             </div>
           </div>
           <div className="bg-slate-800/30 my-6 rounded-xl p-3 md:p-4 border border-slate-700/30">
-              <p className="text-slate-400 text-xs md:text-sm mb-1">Account</p>
-              <p className="text-lg md:text-xl font-bold text-white font-mono">
-                {wallet?.wallet_number || 'N/A'}
-              </p>
-            </div>
+            <p className="text-slate-400 text-xs md:text-sm mb-1">Account</p>
+            <p className="text-lg md:text-xl font-bold text-white font-mono">
+              {wallet?.wallet_number || "N/A"}
+            </p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
             <div className="bg-slate-800/30 rounded-xl p-3 md:p-4 border border-slate-700/30">
-              <p className="text-slate-400 text-xs md:text-sm mb-1">Wallet Tier</p>
+              <p className="text-slate-400 text-xs md:text-sm mb-1">
+                Wallet Tier
+              </p>
               <p className="text-lg md:text-xl font-bold text-white">
-                {wallet ? TIER_CONFIG[wallet.tier].name : 'N/A'}
+                {wallet ? TIER_CONFIG[wallet.tier].name : "N/A"}
               </p>
             </div>
             <div className="bg-slate-800/30 rounded-xl p-3 md:p-4 border border-slate-700/30">
               <p className="text-slate-400 text-xs md:text-sm mb-1">Network</p>
               <p className="text-lg md:text-xl font-bold text-white">
-                {wallet?.network ? NETWORK_CONFIG[wallet.network].name : 'N/A'}
+                {wallet?.network ? NETWORK_CONFIG[wallet.network].name : "N/A"}
               </p>
             </div>
             <div className="bg-slate-800/30 rounded-xl p-3 md:p-4 border border-slate-700/30">
               <p className="text-slate-400 text-xs md:text-sm mb-1">Token</p>
               <p className="text-lg md:text-xl font-bold text-white">
-                {wallet?.token_type ? getTokenById(wallet.token_type)?.symbol : 'N/A'}
+                {wallet?.token_type
+                  ? getTokenById(wallet.token_type)?.symbol
+                  : "N/A"}
               </p>
               <p>{wallet?.token_type}</p>
             </div>
@@ -1252,7 +1282,7 @@ const handleTierUpgrade = async () => {
             Withdraw Funds
           </button>
           <button
-            onClick={() => setActiveTab('withdrawals')}
+            onClick={() => setActiveTab("withdrawals")}
             className="bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl font-medium transition-colors flex items-center gap-2"
           >
             <FiExternalLink className="w-4 h-4" />
@@ -1267,6 +1297,14 @@ const handleTierUpgrade = async () => {
             <FiTrendingUp className="w-4 h-4" />
             Upgrade Tier
           </button>
+          <Link href="/dashboard/trade-transactions">
+            <button
+              className="bg-green-700 cursor-pointer text-white px-6 py-3 rounded-xl font-medium hover:opacity-90 transition-opacity flex items-center gap-2"
+              disabled={!wallet}
+            >
+              Go to trade History
+            </button>
+          </Link>
         </div>
 
         {/* Stock Portfolio Table */}
@@ -1274,7 +1312,9 @@ const handleTierUpgrade = async () => {
           <div className="p-6 border-b border-slate-700/50">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-2xl font-bold text-white mb-2">Stock Portfolio</h2>
+                <h2 className="text-2xl font-bold text-white mb-2">
+                  Stock Portfolio
+                </h2>
                 <p className="text-slate-400">Your current stock investments</p>
               </div>
               <div className="flex items-center gap-2">
@@ -1296,7 +1336,10 @@ const handleTierUpgrade = async () => {
               <div className="text-slate-400 mb-4">
                 <FiActivity className="w-12 h-12 mx-auto mb-2" />
                 <p>No stock investments yet</p>
-                <p className="text-sm mt-2">Your stock portfolio will appear here once you make investments</p>
+                <p className="text-sm mt-2">
+                  Your stock portfolio will appear here once you make
+                  investments
+                </p>
               </div>
             </div>
           ) : (
@@ -1304,13 +1347,24 @@ const handleTierUpgrade = async () => {
               <table className="w-full">
                 <thead className="bg-slate-700/50">
                   <tr>
-                    <th className="text-left p-4 text-slate-300 font-medium">Asset</th>
-                    <th className="text-left p-4 text-slate-300 font-medium">Symbol</th>
-                    <th className="text-left p-4 text-slate-300 font-medium">Amount</th>
-                    <th className="text-left p-4 text-slate-300 font-medium">Avg Price</th>
-                    <th className="text-left p-4 text-slate-300 font-medium">Current Value</th>
-                    <th className="text-left p-4 text-slate-300 font-medium">P&L</th>
-                  
+                    <th className="text-left p-4 text-slate-300 font-medium">
+                      Asset
+                    </th>
+                    <th className="text-left p-4 text-slate-300 font-medium">
+                      Symbol
+                    </th>
+                    <th className="text-left p-4 text-slate-300 font-medium">
+                      Amount
+                    </th>
+                    <th className="text-left p-4 text-slate-300 font-medium">
+                      Avg Price
+                    </th>
+                    <th className="text-left p-4 text-slate-300 font-medium">
+                      Current Value
+                    </th>
+                    <th className="text-left p-4 text-slate-300 font-medium">
+                      P&L
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1318,46 +1372,65 @@ const handleTierUpgrade = async () => {
                     const totalInvested = item.amount * item.average_price;
                     const totalCurrentValue = item.amount * item.current_value;
                     const profitLoss = totalCurrentValue - totalInvested;
-                    const profitLossPercentage = totalInvested > 0 ? (profitLoss / totalInvested) * 100 : 0;
-                    
+                    const profitLossPercentage =
+                      totalInvested > 0
+                        ? (profitLoss / totalInvested) * 100
+                        : 0;
+
                     return (
-                      <tr key={item.id} className="border-t border-slate-700/50 hover:bg-slate-700/25">
+                      <tr
+                        key={item.id}
+                        className="border-t border-slate-700/50 hover:bg-slate-700/25"
+                      >
                         <td className="p-4">
                           <div className="flex items-center gap-3">
                             {item.image_url && (
-                              <img 
-                                src={item.image_url} 
+                              <img
+                                src={item.image_url}
                                 alt={item.asset_name}
                                 className="w-8 h-8 rounded-full"
                                 onError={(e) => {
-                                  e.currentTarget.style.display = 'none';
+                                  e.currentTarget.style.display = "none";
                                 }}
                               />
                             )}
                             <div>
-                              <p className="text-white font-medium">{item.asset_name}</p>
+                              <p className="text-white font-medium">
+                                {item.asset_name}
+                              </p>
                             </div>
                           </div>
                         </td>
                         <td className="p-4">
-                          <p className="text-slate-300 font-mono font-medium">{item.asset}</p>
-                        </td>
-                        <td className="p-4">
-                          <p className="text-white font-medium">{item.amount.toLocaleString()}</p>
-                        </td>
-                        <td className="p-4">
-                          <p className="text-white font-medium">${item.average_price.toLocaleString()}</p>
-                        </td>
-                        <td className="p-4">
-                          <p className="text-white font-medium">${item.current_value.toLocaleString()}</p>
-                        </td>
-                      
-                        <td className={`${item.price_change.includes('+') ? 'text-green-700': 'text-red-800'}`}>
-                          <p>
-                            {item.price_change}
+                          <p className="text-slate-300 font-mono font-medium">
+                            {item.asset}
                           </p>
                         </td>
-                        
+                        <td className="p-4">
+                          <p className="text-white font-medium">
+                            {item.amount.toLocaleString()}
+                          </p>
+                        </td>
+                        <td className="p-4">
+                          <p className="text-white font-medium">
+                            ${item.average_price.toLocaleString()}
+                          </p>
+                        </td>
+                        <td className="p-4">
+                          <p className="text-white font-medium">
+                            ${item.current_value.toLocaleString()}
+                          </p>
+                        </td>
+
+                        <td
+                          className={`${
+                            item.price_change.includes("+")
+                              ? "text-green-700"
+                              : "text-red-800"
+                          }`}
+                        >
+                          <p>{item.price_change}</p>
+                        </td>
                       </tr>
                     );
                   })}
@@ -1372,41 +1445,59 @@ const handleTierUpgrade = async () => {
             <div className="bg-slate-800 rounded-2xl p-6 max-w-md w-full border border-slate-700">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-bold">Upgrade Wallet Tier</h3>
-                <button onClick={() => setShowUpgradeForm(false)} className="text-slate-400 hover:text-white">
+                <button
+                  onClick={() => setShowUpgradeForm(false)}
+                  className="text-slate-400 hover:text-white"
+                >
                   <FiX className="w-6 h-6" />
                 </button>
               </div>
-              
+
               <div className="mb-6">
-                <p className="text-slate-400 mb-2">Current Tier: {wallet && TIER_CONFIG[wallet.tier].name}</p>
-                <p className="text-slate-400 mb-4">Minimum for upgrade: ${wallet && TIER_CONFIG[wallet.tier].minimum * 2}</p>
-                
-                <label className="block text-slate-400 mb-2">Select New Tier</label>
+                <p className="text-slate-400 mb-2">
+                  Current Tier: {wallet && TIER_CONFIG[wallet.tier].name}
+                </p>
+                <p className="text-slate-400 mb-4">
+                  Minimum for upgrade: $
+                  {wallet && TIER_CONFIG[wallet.tier].minimum * 2}
+                </p>
+
+                <label className="block text-slate-400 mb-2">
+                  Select New Tier
+                </label>
                 <div className="space-y-2">
-                  {WALLET_TIERS.filter(tier => 
-                    TIER_CONFIG[tier].minimum > TIER_CONFIG[wallet!.tier].minimum
-                  ).map(tier => (
-                    <div 
+                  {WALLET_TIERS.filter(
+                    (tier) =>
+                      TIER_CONFIG[tier].minimum >
+                      TIER_CONFIG[wallet!.tier].minimum
+                  ).map((tier) => (
+                    <div
                       key={tier}
                       className={`p-3 rounded-lg border cursor-pointer ${
-                        selectedUpgradeTier === tier 
-                          ? 'border-purple-500 bg-purple-500/10' 
-                          : 'border-slate-700 hover:bg-slate-700/50'
+                        selectedUpgradeTier === tier
+                          ? "border-purple-500 bg-purple-500/10"
+                          : "border-slate-700 hover:bg-slate-700/50"
                       }`}
                       onClick={() => setSelectedUpgradeTier(tier)}
                     >
                       <div className="flex justify-between items-center">
                         <div>
-                          <p className="font-medium">{TIER_CONFIG[tier].name}</p>
-                          <p className="text-sm text-slate-400">Min: ${TIER_CONFIG[tier].minimum.toLocaleString()}</p>
+                          <p className="font-medium">
+                            {TIER_CONFIG[tier].name}
+                          </p>
+                          <p className="text-sm text-slate-400">
+                            Min: ${TIER_CONFIG[tier].minimum.toLocaleString()}
+                          </p>
                         </div>
-                        {selectedUpgradeTier === tier && <FiCheck className="text-purple-400" />}
+                        {selectedUpgradeTier === tier && (
+                          <FiCheck className="text-purple-400" />
+                        )}
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
-              
+
               <button
                 onClick={handleTierUpgrade}
                 disabled={!selectedUpgradeTier || upgrading}
@@ -1435,18 +1526,31 @@ const handleTierUpgrade = async () => {
               <table className="w-full">
                 <thead className="bg-slate-700/50">
                   <tr>
-                    <th className="p-3 text-left text-slate-300">Current Tier</th>
-                    <th className="p-3 text-left text-slate-300">Target Tier</th>
+                    <th className="p-3 text-left text-slate-300">
+                      Current Tier
+                    </th>
+                    <th className="p-3 text-left text-slate-300">
+                      Target Tier
+                    </th>
                     <th className="p-3 text-left text-slate-300">Requested</th>
                     <th className="p-3 text-left text-slate-300">Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {upgradeRequests.map(request => (
-                    <tr key={request.id} className="border-t border-slate-700/50 hover:bg-slate-700/25">
-                      <td className="p-3">{TIER_CONFIG[request.current_tier].name}</td>
-                      <td className="p-3">{TIER_CONFIG[request.target_tier].name}</td>
-                      <td className="p-3 text-slate-400">{formatDate(request.created_at)}</td>
+                  {upgradeRequests.map((request) => (
+                    <tr
+                      key={request.id}
+                      className="border-t border-slate-700/50 hover:bg-slate-700/25"
+                    >
+                      <td className="p-3">
+                        {TIER_CONFIG[request.current_tier].name}
+                      </td>
+                      <td className="p-3">
+                        {TIER_CONFIG[request.target_tier].name}
+                      </td>
+                      <td className="p-3 text-slate-400">
+                        {formatDate(request.created_at)}
+                      </td>
                       <td className="p-3">
                         {request.status ? (
                           <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm flex items-center gap-1 w-fit">
