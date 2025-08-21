@@ -1356,12 +1356,12 @@ const handleTierUpgrade = async () => {
                     <th className="text-left p-4 text-slate-300 font-medium">
                       Amount
                     </th>
-                    <th className="text-left p-4 text-slate-300 font-medium">
+                    {/* <th className="text-left p-4 text-slate-300 font-medium">
                       Avg Price
                     </th>
                     <th className="text-left p-4 text-slate-300 font-medium">
                       Current Value
-                    </th>
+                    </th> */}
                     <th className="text-left p-4 text-slate-300 font-medium">
                       P&L
                     </th>
@@ -1411,16 +1411,16 @@ const handleTierUpgrade = async () => {
                             {item.amount.toLocaleString()}
                           </p>
                         </td>
-                        <td className="p-4">
+                        {/* <td className="p-4">
                           <p className="text-white font-medium">
                             ${item.average_price.toLocaleString()}
                           </p>
-                        </td>
-                        <td className="p-4">
+                        </td> */}
+                        {/* <td className="p-4">
                           <p className="text-white font-medium">
                             ${item.current_value.toLocaleString()}
                           </p>
-                        </td>
+                        </td> */}
 
                         <td
                           className={`${
