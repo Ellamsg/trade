@@ -157,7 +157,7 @@ const PortfolioPage = () => {
           <div className="p-6 border-b border-slate-700/50">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-2xl font-bold text-white mb-2">Trade Assets</h2>
+                <h2 className="text-2xl font-bold text-white mb-2">Trade Stocks</h2>
                 <p className="text-slate-400">Your current stock trades</p>
               </div>
               <div className="flex items-center gap-2">
