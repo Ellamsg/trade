@@ -100,6 +100,8 @@ export interface WithdrawalRequest {
 
 export interface StockPortfolioItem {
   readonly id: string;
+   readonly created_at?: string;
+   readonly updated_at?: string;
   readonly user_id: string;
   readonly asset: string;
   readonly asset_name: string;
