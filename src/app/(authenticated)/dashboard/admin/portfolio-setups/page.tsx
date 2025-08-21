@@ -701,10 +701,10 @@ const AdminWalletsPage = () => {
                                     </span>
                                   )}
                                 </div>
-                                <label className="text-xs text-slate-400">
+                                <label className="text-xs hidden text-slate-400">
                                   Profit/Loss
                                 </label>
-                                <div className="text-sm">
+                                <div className="text-sm hidden">
                                   {editingId === wallet.id ? (
                                     <input
                                       type="number"
@@ -731,7 +731,7 @@ const AdminWalletsPage = () => {
                                   )}
                                 </div>
                               </div>
-                              <div>
+                              <div className="hidden">
                                 <label className="text-xs text-slate-400">
                                   Performance
                                 </label>
