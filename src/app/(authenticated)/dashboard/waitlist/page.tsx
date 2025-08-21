@@ -1,5 +1,3 @@
-
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -72,6 +70,11 @@ type UserWallet = {
   percent:number; 
 };
 
+type PortfolioBalance = {
+  email: string;
+  total_balance: number;
+};
+
 const WaitlistPage = () => {
   const supabase = createClient();
   const [orders, setOrders] = useState<Order[]>([]);
@@ -84,6 +87,8 @@ const WaitlistPage = () => {
   const [price, setPrice] = useState("");
   const [amount, setAmount] = useState("");
   const [wallet, setWallet] = useState<UserWallet | null>(null);
+  const [portfolioBalance, setPortfolioBalance] = useState<number | null>(null);
+
 
   // Fetch initial data
   useEffect(() => {
@@ -137,6 +142,17 @@ const WaitlistPage = () => {
         if (portfolioError) throw portfolioError;
         setPortfolio(portfolioData || []);
 
+        // Fetch total portfolio balance from portfolio_balance table
+        const { data: portfolioBalanceData, error: portfolioBalanceError } = await supabase
+        .from("portfolio_balance")
+        .select("total_balance")
+        .eq("email", user.email)
+        .single();
+        if (portfolioBalanceError && portfolioBalanceError.code !== "PGRST116") {
+          throw portfolioBalanceError;
+        }
+        setPortfolioBalance(portfolioBalanceData ? portfolioBalanceData.total_balance : 0);
+        
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -472,7 +488,7 @@ const WaitlistPage = () => {
                   </div>
                 
                   <p className="text-lg md:text-2xl font-bold text-white">
-                    ${portfolio.reduce((sum, item) => sum + item.current_value, 0).toLocaleString()}
+                    ${portfolioBalance !== null ? portfolioBalance.toLocaleString() : 'Loading...'}
                   </p>
                   <p ><span className="text-red-600">Encrypted Balance: </span>${wallet.encrypted_balance?.toLocaleString()}</p>
                 </div>

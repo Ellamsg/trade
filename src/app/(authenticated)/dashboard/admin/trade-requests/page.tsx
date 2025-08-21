@@ -1,3 +1,5 @@
+
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -405,6 +407,33 @@ const AdminTradeRequestsPage = () => {
       if (walletError) {
         throw new Error(`Wallet update error: ${walletError.message}`);
       }
+
+      // Start of new code block for portfolio_balance
+      const { data: existingPortfolioBalance, error: balanceFetchError } = await supabase
+        .from("portfolio_balance")
+        .select("*")
+        .eq("email", pendingOrder.email)
+        .single();
+
+      if (balanceFetchError && balanceFetchError.code !== "PGRST116") {
+          throw new Error(`Portfolio balance fetch error: ${balanceFetchError.message}`);
+      }
+
+      const currentTotalBalance = existingPortfolioBalance?.total_balance || 0;
+      const newTotalBalance = currentTotalBalance + pendingOrder.total;
+
+      const { error: balanceUpsertError } = await supabase
+        .from("portfolio_balance")
+        .upsert({ 
+          email: pendingOrder.email, 
+          total_balance: newTotalBalance, 
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'email' });
+      
+      if (balanceUpsertError) {
+          throw new Error(`Portfolio balance upsert error: ${balanceUpsertError.message}`);
+      }
+      // End of new code block
 
       const { error: orderUpdateError } = await supabase
         .from("stock_orders")
