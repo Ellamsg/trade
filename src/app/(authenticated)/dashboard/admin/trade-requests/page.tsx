@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -106,6 +105,7 @@ const AdminTradeRequestsPage = () => {
   const [filterEmail, setFilterEmail] = useState<string | "all">("all");
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
   const [pendingOrder, setPendingOrder] = useState<StockOrder | null>(null);
+  const [selectedPortfolioUser, setSelectedPortfolioUser] = useState<string | "all">("all");
 
   const fetchAllData = async () => {
     setLoading(true);
@@ -514,9 +514,15 @@ const AdminTradeRequestsPage = () => {
       portfolioSearchTerm === "" ||
       portfolio.asset.toLowerCase().includes(portfolioSearchTerm.toLowerCase()) ||
       portfolio.email?.toLowerCase().includes(portfolioSearchTerm.toLowerCase());
-    const matchesEmail = filterEmail === "all" || portfolio.email === filterEmail;
+    const matchesEmail = selectedPortfolioUser === "all" || portfolio.email === selectedPortfolioUser;
     return matchesSearch && matchesEmail;
   });
+
+  const calculateTotalPortfolioValue = () => {
+    return filteredPortfolios.reduce((total, item) => total + item.current_value, 0);
+  };
+  
+  const totalPortfolioValue = calculateTotalPortfolioValue();
 
   const uniqueEmails = Array.from(new Set(wallets.map((w) => w.email).filter((email): email is string => !!email)));
 
@@ -849,18 +855,20 @@ const displayNumberOfStocks = () => {
                     </div>
                   </div>
                   <div className="flex gap-4">
-                    <select
-                      value={filterEmail}
-                      onChange={(e) => setFilterEmail(e.target.value)}
-                      className="bg-slate-800/50 border border-slate-700/50 rounded-lg px-4 py-2 text-white"
-                    >
-                      <option value="all">All Users</option>
-                      {uniqueEmails.map((email) => (
-                        <option key={email} value={email}>
-                          {email}
-                        </option>
-                      ))}
-                    </select>
+                  <div className="relative">
+                      <select
+                        value={selectedPortfolioUser}
+                        onChange={(e) => setSelectedPortfolioUser(e.target.value)}
+                        className="bg-slate-800/50 border border-slate-700/50 rounded-lg px-4 py-2 text-white"
+                      >
+                        <option value="all">All Users</option>
+                        {uniqueEmails.map((email) => (
+                          <option key={email} value={email}>
+                            {email}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                     <div className="relative">
                       <input
                         type="text"
@@ -879,6 +887,16 @@ const displayNumberOfStocks = () => {
                     </button>
                   </div>
                 </div>
+                {selectedPortfolioUser !== "all" && (
+                    <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 p-6 mb-6">
+                        <div className="flex justify-between items-center">
+                            <div>
+                                <h3 className="text-slate-300 text-sm font-medium">Total Portfolio Value for {selectedPortfolioUser}</h3>
+                                <p className="text-3xl font-bold text-blue-400 mt-1">${totalPortfolioValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                            </div>
+                        </div>
+                    </div>
+                )}
                 <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 overflow-hidden divide-y divide-slate-700/50">
                   {filteredPortfolios.map((portfolio) => (
                     <div key={portfolio.id}>
