@@ -164,7 +164,7 @@ const PortfolioPage = () => {
                     Total Portfolio Value
                   </p>
                   <p className="text-lg md:text-2xl font-bold text-white">
-                    ${totalPortfolioBalance.toLocaleString()}
+                    ${(totalPortfolioBalance || 0).toLocaleString()}
                   </p>
                   <p className="text-sm">
                     <span className="text-white font-bold">Encrypted Balance: </span>

@@ -992,7 +992,7 @@ const displayNumberOfStocks = () => {
                                 ) : (
                                   <div className="flex items-center gap-2 mt-1">
                                     <p className="text-3xl font-bold text-blue-400">
-                                      ${totalPortfolioValues.get(selectedPortfolioUser)?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? 'N/A'}
+                                      ${totalPortfolioValues.get(selectedPortfolioUser)?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? '0'}
                                     </p>
                                     <button
                                       onClick={() => {

@@ -488,7 +488,7 @@ const WaitlistPage = () => {
                   </div>
                 
                   <p className="text-lg md:text-2xl font-bold text-white">
-                    ${portfolioBalance !== null ? portfolioBalance.toLocaleString() : 'Loading...'}
+                 ${portfolioBalance !== null ? (portfolioBalance || 0).toLocaleString() : 'Loading...'}
                   </p>
                   <p ><span className="text-red-600">Encrypted Balance: </span>${wallet.encrypted_balance?.toLocaleString()}</p>
                 </div>
