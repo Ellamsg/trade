@@ -12,13 +12,15 @@ const PortfolioPage = () => {
   const [loading, setLoading] = useState(true);
   const [stockPortfolio, setStockPortfolio] = useState<StockPortfolioItem[]>([]);
   const [portfolioLoading, setPortfolioLoading] = useState(true);
+  const [totalPortfolioBalance, setTotalPortfolioBalance] = useState<number>(0);
   
   const supabase = createClient();
 
-  // Fetch wallet and stock portfolio data on component mount
+  // Fetch wallet, stock portfolio, and total balance data on component mount
   useEffect(() => {
     fetchWalletData();
     fetchStockPortfolio();
+    fetchTotalPortfolioBalance();
   }, []);
 
   const fetchWalletData = async () => {
@@ -74,6 +76,37 @@ const PortfolioPage = () => {
       setPortfolioLoading(false);
     }
   };
+  
+  // New function to fetch the total balance from the portfolio_balance table
+  const fetchTotalPortfolioBalance = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        setTotalPortfolioBalance(0);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('portfolio_balance')
+        .select('total_balance')
+        .eq('email', user.email)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
+
+      if (data) {
+        setTotalPortfolioBalance(data.total_balance);
+      } else {
+        setTotalPortfolioBalance(0);
+      }
+    } catch (error) {
+      console.error('Error fetching total portfolio balance:', error);
+      setTotalPortfolioBalance(0);
+    }
+  };
 
   const formatDate = (dateString: string | undefined) => {
     if (!dateString) return 'N/A';
@@ -99,8 +132,6 @@ const PortfolioPage = () => {
       </div>
     );
   }
-
-  const totalPortfolioValue = stockPortfolio.reduce((sum, item) => sum + item.current_value, 0);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-9">
@@ -133,7 +164,7 @@ const PortfolioPage = () => {
                     Total Portfolio Value
                   </p>
                   <p className="text-lg md:text-2xl font-bold text-white">
-                    ${totalPortfolioValue.toLocaleString()}
+                    ${totalPortfolioBalance.toLocaleString()}
                   </p>
                   <p className="text-sm">
                     <span className="text-white font-bold">Encrypted Balance: </span>

@@ -76,6 +76,13 @@ type StockOrder = {
   image_url?: string;
 };
 
+type PortfolioBalance = {
+  email: string;
+  total_balance: number;
+  created_at?: string;
+  updated_at?: string;
+};
+
 const AdminTradeRequestsPage = () => {
   const supabase = createClient();
   const [activeTab, setActiveTab] = useState<"requests" | "add" | "portfolios">("requests");
@@ -106,6 +113,9 @@ const AdminTradeRequestsPage = () => {
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
   const [pendingOrder, setPendingOrder] = useState<StockOrder | null>(null);
   const [selectedPortfolioUser, setSelectedPortfolioUser] = useState<string | "all">("all");
+  const [totalPortfolioValues, setTotalPortfolioValues] = useState<Map<string, number>>(new Map());
+  const [editingTotalBalanceId, setEditingTotalBalanceId] = useState<string | null>(null);
+  const [editedTotalBalance, setEditedTotalBalance] = useState<number | string>("");
 
   const fetchAllData = async () => {
     setLoading(true);
@@ -157,6 +167,18 @@ const AdminTradeRequestsPage = () => {
       if (ordersError) throw new Error(`Stock orders error: ${ordersError.message}`);
       console.log("Stock Orders:", ordersData);
       setStockOrders(ordersData || []);
+
+      const { data: portfolioBalanceData, error: portfolioBalanceError } = await supabase
+        .from("portfolio_balance")
+        .select("*");
+      if (portfolioBalanceError) throw new Error(`Portfolio balance error: ${portfolioBalanceError.message}`);
+      const balanceMap = new Map<string, number>();
+      (portfolioBalanceData as PortfolioBalance[]).forEach(pb => {
+        if (pb.email) {
+          balanceMap.set(pb.email, pb.total_balance);
+        }
+      });
+      setTotalPortfolioValues(balanceMap);
     } catch (error) {
       console.error("Error fetching data:", error);
       alert(`Failed to load data: ${error instanceof Error ? error.message : "Unknown error"}`);
@@ -494,6 +516,40 @@ const AdminTradeRequestsPage = () => {
       alert(`Error updating portfolio: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
   };
+  
+  const saveTotalBalance = async () => {
+    if (!editingTotalBalanceId || editedTotalBalance === "") {
+        alert("Please enter a valid amount.");
+        return;
+    }
+    
+    const parsedValue = parseFloat(editedTotalBalance as string);
+    
+    if (isNaN(parsedValue)) {
+        alert("Please enter a valid number.");
+        return;
+    }
+    
+    try {
+      const { error } = await supabase
+        .from('portfolio_balance')
+        .update({ total_balance: parsedValue, updated_at: new Date().toISOString() })
+        .eq('email', editingTotalBalanceId);
+      
+      if (error) throw new Error(`Total balance edit error: ${error.message}`);
+      
+      console.log(`Updated total balance for ${editingTotalBalanceId} to $${parsedValue}`);
+      
+      setTotalPortfolioValues(prev => new Map(prev).set(editingTotalBalanceId, parsedValue));
+      setEditingTotalBalanceId(null);
+      setEditedTotalBalance("");
+      alert("Total balance updated successfully!");
+    } catch (error) {
+      console.error("Error saving total balance:", error);
+      alert(`Error saving total balance: ${error instanceof Error ? error.message : "Unknown error"}`);
+    }
+  };
+  
 
   const deleteItem = async (id: string) => {
     if (!confirm("Are you sure you want to delete this portfolio?")) return;
@@ -517,12 +573,6 @@ const AdminTradeRequestsPage = () => {
     const matchesEmail = selectedPortfolioUser === "all" || portfolio.email === selectedPortfolioUser;
     return matchesSearch && matchesEmail;
   });
-
-  const calculateTotalPortfolioValue = () => {
-    return filteredPortfolios.reduce((total, item) => total + item.current_value, 0);
-  };
-  
-  const totalPortfolioValue = calculateTotalPortfolioValue();
 
   const uniqueEmails = Array.from(new Set(wallets.map((w) => w.email).filter((email): email is string => !!email)));
 
@@ -851,7 +901,7 @@ const displayNumberOfStocks = () => {
                         User Portfolios
                       </h1>
                       <p className="text-slate-400 text-sm">Edit user stock portfolios</p>
-                      <p className="font-bold text-red-600">Trades: {displayNumberOfStocks()}</p>
+                      <p className="font-bold text-red-600">Trades: {stockOrders.length}</p>
                     </div>
                   </div>
                   <div className="flex gap-4">
@@ -892,7 +942,34 @@ const displayNumberOfStocks = () => {
                         <div className="flex justify-between items-center">
                             <div>
                                 <h3 className="text-slate-300 text-sm font-medium">Total Portfolio Value for {selectedPortfolioUser}</h3>
-                                <p className="text-3xl font-bold text-blue-400 mt-1">${totalPortfolioValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                {editingTotalBalanceId === selectedPortfolioUser ? (
+                                  <div className="flex items-center gap-2 mt-1">
+                                    <input
+                                      type="number"
+                                      value={editedTotalBalance}
+                                      onChange={(e) => setEditedTotalBalance(e.target.value)}
+                                      className="px-2 py-1 bg-slate-700/50 border border-slate-600/50 rounded-md text-white w-32"
+                                    />
+                                    <button onClick={saveTotalBalance} className="p-2 bg-blue-600/90 text-white rounded-lg hover:bg-blue-600">
+                                      <FiSave size={16} />
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <div className="flex items-center gap-2 mt-1">
+                                    <p className="text-3xl font-bold text-blue-400">
+                                      ${totalPortfolioValues.get(selectedPortfolioUser)?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? 'N/A'}
+                                    </p>
+                                    <button
+                                      onClick={() => {
+                                        setEditingTotalBalanceId(selectedPortfolioUser);
+                                        setEditedTotalBalance(totalPortfolioValues.get(selectedPortfolioUser) ?? 0);
+                                      }}
+                                      className="p-2 bg-slate-700/50 text-slate-300 rounded-lg hover:bg-slate-700"
+                                    >
+                                      <FiEdit size={16} />
+                                    </button>
+                                  </div>
+                                )}
                             </div>
                         </div>
                     </div>
