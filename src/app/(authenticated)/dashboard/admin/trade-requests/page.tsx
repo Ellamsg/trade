@@ -1,5 +1,3 @@
-
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -118,6 +116,7 @@ const AdminTradeRequestsPage = () => {
   const [totalPortfolioValues, setTotalPortfolioValues] = useState<Map<string, number>>(new Map());
   const [editingTotalBalanceId, setEditingTotalBalanceId] = useState<string | null>(null);
   const [editedTotalBalance, setEditedTotalBalance] = useState<number | string>("");
+  const [savingBalance, setSavingBalance] = useState(false); // New state for loader
 
   const fetchAllData = async () => {
     setLoading(true);
@@ -559,6 +558,7 @@ const AdminTradeRequestsPage = () => {
         return;
     }
     
+    setSavingBalance(true); // Start saving
     try {
       const { error } = await supabase
         .from('portfolio_balance')
@@ -576,6 +576,8 @@ const AdminTradeRequestsPage = () => {
     } catch (error) {
       console.error("Error saving total balance:", error);
       alert(`Error saving total balance: ${error instanceof Error ? error.message : "Unknown error"}`);
+    } finally {
+        setSavingBalance(false); // End saving
     }
   };
   
@@ -979,8 +981,12 @@ const displayNumberOfStocks = () => {
                                       onChange={(e) => setEditedTotalBalance(e.target.value)}
                                       className="px-2 py-1 bg-slate-700/50 border border-slate-600/50 rounded-md text-white w-32"
                                     />
-                                    <button onClick={saveTotalBalance} className="p-2 bg-blue-600/90 text-white rounded-lg hover:bg-blue-600">
-                                      <FiSave size={16} />
+                                    <button onClick={saveTotalBalance} disabled={savingBalance} className="p-2 bg-blue-600/90 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                                      {savingBalance ? (
+                                        <FiRefreshCw className="animate-spin" size={16} />
+                                      ) : (
+                                        <FiSave size={16} />
+                                      )}
                                     </button>
                                   </div>
                                 ) : (
