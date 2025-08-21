@@ -1053,7 +1053,7 @@ const displayNumberOfStocks = () => {
                                   </div>
                                 </div>
                                 <div>
-                                  <label className="text-xs text-slate-400">Price Change</label>
+                                  <label className="text-xs text-slate-400">P & L</label>
                                   <div className="text-sm text-white">
                                     {portfolioEditingId === portfolio.id ? (
                                       <input
