@@ -201,12 +201,13 @@ const StockTransactions = () => {
     );
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  })}`;
+};
 
   if (loading) {
     return <Loader />;
@@ -237,7 +238,7 @@ const StockTransactions = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-slate-400 text-xs md:text-sm">
-                    Pending Orders
+                    Pending Trades
                   </p>
                   <p className="text-lg md:text-2xl font-bold text-white">
                     {pendingOrders.length}
@@ -252,7 +253,7 @@ const StockTransactions = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-slate-400 text-xs md:text-sm">
-                    Approved Orders
+                    Approved Trades
                   </p>
                   <p className="text-lg md:text-2xl font-bold text-white">
                     {approvedOrders.length}
@@ -271,7 +272,7 @@ const StockTransactions = () => {
           <div className="px-4 md:px-6 py-4 border-b border-slate-700/50 bg-slate-800/50">
             <h2 className="text-lg md:text-xl font-semibold flex items-center">
               <FiActivity className="mr-2 text-blue-400" />
-              Your Orders
+              Your Trades
             </h2>
           </div>
 

@@ -65,9 +65,11 @@ type PortfolioItem = {
 
 type UserWallet = {
   id: string;
+  encrypted_balance?:number;
   balance: number;
   wallet_number: string;
   tier:WalletTier
+  percent:number; 
 };
 
 const WaitlistPage = () => {
@@ -96,7 +98,7 @@ const WaitlistPage = () => {
         // Fetch user wallet
         const { data: walletData, error: walletError } = await supabase
           .from("wallets")
-          .select("id, balance, wallet_number, tier")
+          .select("id, balance, wallet_number, tier,encrypted_balance,percent")
           .eq("user_id", user.id)
           .single();
 
@@ -462,12 +464,17 @@ const WaitlistPage = () => {
             <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 border border-slate-700/50">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-slate-400 text-xs md:text-sm">
+                  <div className="flex justify-between">
+  <p className="text-slate-400 text-xs md:text-sm">
                     Portfolio Value
                   </p>
+                  <p className="text-red-600 font-bold">{wallet.percent?.toLocaleString()}%</p>
+                  </div>
+                
                   <p className="text-lg md:text-2xl font-bold text-white">
                     ${portfolio.reduce((sum, item) => sum + item.current_value, 0).toLocaleString()}
                   </p>
+                  <p>Encrypted Balance: ${wallet.encrypted_balance?.toLocaleString()}</p>
                 </div>
                 <div className="p-2 md:p-3 bg-purple-600/20 rounded-lg">
                   <FiTrendingUp className="size-4 md:size-6 text-purple-400" />

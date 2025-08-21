@@ -47,7 +47,7 @@ const Sidebar = ({ closeSidebar }: { closeSidebar?: () => void }) => {
       rhyme: "Count your gains, feel divine"
     },
     { 
-      name: 'Transactions', 
+      name: 'Trades', 
       href: '/dashboard/trade-transactions', 
       icon: <FiPieChart />,
       rhyme: "Check your history"
