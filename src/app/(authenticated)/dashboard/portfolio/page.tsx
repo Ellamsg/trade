@@ -888,14 +888,14 @@ const handleTierUpgrade = async () => {
               </>
             )}
             
-            {waitingForAccount && !creatingWallet && (
+            {/* {waitingForAccount && !creatingWallet && (
               <button
                 onClick={resetWalletCreation}
                 className="mt-6 bg-slate-700 hover:bg-slate-600 text-white py-2 px-6 rounded-xl font-medium transition-colors"
               >
                 Cancel Request
               </button>
-            )}
+            )} */}
           </div>
         </div>
       </div>
