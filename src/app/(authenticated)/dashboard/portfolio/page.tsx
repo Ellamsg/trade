@@ -3181,6 +3181,7 @@
 // export default PortfolioPage;
 
 
+
 "use client"
 import React, { useState, useEffect, useRef } from 'react';
 import { FiTrendingUp, FiTrendingDown, FiDollarSign, FiPieChart, FiActivity, FiPlus, FiCreditCard, FiArrowUpRight, FiArrowDownLeft, FiCheck, FiClock, FiX, FiArrowLeft, FiExternalLink, FiChevronDown } from 'react-icons/fi';
@@ -3199,8 +3200,8 @@ import { WalletTier ,
   WalletUpgradeRequest
 } from '@/app/data';
 import Link from 'next/link';
-const ContinueAccountGeneration = ({ onContinue, onCancel, accountRequest }: { 
-  onContinue: () => void, 
+const ContinueAccountGeneration = ({ onContinue, onCancel, accountRequest }: {
+  onContinue: () => void,
   onCancel: () => void,
   accountRequest: TransactionRequest | null
 }) => {
@@ -3264,21 +3265,21 @@ const PortfolioPage = () => {
   const [showTierSelection, setShowTierSelection] = useState(false);
   const [showTokenSelection, setShowTokenSelection] = useState(false);
   const [showNetworkSelection, setShowNetworkSelection] = useState(false);
- 
+
   const [creatingWallet, setCreatingWallet] = useState(false);
   const [selectedTier, setSelectedTier] = useState<WalletTier | null>(null);
   const [selectedToken, setSelectedToken] = useState<TokenType | null>(null);
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkType | null>(null);
   const [accountRequest, setAccountRequest] = useState<TransactionRequest | null>(null);
   const [generatingAccount, setGeneratingAccount] = useState(false);
- 
+
   const [waitingForAccount, setWaitingForAccount] = useState(false);
   const [showWithdrawalForm, setShowWithdrawalForm] = useState(false);
   const [withdrawalAmount, setWithdrawalAmount] = useState('');
   const [withdrawalNetwork, setWithdrawalNetwork] = useState<NetworkType | null>(null);
   const [withdrawalToken, setWithdrawalToken] = useState<TokenType | null>(null);
   const [withdrawalAccount, setWithdrawalAccount] = useState('');
- 
+
   const [withdrawing, setWithdrawing] = useState(false);
   const [withdrawals, setWithdrawals] = useState<WithdrawalRequest[]>([]);
   const [activeTab, setActiveTab] = useState<'portfolio' | 'withdrawals'>('portfolio');
@@ -3286,7 +3287,7 @@ const PortfolioPage = () => {
   const [portfolioLoading, setPortfolioLoading] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showContinuePrompt, setShowContinuePrompt] = useState(false);
-  
+
 
 // Add these states to the component
 const [showUpgradeForm, setShowUpgradeForm] = useState(false);
@@ -3308,20 +3309,20 @@ const [upgradeRequests, setUpgradeRequests] = useState<WalletUpgradeRequest[]>([
         setLoading(false);
         return;
       }
-  
+
       // First, check if a wallet already exists for the user
       const { data: walletData, error: walletError } = await supabase
         .from('wallets')
         .select('*')
         .eq('user_id', user.id)
-        .single();
-  
-      if (walletError && walletError.code !== 'PGRST116') { // PGRST116 means "No rows found"
+        .limit(1);
+
+      if (walletError) {
         console.error('Error fetching wallet data:', walletError);
       }
-  
-      if (walletData) {
-        setWallet(walletData);
+
+      if (walletData && walletData.length > 0) {
+        setWallet(walletData[0]);
         setLoading(false);
       } else {
         // If no wallet, check for a pending account generation request
@@ -3329,27 +3330,33 @@ const [upgradeRequests, setUpgradeRequests] = useState<WalletUpgradeRequest[]>([
           .from('transactions')
           .select('*')
           .eq('email', user.email!)
-          .is('account_number', null)
           .eq('status', false)
           .order('created_at', { ascending: false })
-          .limit(1)
-          .single();
-  
-        if (!requestError && requestData) {
-          setAccountRequest(requestData);
-          setShowContinuePrompt(true);
-          setLoading(false);
+          .limit(1);
+
+        if (!requestError && requestData && requestData.length > 0) {
+          const request = requestData[0];
+          setAccountRequest(request);
+
+          if (request.account_number) {
+            // If account number is already generated, proceed to create the wallet
+            createWallet(request.wallet_type, request.account_number, request.network, request.token_type, request.id);
+          } else {
+            // If no account number, prompt user to continue or show waiting state
+            setWaitingForAccount(true);
+            startAccountNumberPolling(request.id);
+          }
         } else {
           // If no wallet and no pending request, show tier selection
           setShowTierSelection(true);
-          setLoading(false);
         }
+        setLoading(false);
       }
     };
-  
+
     checkWalletStatus();
     fetchStockPortfolio();
-  
+
     return () => {
       if (pollingIntervalRef.current) {
         clearInterval(pollingIntervalRef.current);
@@ -3365,7 +3372,7 @@ const [upgradeRequests, setUpgradeRequests] = useState<WalletUpgradeRequest[]>([
 
   const handleContinue = () => {
     if (!accountRequest) return;
-    
+
     setContinueLoading(true); // Set continue loading state
     setShowContinuePrompt(false);
     setWaitingForAccount(true);
@@ -3377,10 +3384,10 @@ const [upgradeRequests, setUpgradeRequests] = useState<WalletUpgradeRequest[]>([
     try {
       // You might want to delete the pending request from the database
       // await supabase.from('transactions').delete().eq('id', accountRequest.id);
-      
+
       setAccountRequest(null);
       setShowContinuePrompt(false);
-      
+
       // After canceling, reset to the initial state to allow new creation
       setLoading(true);
       fetchWalletData();
@@ -3393,7 +3400,7 @@ const [upgradeRequests, setUpgradeRequests] = useState<WalletUpgradeRequest[]>([
     try {
       setPortfolioLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
-      
+
       if (!user) {
         setPortfolioLoading(false);
         return;
@@ -3404,9 +3411,9 @@ const [upgradeRequests, setUpgradeRequests] = useState<WalletUpgradeRequest[]>([
         .select('*')
         .eq('user_id', user.id)
         .order('current_value', { ascending: false });
-  
+
       if (error) throw error;
-  
+
       setStockPortfolio(data || []);
     } catch (error) {
       console.error('Error fetching stock portfolio:', error);
@@ -3522,7 +3529,7 @@ const handleTierUpgrade = async () => {
     setUpgradeRequests(prev => [data, ...prev]);
     setShowUpgradeForm(false);
     setSelectedUpgradeTier(null);
-    
+
   } catch (error) {
     console.error('Error requesting tier upgrade:', error);
     alert('Failed to request upgrade. Please try again.');
@@ -3569,7 +3576,7 @@ const handleTierUpgrade = async () => {
     try {
       setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
-      
+
       if (!user) {
         setLoading(false);
         return;
@@ -3654,9 +3661,9 @@ const handleTierUpgrade = async () => {
     try {
       setGeneratingAccount(true);
       setWaitingForAccount(true);
-      
+
       const { data: { user } = {} } = await supabase.auth.getUser();
-      
+
       if (!user) throw new Error('User not authenticated');
 
       const transactionData = {
@@ -3678,7 +3685,7 @@ const handleTierUpgrade = async () => {
       if (error) throw error;
 
       setAccountRequest(data);
-      
+
       setGeneratingAccount(false);
       startAccountNumberPolling(data.id);
 
@@ -3705,13 +3712,13 @@ const handleTierUpgrade = async () => {
 
         if (!error && data) {
           setAccountRequest(data);
-          
+
           if (data.account_number) {
             clearInterval(pollingIntervalRef.current!);
             pollingIntervalRef.current = null;
             setWaitingForAccount(false);
             setContinueLoading(false); // Stop continue loading
-            createWallet(data.wallet_type, data.account_number, data.network, data.token_type);
+            createWallet(data.wallet_type, data.account_number, data.network, data.token_type, data.id);
           }
         }
       } catch (error) {
@@ -3721,7 +3728,7 @@ const handleTierUpgrade = async () => {
     }, 3000);
   };
 
-  const createWallet = async (tier: WalletTier, accountNumber: string, network: NetworkType, tokenType: TokenType) => {
+  const createWallet = async (tier: WalletTier, accountNumber: string, network: NetworkType, tokenType: TokenType, transactionId: string) => {
     try {
       setCreatingWallet(true);
       const { data: { user } } = await supabase.auth.getUser();
@@ -3740,7 +3747,7 @@ const handleTierUpgrade = async () => {
         network: network,
         token_type: tokenType
       };
-      
+
       const { data, error } = await supabase
         .from('wallets')
         .insert(walletData)
@@ -3749,11 +3756,21 @@ const handleTierUpgrade = async () => {
 
       if (error) throw error;
 
+      // Update the transaction status to true after successful wallet creation
+      // const { error: updateError } = await supabase
+      //   .from('transactions')
+      //   .update({ status: true })
+      //   .eq('id', transactionId);
+
+      // if (updateError) {
+      //   console.error('Error updating transaction status:', updateError);
+      // }
+
       setWallet(data);
       resetSelections();
       setAccountRequest(null);
       setContinueLoading(false); // Stop continue loading
-      
+
     } catch (error) {
       console.error('Error creating wallet:', error);
       setContinueLoading(false); // Stop continue loading on error
@@ -3811,13 +3828,13 @@ const handleTierUpgrade = async () => {
 
       setWithdrawals(prev => [data, ...prev]);
       setWallet(prev => prev ? { ...prev, balance: prev.balance - amount } : null);
-      
+
       setWithdrawalAmount('');
       setWithdrawalNetwork(null);
       setWithdrawalToken(null);
       setWithdrawalAccount('');
       setShowWithdrawalForm(false);
-      
+
     } catch (error) {
       console.error('Error processing withdrawal:', error);
       alert('Failed to process withdrawal. Please try again.');
@@ -3971,7 +3988,7 @@ const handleTierUpgrade = async () => {
                 key={token.id}
                 className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50 hover:scale-105 transition-transform cursor-pointer group hover:border-slate-600"
                 onClick={() => handleTokenSelection(token.id)}
-              > 
+              >
                 <div className="text-center">
                   <div className="text-4xl mb-4">{token.icon}</div>
                   <h3 className="text-lg font-bold mb-2">{token.name}</h3>
@@ -3994,7 +4011,7 @@ const handleTierUpgrade = async () => {
   if (showNetworkSelection && selectedToken) {
     const token = getTokenById(selectedToken);
     if (!token) return null;
-    
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-9">
         <div className="max-w-6xl mx-auto p-4 md:p-6">
@@ -4046,13 +4063,13 @@ const handleTierUpgrade = async () => {
 
   if (generatingAccount || waitingForAccount || creatingWallet) {
     const token = selectedToken ? getTokenById(selectedToken) : null;
-    
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-9">
         <div className="max-w-4xl mx-auto p-4 md:p-6">
           <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50 text-center">
             <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-400 mx-auto mb-6"></div>
-            
+
             {generatingAccount && (
               <>
                 <h3 className="text-2xl font-bold mb-4">
@@ -4061,7 +4078,7 @@ const handleTierUpgrade = async () => {
                 <p className="text-slate-400">Creating your wallet request</p>
               </>
             )}
-            
+
             {waitingForAccount && !generatingAccount && (
               <>
                 <h3 className="text-2xl font-bold mb-4">
@@ -4086,7 +4103,7 @@ const handleTierUpgrade = async () => {
                 </p>
               </>
             )}
-            
+
             {creatingWallet && (
               <>
                 <h3 className="text-2xl font-bold mb-4">
@@ -4095,7 +4112,7 @@ const handleTierUpgrade = async () => {
                 <p className="text-slate-400">Setting up your investment wallet</p>
               </>
             )}
-            
+
             {/* {waitingForAccount && !creatingWallet && (
               <button
                 onClick={resetWalletCreation}
