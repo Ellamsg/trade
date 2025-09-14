@@ -15,6 +15,7 @@ export default function IntroLoader() {
       return
     }
 
+
     // Simulate loading progress
     const interval = setInterval(() => {
       setProgress(prev => {
