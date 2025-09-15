@@ -53,6 +53,7 @@ const AdminWalletsPage = () => {
     profit_loss?: string | number;
     performance_percentage?: string | number;
     status?: boolean;
+    commissions?: string | number;
     price_change?: string;
     percent?: string | number;
     encrypted_balance?: string | number;
@@ -106,6 +107,7 @@ const AdminWalletsPage = () => {
       setEditForm({
         balance: item.balance.toString(),
         percent: item.percent?.toString(),
+        commissions: item.commissions?.toString(),
         encrypted_balance: item.encrypted_balance?.toString(),
         current_value: item.current_value.toString(),
         profit_loss: item.profit_loss.toString(),
@@ -135,6 +137,7 @@ const AdminWalletsPage = () => {
           .update({
             balance: Number(editForm.balance) || 0,
             percent: Number(editForm.percent) || 0,
+            commissions: Number(editForm.commissions) || 0,
             current_value: Number(editForm.current_value) || 0,
             profit_loss: Number(editForm.profit_loss) || 0,
             encrypted_balance: Number(editForm.encrypted_balance) || 0,
@@ -153,6 +156,7 @@ const AdminWalletsPage = () => {
                   ...wallet,
                   balance: Number(editForm.balance) || 0,
                   percent: Number(editForm.percent) || 0,
+                  commissions: Number(editForm.commissions) || 0,
                   current_value: Number(editForm.current_value) || 0,
                   encrypted_balance: Number(editForm.encrypted_balance) || 0,
                   profit_loss: Number(editForm.profit_loss) || 0,
@@ -701,6 +705,32 @@ const AdminWalletsPage = () => {
                                     </span>
                                   )}
                                 </div>
+
+
+ <div className="text-sm text-white">
+                                  <label className="text-xs text-slate-400">
+                                   Commissions $:
+                                  </label>
+
+                                  {editingId === wallet.id ? (
+                                    <input
+                                      type="number"
+                                      value={editForm.commissions || ""}
+                                      onChange={(e) =>
+                                        setEditForm({
+                                          ...editForm,
+                                          commissions: e.target.value,
+                                        })
+                                      }
+                                      className="w-full px-2 py-1 bg-slate-800/50 border border-slate-700/50 rounded text-white text-sm"
+                                    />
+                                  ) : (
+                                    <span>
+                                      {wallet.commissions}
+                                    </span>
+                                  )}
+                                </div>
+
                                 <label className="text-xs hidden text-slate-400">
                                   Profit/Loss
                                 </label>
