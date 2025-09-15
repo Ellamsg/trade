@@ -1,6 +1,11 @@
-import React from 'react';
-import { FiDollarSign } from 'react-icons/fi';
-import { UserWallet, TIER_CONFIG, NETWORK_CONFIG, POPULAR_TOKENS } from '@/app/data';
+import React from "react";
+import { FiDollarSign } from "react-icons/fi";
+import {
+  UserWallet,
+  TIER_CONFIG,
+  NETWORK_CONFIG,
+  POPULAR_TOKENS,
+} from "@/app/data";
 
 interface PortfoliySummaryProps {
   wallet: UserWallet | null;
@@ -8,7 +13,7 @@ interface PortfoliySummaryProps {
 
 const PortfolioSummary: React.FC<PortfoliySummaryProps> = ({ wallet }) => {
   const getTokenById = (tokenId: string) => {
-    return POPULAR_TOKENS.find(token => token.id === tokenId);
+    return POPULAR_TOKENS.find((token) => token.id === tokenId);
   };
 
   return (
@@ -16,34 +21,36 @@ const PortfolioSummary: React.FC<PortfoliySummaryProps> = ({ wallet }) => {
       <div className="flex items-center justify-between mb-6">
         <div>
           <p className="text-slate-400 text-base md:text-lg mb-2">
-           Your Current Wallet Value
+            Your Current Wallet Value
           </p>
-   <p
+    <p
   className={`text-2xl md:text-4xl font-bold mb-2 ${
-    wallet?.balance?.toString().includes("-") ? "text-red-500" : "text-green-500"
+    wallet?.p_l?.toString().includes("+")
+      ? "text-green-500"
+      : wallet?.p_l?.toString().includes("-")
+      ? "text-red-500"
+      : "text-white"
   }`}
 >
-  {wallet?.balance !== undefined
-    ? `${wallet?.balance?.toString().includes("-") ? "-" : "+"}$${Math.abs(wallet.balance).toLocaleString()}`
-    : "$0"}
+  {wallet?.p_l} ${wallet?.balance.toLocaleString() || "0"}
 </p>
 
-           <p className="text-slate-400 text-base md:text-sm mb-2">
-           Commission
+
+          <p className="text-slate-400 text-base md:text-sm mb-2">Commission</p>
+
+          <p
+            className={`md:text-13px font-bold mb-2 ${
+              wallet?.commissions?.toString().includes("-")
+                ? "text-red-500"
+                : "text-green-500"
+            }`}
+          >
+            {wallet?.commissions !== undefined && wallet?.commissions !== 0
+              ? `${
+                  wallet?.commissions?.toString().includes("-") ? "-" : "+"
+                }$${Math.abs(wallet.commissions).toLocaleString()}`
+              : "$0"}
           </p>
-          
-<p
-  className={`md:text-13px font-bold mb-2 ${
-    wallet?.commissions?.toString().includes("-") ? "text-red-500" : "text-green-500"
-  }`}
->
-  {wallet?.commissions !== undefined && wallet?.commissions !== 0
-    ? `${wallet?.commissions?.toString().includes("-") ? "-" : "+"}$${Math.abs(wallet.commissions).toLocaleString()}`
-    : "$0"}
-</p>
-
-
-          
         </div>
 
         <div className="p-3 md:p-4 bg-blue-600/20 rounded-xl">
@@ -58,9 +65,7 @@ const PortfolioSummary: React.FC<PortfoliySummaryProps> = ({ wallet }) => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
         <div className="bg-slate-800/30 rounded-xl p-3 md:p-4 border border-slate-700/30">
-          <p className="text-slate-400 text-xs md:text-sm mb-1">
-            Wallet Tier
-          </p>
+          <p className="text-slate-400 text-xs md:text-sm mb-1">Wallet Tier</p>
           <p className="text-lg md:text-xl font-bold text-white">
             {wallet ? TIER_CONFIG[wallet.tier].name : "N/A"}
           </p>

@@ -50,6 +50,7 @@ export interface UserWallet {
   readonly profit_loss: number;
   readonly encrypted_balance: number;
   readonly percent: number;
+  readonly p_l :string;
   readonly commissions :number ;
   readonly performance_percentage: number;
   readonly network?: NetworkType;

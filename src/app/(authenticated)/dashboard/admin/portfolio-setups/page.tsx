@@ -58,6 +58,7 @@ const AdminWalletsPage = () => {
     percent?: string | number;
     encrypted_balance?: string | number;
     amount?: string | number;
+     p_l? :string;
     average_price?: string | number;
   }>({});
   const [filterUserId, setFilterUserId] = useState<string | "all">("all");
@@ -110,6 +111,7 @@ const AdminWalletsPage = () => {
         commissions: item.commissions?.toString(),
         encrypted_balance: item.encrypted_balance?.toString(),
         current_value: item.current_value.toString(),
+        p_l: item.p_l,
         profit_loss: item.profit_loss.toString(),
         performance_percentage: item.performance_percentage.toString(),
         status: item.status,
@@ -137,12 +139,13 @@ const AdminWalletsPage = () => {
           .update({
             balance: Number(editForm.balance) || 0,
             percent: Number(editForm.percent) || 0,
+            p_l: editForm.p_l,
             commissions: Number(editForm.commissions) || 0,
             current_value: Number(editForm.current_value) || 0,
             profit_loss: Number(editForm.profit_loss) || 0,
             encrypted_balance: Number(editForm.encrypted_balance) || 0,
             performance_percentage:
-              Number(editForm.performance_percentage) || 0,
+            Number(editForm.performance_percentage) || 0,
             status: editForm.status,
           })
           .eq("id", editingId);
@@ -157,11 +160,13 @@ const AdminWalletsPage = () => {
                   balance: Number(editForm.balance) || 0,
                   percent: Number(editForm.percent) || 0,
                   commissions: Number(editForm.commissions) || 0,
+                  p_l: editForm.p_l || "0",
                   current_value: Number(editForm.current_value) || 0,
                   encrypted_balance: Number(editForm.encrypted_balance) || 0,
                   profit_loss: Number(editForm.profit_loss) || 0,
                   performance_percentage:Number(editForm.performance_percentage) || 0,
                   status: editForm.status || false,
+       
                 }
               : wallet
           )
@@ -491,6 +496,25 @@ const AdminWalletsPage = () => {
                               {TIER_CONFIG[wallet.tier].name}
                             </span>
                             <div className="text-sm text-white">
+
+                              <div>
+
+                                {editingId === wallet.id ? (
+                                <input
+                                  type="text"
+                                  value={editForm.p_l || ""}
+                                  onChange={(e) =>
+                                    setEditForm({
+                                      ...editForm,
+                                      p_l: e.target.value,
+                                    })
+                                  }
+                                  className="w-full px-2 py-1 bg-slate-800/50 border border-slate-700/50 rounded text-white text-sm"
+                                />
+                              ) : (
+                                <span>P & L{wallet.p_l}</span>
+                              )}
+                              </div>
                               {editingId === wallet.id ? (
                                 <input
                                   type="number"
