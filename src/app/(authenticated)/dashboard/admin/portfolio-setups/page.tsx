@@ -706,12 +706,11 @@ const AdminWalletsPage = () => {
                                   )}
                                 </div>
 
-
- <div className="text-sm text-white">
+                            <div className="text-sm text-white">
                                   <label className="text-xs text-slate-400">
                                    Commission $:
                                   </label>
-
+                                   
                                   {editingId === wallet.id ? (
                                     <input
                                       type="number"
