@@ -709,7 +709,7 @@ const AdminWalletsPage = () => {
 
  <div className="text-sm text-white">
                                   <label className="text-xs text-slate-400">
-                                   Commissions $:
+                                   Commission $:
                                   </label>
 
                                   {editingId === wallet.id ? (

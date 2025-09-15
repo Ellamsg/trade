@@ -22,7 +22,7 @@ const PortfolioSummary: React.FC<PortfoliySummaryProps> = ({ wallet }) => {
             ${wallet?.balance.toLocaleString() || "0"}
           </p>
            <p className="text-slate-400 text-base md:text-sm mb-2">
-           Commissions
+           Commission
           </p>
             <p className="md:text-13px font-bold text-white mb-2">
             ${wallet?.commissions.toLocaleString() || "0"}
