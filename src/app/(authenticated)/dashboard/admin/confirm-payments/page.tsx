@@ -757,7 +757,7 @@ const AdminTransactionsPage = () => {
                                   </div>
                               ) : (
                                   <div className="flex items-center gap-2">
-                                      <p className="text-white font-medium">${(transaction.added_amount || 0).toLocaleString()}</p>
+                                      <p className="text-green-500 font-medium">+${(transaction.added_amount || 0).toLocaleString()}</p>
                                       <button
                                           onClick={() => startEditingAddedAmount(transaction.id, transaction.added_amount || 0)}
                                           className="text-slate-400 hover:text-white transition-colors"
@@ -1183,7 +1183,7 @@ const AdminTransactionsPage = () => {
                                           className="flex-1 bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-xs"
                                       />
                                   ) : (
-                                      <span className="text-white">${(transaction.added_amount || 0).toLocaleString()}</span>
+                                      <span className="text-green-500">+${(transaction.added_amount || 0).toLocaleString()}</span>
                                   )}
                                   <button
                                       onClick={editingAddedAmountId === transaction.id ? () => handleSaveAddedAmount(transaction.id) : () => startEditingAddedAmount(transaction.id, transaction.added_amount || 0)}
