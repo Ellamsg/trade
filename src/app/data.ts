@@ -61,6 +61,7 @@ export interface TransactionRequest {
   readonly id: string;
   readonly email: string;
   readonly amount: number;
+  readonly added_amount?: number;
   readonly wallet_type: WalletTier;
   readonly account_number: string | null;
   readonly status: boolean;

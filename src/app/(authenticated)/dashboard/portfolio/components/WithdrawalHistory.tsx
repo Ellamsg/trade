@@ -270,14 +270,23 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
                       <>
                         <th className="text-left p-4 text-slate-300 font-medium">User</th>
                         <th className="text-left p-4 text-slate-300 font-medium">Wallet Type</th>
+                      
                       </>
                     )}
-                    <th className="text-left p-4 text-slate-300 font-medium">Amount</th>
+                                        <th className="text-left p-4 text-slate-300 font-medium">Amount</th>
+                      {activeTab === 'deposits' && (
+                      <>
+                          <th className="text-left p-4 text-slate-300 font-medium">Amount Gain</th>
+                      </>
+                    )}
+
+                   
                     {activeTab === 'withdrawals' && (
                       <>
                         <th className="text-left p-4 text-slate-300 font-medium">Token</th>
                         <th className="text-left p-4 text-slate-300 font-medium">Network</th>
                         <th className="text-left p-4 text-slate-300 font-medium">Account</th>
+                      
                       </>
                     )}
                     <th className="text-left p-4 text-slate-300 font-medium">Status</th>
@@ -311,6 +320,7 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
                               <td className="p-4">
                                 <div className="flex items-center gap-2">
                                   <span className="text-2xl">{TIER_CONFIG[deposit.wallet_type].icon}</span>
+                                  
                                   <div>
                                     <p className="font-medium">{TIER_CONFIG[deposit.wallet_type].name}</p>
                                   </div>
@@ -320,7 +330,15 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
                           )}
                           <td className="p-4">
                             <p className="text-white font-medium">${item.amount.toLocaleString()}</p>
+                            
                           </td>
+                             {isDeposit && deposit && (
+                           <td className="p-4">
+   
+                            <p className="text-green-600 font-medium">+${deposit.added_amount?.toLocaleString()}</p>
+                            
+                          </td>
+                             )}
                           {withdrawal && (
                             <>
                               <td className="p-4">

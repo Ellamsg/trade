@@ -1,8 +1,11 @@
+
 "use client"
 import React, { useState, useEffect } from 'react';
 import { FiUser, FiMail, FiDollarSign, FiClock, FiEdit3, FiSave, FiX, FiCheck, FiEye, FiRefreshCw, FiExternalLink, FiChevronDown, FiChevronUp, FiTrash2 } from 'react-icons/fi';
 import { createClient } from '@/app/utils/supabase/clients';
 import { TIER_CONFIG, TransactionRequest, WithdrawalRequest } from '@/app/data';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const AdminTransactionsPage = () => {
   const [transactions, setTransactions] = useState<TransactionRequest[]>([]);
@@ -20,6 +23,10 @@ const AdminTransactionsPage = () => {
   const [isConfirming, setIsConfirming] = useState(false);
   const [editingAmountId, setEditingAmountId] = useState<string | null>(null);
   const [editAmount, setEditAmount] = useState<number>(0);
+  const [editingAddedAmountId, setEditingAddedAmountId] = useState<string | null>(null);
+  const [editAddedAmount, setEditAddedAmount] = useState<number>(0);
+  const [editingDateId, setEditingDateId] = useState<string | null>(null);
+  const [editDate, setEditDate] = useState<Date | null>(null);
   
   const supabase = createClient();
 
@@ -200,6 +207,30 @@ const AdminTransactionsPage = () => {
     }
   };
 
+  const updateTransactionAddedAmount = async (transactionId: string, newAddedAmount: number) => {
+    try {
+      const { data, error } = await supabase
+        .from('transactions')
+        .update({ added_amount: newAddedAmount })
+        .eq('id', transactionId)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setTransactions(prev => 
+        prev.map(transaction => 
+          transaction.id === transactionId 
+            ? { ...transaction, added_amount: newAddedAmount }
+            : transaction
+        )
+      );
+      cancelEditingAddedAmount();
+    } catch (error) {
+      console.error('Error updating added amount:', error);
+    }
+  };
+
   const updateWithdrawalAmount = async (withdrawalId: string, newAmount: number) => {
     try {
       const { data, error } = await supabase
@@ -221,6 +252,30 @@ const AdminTransactionsPage = () => {
       cancelEditingAmount();
     } catch (error) {
       console.error('Error updating withdrawal amount:', error);
+    }
+  };
+
+  const updateTransactionDate = async (transactionId: string, newDate: Date) => {
+    try {
+      const { data, error } = await supabase
+        .from('transactions')
+        .update({ created_at: newDate.toISOString() })
+        .eq('id', transactionId)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setTransactions(prev => 
+        prev.map(transaction => 
+          transaction.id === transactionId 
+            ? { ...transaction, created_at: newDate.toISOString() }
+            : transaction
+        )
+      );
+      cancelEditingDate();
+    } catch (error) {
+      console.error('Error updating transaction date:', error);
     }
   };
 
@@ -263,6 +318,38 @@ const AdminTransactionsPage = () => {
   const cancelEditingAmount = () => {
     setEditingAmountId(null);
     setEditAmount(0);
+  };
+
+  const startEditingAddedAmount = (id: string, currentAddedAmount: number) => {
+    setEditingAddedAmountId(id);
+    setEditAddedAmount(currentAddedAmount);
+  };
+
+  const handleSaveAddedAmount = (id: string) => {
+    if (editAddedAmount > 0) {
+      updateTransactionAddedAmount(id, editAddedAmount);
+    }
+  };
+
+  const cancelEditingAddedAmount = () => {
+    setEditingAddedAmountId(null);
+    setEditAddedAmount(0);
+  };
+
+  const startEditingDate = (id: string, currentDate: string) => {
+    setEditingDateId(id);
+    setEditDate(new Date(currentDate));
+  };
+
+  const handleSaveDate = (id: string) => {
+    if (editDate) {
+      updateTransactionDate(id, editDate);
+    }
+  };
+
+  const cancelEditingDate = () => {
+    setEditingDateId(null);
+    setEditDate(null);
   };
 
   const startEditingWalletAddress = (id: string, currentAddress: string) => {
@@ -577,7 +664,9 @@ const AdminTransactionsPage = () => {
                     <th className="text-left p-4 text-slate-300 font-medium">User</th>
                     {activeTab === 'deposits' && <th className="text-left p-4 text-slate-300 font-medium">Wallet Type</th>}
                     <th className="text-left p-4 text-slate-300 font-medium">Amount</th>
+                    {activeTab === 'deposits' && <th className="text-left p-4 text-slate-300 font-medium">Added Amount</th>}
                     <th className="text-left p-4 text-slate-300 font-medium">Status</th>
+            
                     <th className="text-left p-4 text-slate-300 font-medium">Actions</th>
                     <th className="text-left p-4 text-slate-300 font-medium"></th>
                   </tr>
@@ -645,8 +734,43 @@ const AdminTransactionsPage = () => {
                               )}
                             </td>
                             <td className="p-4">
+                              {editingAddedAmountId === transaction.id ? (
+                                  <div className="flex items-center gap-2">
+                                      <input
+                                          type="number"
+                                          value={editAddedAmount}
+                                          onChange={(e) => setEditAddedAmount(parseFloat(e.target.value))}
+                                          className="w-24 bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-sm focus:outline-none focus:border-blue-500"
+                                      />
+                                      <button
+                                          onClick={() => handleSaveAddedAmount(transaction.id)}
+                                          className="bg-green-600 hover:bg-green-700 text-white p-1 rounded transition-colors"
+                                      >
+                                          <FiSave className="w-4 h-4" />
+                                      </button>
+                                      <button
+                                          onClick={cancelEditingAddedAmount}
+                                          className="bg-slate-600 hover:bg-slate-700 text-white p-1 rounded transition-colors"
+                                      >
+                                          <FiX className="w-4 h-4" />
+                                      </button>
+                                  </div>
+                              ) : (
+                                  <div className="flex items-center gap-2">
+                                      <p className="text-white font-medium">${(transaction.added_amount || 0).toLocaleString()}</p>
+                                      <button
+                                          onClick={() => startEditingAddedAmount(transaction.id, transaction.added_amount || 0)}
+                                          className="text-slate-400 hover:text-white transition-colors"
+                                      >
+                                          <FiEdit3 className="w-4 h-4" />
+                                      </button>
+                                  </div>
+                              )}
+                            </td>
+                            <td className="p-4">
                               {renderDepositStatus(transaction.account_number)}
                             </td>
+                          
                             <td className="p-4">
                               {renderActions(transaction)}
                             </td>
@@ -665,7 +789,7 @@ const AdminTransactionsPage = () => {
                           </tr>
                           {isExpanded && (
                             <tr className="bg-slate-700/10 border-b border-slate-700/30">
-                              <td colSpan={5} className="p-4">
+                              <td colSpan={8} className="p-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-16">
                                   <div className="space-y-2">
                                     <h4 className="font-medium text-slate-300">Transaction Details</h4>
@@ -674,12 +798,6 @@ const AdminTransactionsPage = () => {
                                         <span className="text-slate-400">Token/Network:</span>
                                         <span className="text-white">
                                           {transaction.token_type} ({transaction.network})
-                                        </span>
-                                      </div>
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-slate-400">Created:</span>
-                                        <span className="text-slate-300">
-                                          {formatDate(transaction.created_at)}
                                         </span>
                                       </div>
                                       <div>
@@ -719,6 +837,47 @@ const AdminTransactionsPage = () => {
                                                     <FiEdit3 className="w-4 h-4" />
                                                 </button>
                                             </div>
+                                        )}
+                                      </div>
+                                      <div>
+                                        <div className="font-medium text-slate-300 mt-2">Created Date:</div>
+                                        {editingDateId === transaction.id ? (
+                                          <div className="flex items-center gap-2 mt-1">
+                                            <DatePicker
+                                                selected={editDate}
+                                                onChange={(date: Date | null) => setEditDate(date)}
+                                        
+                                                showTimeSelect
+                                                timeFormat="HH:mm"
+                                                timeIntervals={15}
+                                                dateFormat="MMM d, yyyy h:mm aa"
+                                                className="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-sm focus:outline-none focus:border-blue-500"
+                                            />
+                                            <button
+                                                onClick={() => handleSaveDate(transaction.id)}
+                                                className="bg-green-600 hover:bg-green-700 text-white p-1 rounded transition-colors"
+                                            >
+                                                <FiSave className="w-4 h-4" />
+                                            </button>
+                                            <button
+                                                onClick={cancelEditingDate}
+                                                className="bg-slate-600 hover:bg-slate-700 text-white p-1 rounded transition-colors"
+                                            >
+                                                <FiX className="w-4 h-4" />
+                                            </button>
+                                          </div>
+                                        ) : (
+                                          <div className="flex items-center gap-2 mt-1">
+                                            <span className="font-mono text-slate-300">
+                                              {formatDate(transaction.created_at)}
+                                            </span>
+                                            <button
+                                                onClick={() => startEditingDate(transaction.id, transaction.created_at)}
+                                                className="text-slate-400 hover:text-white transition-colors"
+                                            >
+                                                <FiEdit3 className="w-4 h-4" />
+                                            </button>
+                                          </div>
                                         )}
                                       </div>
                                     </div>
@@ -775,6 +934,7 @@ const AdminTransactionsPage = () => {
                             <td className="p-4">
                               {renderWithdrawalStatus(withdrawal.status)}
                             </td>
+                         
                             <td className="p-4">
                               {renderActions(withdrawal)}
                             </td>
@@ -793,7 +953,7 @@ const AdminTransactionsPage = () => {
                           </tr>
                           {isExpanded && (
                             <tr className="bg-slate-700/10 border-b border-slate-700/30">
-                              <td colSpan={4} className="p-4">
+                              <td colSpan={6} className="p-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-16">
                                   <div className="space-y-2">
                                     <h4 className="font-medium text-slate-300">Withdrawal Details</h4>
@@ -802,12 +962,6 @@ const AdminTransactionsPage = () => {
                                         <span className="text-slate-400">Token/Network:</span>
                                         <span className="text-white">
                                           {withdrawal.token_type} ({withdrawal.network})
-                                        </span>
-                                      </div>
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-slate-400">Created:</span>
-                                        <span className="text-slate-300">
-                                          {formatDate(withdrawal.created_at)}
                                         </span>
                                       </div>
                                       {withdrawal.status && (
@@ -855,6 +1009,46 @@ const AdminTransactionsPage = () => {
                                                     <FiEdit3 className="w-4 h-4" />
                                                 </button>
                                             </div>
+                                        )}
+                                      </div>
+                                      <div>
+                                        <div className="font-medium text-slate-300 mt-2">Created Date:</div>
+                                        {editingDateId === withdrawal.id ? (
+                                          <div className="flex items-center gap-2 mt-1">
+                                            <DatePicker
+                                                selected={editDate}
+                                               onChange={(date: Date | null) => setEditDate(date)}
+                                                showTimeSelect
+                                                timeFormat="HH:mm"
+                                                timeIntervals={15}
+                                                dateFormat="MMM d, yyyy h:mm aa"
+                                                className="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-sm focus:outline-none focus:border-blue-500"
+                                            />
+                                            <button
+                                                onClick={() => handleSaveDate(withdrawal.id)}
+                                                className="bg-green-600 hover:bg-green-700 text-white p-1 rounded transition-colors"
+                                            >
+                                                <FiSave className="w-4 h-4" />
+                                            </button>
+                                            <button
+                                                onClick={cancelEditingDate}
+                                                className="bg-slate-600 hover:bg-slate-700 text-white p-1 rounded transition-colors"
+                                            >
+                                                <FiX className="w-4 h-4" />
+                                            </button>
+                                          </div>
+                                        ) : (
+                                          <div className="flex items-center gap-2 mt-1">
+                                            <span className="font-mono text-slate-300">
+                                              {formatDate(withdrawal.created_at)}
+                                            </span>
+                                            <button
+                                                onClick={() => startEditingDate(withdrawal.id, withdrawal.created_at)}
+                                                className="text-slate-400 hover:text-white transition-colors"
+                                            >
+                                                <FiEdit3 className="w-4 h-4" />
+                                            </button>
+                                          </div>
                                         )}
                                       </div>
                                     </div>
@@ -913,7 +1107,9 @@ const AdminTransactionsPage = () => {
                           </div>
                           <div>
                             <p className="text-white font-medium text-sm">{transaction.email}</p>
-                            <p className="text-slate-400 text-xs">{formatDate(transaction.created_at)}</p>
+                            <p className="text-slate-400 text-xs">
+                                {formatDate(transaction.created_at)}
+                            </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
@@ -973,6 +1169,72 @@ const AdminTransactionsPage = () => {
                                       >
                                           <FiEdit3 className="w-4 h-4" /> Edit Amount
                                       </button>
+                                  )}
+                              </div>
+                          </div>
+                          <div>
+                              <div className="font-medium text-slate-300">Added Amount:</div>
+                              <div className="flex items-center gap-2 mt-1">
+                                  {editingAddedAmountId === transaction.id ? (
+                                      <input
+                                          type="number"
+                                          value={editAddedAmount}
+                                          onChange={(e) => setEditAddedAmount(parseFloat(e.target.value))}
+                                          className="flex-1 bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-xs"
+                                      />
+                                  ) : (
+                                      <span className="text-white">${(transaction.added_amount || 0).toLocaleString()}</span>
+                                  )}
+                                  <button
+                                      onClick={editingAddedAmountId === transaction.id ? () => handleSaveAddedAmount(transaction.id) : () => startEditingAddedAmount(transaction.id, transaction.added_amount || 0)}
+                                      className="text-slate-400 hover:text-white transition-colors"
+                                  >
+                                      {editingAddedAmountId === transaction.id ? <FiSave className="w-4 h-4" /> : <FiEdit3 className="w-4 h-4" />}
+                                  </button>
+                                  {editingAddedAmountId === transaction.id && (
+                                      <button onClick={cancelEditingAddedAmount} className="bg-slate-600 hover:bg-slate-700 text-white p-1 rounded transition-colors">
+                                          <FiX className="w-4 h-4" />
+                                      </button>
+                                  )}
+                              </div>
+                          </div>
+                          <div>
+                              <div className="font-medium text-slate-300">Date:</div>
+                              <div className="flex items-center gap-2 mt-1">
+                                  {editingDateId === transaction.id ? (
+                                      <>
+                                          <DatePicker
+                                              selected={editDate}
+                                              onChange={(date: Date | null) => setEditDate(date)}
+                                              showTimeSelect
+                                              timeFormat="HH:mm"
+                                              timeIntervals={15}
+                                              dateFormat="MMM d, yyyy h:mm aa"
+                                              className="w-full bg-slate-700 border border-slate-600 rounded px-1 text-white text-xs"
+                                          />
+                                          <button
+                                              onClick={() => handleSaveDate(transaction.id)}
+                                              className="bg-green-600 hover:bg-green-700 text-white p-1 rounded transition-colors"
+                                          >
+                                              <FiSave className="w-4 h-4" />
+                                          </button>
+                                          <button
+                                              onClick={cancelEditingDate}
+                                              className="bg-slate-600 hover:bg-slate-700 text-white p-1 rounded transition-colors"
+                                          >
+                                              <FiX className="w-4 h-4" />
+                                          </button>
+                                      </>
+                                  ) : (
+                                      <>
+                                          <span className="text-white">{formatDate(transaction.created_at)}</span>
+                                          <button
+                                              onClick={() => startEditingDate(transaction.id, transaction.created_at)}
+                                              className="text-slate-400 hover:text-white transition-colors"
+                                          >
+                                              <FiEdit3 className="w-4 h-4" />
+                                          </button>
+                                      </>
                                   )}
                               </div>
                           </div>
@@ -1049,7 +1311,9 @@ const AdminTransactionsPage = () => {
                           </div>
                           <div>
                             <p className="text-white font-medium text-sm">{withdrawal.email}</p>
-                            <p className="text-slate-400 text-xs">{formatDate(withdrawal.created_at)}</p>
+                            <p className="text-slate-400 text-xs">
+                                {formatDate(withdrawal.created_at)}
+                            </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
@@ -1105,6 +1369,46 @@ const AdminTransactionsPage = () => {
                                       >
                                           <FiEdit3 className="w-4 h-4" /> Edit Amount
                                       </button>
+                                  )}
+                              </div>
+                          </div>
+                          <div>
+                              <div className="font-medium text-slate-300">Date:</div>
+                              <div className="flex items-center gap-2 mt-1">
+                                  {editingDateId === withdrawal.id ? (
+                                      <>
+                                          <DatePicker
+                                              selected={editDate}
+                                                  onChange={(date: Date | null) => setEditDate(date)}
+                                              showTimeSelect
+                                              timeFormat="HH:mm"
+                                              timeIntervals={15}
+                                              dateFormat="MMM d, yyyy h:mm aa"
+                                              className="w-full bg-slate-700 border border-slate-600 rounded px-1 text-white text-xs"
+                                          />
+                                          <button
+                                              onClick={() => handleSaveDate(withdrawal.id)}
+                                              className="bg-green-600 hover:bg-green-700 text-white p-1 rounded transition-colors"
+                                          >
+                                              <FiSave className="w-4 h-4" />
+                                          </button>
+                                          <button
+                                              onClick={cancelEditingDate}
+                                              className="bg-slate-600 hover:bg-slate-700 text-white p-1 rounded transition-colors"
+                                          >
+                                              <FiX className="w-4 h-4" />
+                                          </button>
+                                      </>
+                                  ) : (
+                                      <>
+                                          <span className="text-white">{formatDate(withdrawal.created_at)}</span>
+                                          <button
+                                              onClick={() => startEditingDate(withdrawal.id, withdrawal.created_at)}
+                                              className="text-slate-400 hover:text-white transition-colors"
+                                          >
+                                              <FiEdit3 className="w-4 h-4" />
+                                          </button>
+                                      </>
                                   )}
                               </div>
                           </div>

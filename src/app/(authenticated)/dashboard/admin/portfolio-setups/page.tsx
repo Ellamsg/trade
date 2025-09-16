@@ -502,6 +502,7 @@ const AdminWalletsPage = () => {
                                 {editingId === wallet.id ? (
                                 <input
                                   type="text"
+                                  placeholder="e.g - , +"
                                   value={editForm.p_l || ""}
                                   onChange={(e) =>
                                     setEditForm({
