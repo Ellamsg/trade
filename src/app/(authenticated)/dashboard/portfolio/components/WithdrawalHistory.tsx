@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect } from 'react';
 import { FiArrowUpRight, FiExternalLink, FiCheck, FiClock, FiDollarSign, FiUser, FiChevronDown, FiChevronUp, FiEye } from 'react-icons/fi';
 import { WithdrawalRequest, TransactionRequest, NETWORK_CONFIG, TIER_CONFIG } from '@/app/data';
@@ -119,13 +118,6 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
             > 
               Back to Portfolio 
             </button>
-            {/* <button
-              onClick={onNewWithdrawal}
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
-            >
-              <FiArrowUpRight className="w-4 h-4" />
-              New Withdrawal
-            </button> */}
           </div>
         </div>
 
@@ -185,7 +177,6 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
           <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 border border-slate-700/50">
             <div className="flex items-center justify-between">
               <div>
-
                 <p className="text-slate-400 text-sm">{(activeTab === 'withdrawals' ? 'Total Amount withdrawn' : 'Total Amount Deposited ')}</p> 
                 <p className="text-2xl font-bold text-white">
                   ${(activeTab === 'withdrawals' 
@@ -262,7 +253,8 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
           </div>
         ) : (
           <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 overflow-hidden">
-            <div className="overflow-x-auto">
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-slate-700/50">
                   <tr>
@@ -270,23 +262,17 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
                       <>
                         <th className="text-left p-4 text-slate-300 font-medium">User</th>
                         <th className="text-left p-4 text-slate-300 font-medium">Wallet Type</th>
-                      
                       </>
                     )}
-                                        <th className="text-left p-4 text-slate-300 font-medium">Amount</th>
-                      {activeTab === 'deposits' && (
-                      <>
-                          <th className="text-left p-4 text-slate-300 font-medium">Amount Gain</th>
-                      </>
+                    <th className="text-left p-4 text-slate-300 font-medium">Amount</th>
+                    {activeTab === 'deposits' && (
+                      <th className="text-left p-4 text-slate-300 font-medium">Amount Gain</th>
                     )}
-
-                   
                     {activeTab === 'withdrawals' && (
                       <>
                         <th className="text-left p-4 text-slate-300 font-medium">Token</th>
                         <th className="text-left p-4 text-slate-300 font-medium">Network</th>
                         <th className="text-left p-4 text-slate-300 font-medium">Account</th>
-                      
                       </>
                     )}
                     <th className="text-left p-4 text-slate-300 font-medium">Status</th>
@@ -320,7 +306,6 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
                               <td className="p-4">
                                 <div className="flex items-center gap-2">
                                   <span className="text-2xl">{TIER_CONFIG[deposit.wallet_type].icon}</span>
-                                  
                                   <div>
                                     <p className="font-medium">{TIER_CONFIG[deposit.wallet_type].name}</p>
                                   </div>
@@ -330,15 +315,12 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
                           )}
                           <td className="p-4">
                             <p className="text-white font-medium">${item.amount.toLocaleString()}</p>
-                            
                           </td>
-                             {isDeposit && deposit && (
-                           <td className="p-4">
-   
-                            <p className="text-green-600 font-medium">+${deposit.added_amount?.toLocaleString()}</p>
-                            
-                          </td>
-                             )}
+                          {isDeposit && deposit && (
+                            <td className="p-4">
+                              <p className="text-green-600 font-medium">+${deposit.added_amount?.toLocaleString()}</p>
+                            </td>
+                          )}
                           {withdrawal && (
                             <>
                               <td className="p-4">
@@ -435,6 +417,142 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
                   })}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden">
+              {currentData.map((item) => {
+                const isExpanded = expandedRows.has(item.id);
+                const isDeposit = activeTab === 'deposits';
+                const deposit = isDeposit ? item as TransactionRequest : null;
+                const withdrawal = !isDeposit ? item as WithdrawalRequest : null;
+
+                return (
+                  <div key={item.id} className="border-b border-slate-700/50">
+                    <div className="p-4">
+                      {/* Main Info Row */}
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <div className="w-8 h-8 bg-slate-600 rounded-full flex items-center justify-center">
+                              {isDeposit ? (
+                                <span className="text-lg">{deposit && TIER_CONFIG[deposit.wallet_type].icon}</span>
+                              ) : (
+                                <FiDollarSign className="w-4 h-4 text-slate-300" />
+                              )}
+                            </div>
+                            <div>
+                              <p className="text-white font-medium">${item.amount.toLocaleString()}</p>
+                              <p className="text-slate-400 text-xs">{formatDate(item.created_at)}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              {item.status ? (
+                                <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 w-fit">
+                                  <FiCheck className="w-3 h-3" />
+                                  Completed
+                                </span>
+                              ) : (
+                                <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 w-fit">
+                                  <FiClock className="w-3 h-3" />
+                                  Pending
+                                </span>
+                              )}
+                            </div>
+                            <button
+                              onClick={() => toggleRowExpand(item.id)}
+                              className="text-slate-400 hover:text-white transition-colors p-1"
+                            >
+                              {isExpanded ? (
+                                <FiChevronUp className="w-5 h-5" />
+                              ) : (
+                                <FiChevronDown className="w-5 h-5" />
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Expandable Details */}
+                    {isExpanded && (
+                      <div className="px-4 pb-4 border-t border-slate-700/30 bg-slate-700/10">
+                        <div className="pt-4 space-y-4">
+                          {/* Deposit specific details */}
+                          {isDeposit && deposit && (
+                            <>
+                              <div className="grid grid-cols-1 gap-3">
+                                <div>
+                                  <span className="text-slate-400 text-sm">User:</span>
+                                  <p className="text-white font-medium">{deposit.email}</p>
+                                </div>
+                                <div>
+                                  <span className="text-slate-400 text-sm">Wallet Type:</span>
+                                  <p className="text-white font-medium flex items-center gap-2">
+                                    <span className="text-lg">{TIER_CONFIG[deposit.wallet_type].icon}</span>
+                                    {TIER_CONFIG[deposit.wallet_type].name}
+                                  </p>
+                                </div>
+                                {deposit.added_amount && (
+                                  <div>
+                                    <span className="text-slate-400 text-sm">Amount Gain:</span>
+                                    <p className="text-green-600 font-medium">+${deposit.added_amount.toLocaleString()}</p>
+                                  </div>
+                                )}
+                                <div>
+                                  <span className="text-slate-400 text-sm">Wallet Assignment:</span>
+                                  <p className="text-white font-mono text-sm break-all">
+                                    {deposit.account_number || 'Not assigned'}
+                                  </p>
+                                </div>
+                              </div>
+                            </>
+                          )}
+
+                          {/* Withdrawal specific details */}
+                          {withdrawal && (
+                            <>
+                              <div className="grid grid-cols-1 gap-3">
+                                <div>
+                                  <span className="text-slate-400 text-sm">Token:</span>
+                                  <p className="text-white font-medium">{withdrawal.token_type.toUpperCase()}</p>
+                                </div>
+                                <div>
+                                  <span className="text-slate-400 text-sm">Network:</span>
+                                  <p className="text-white font-medium">{NETWORK_CONFIG[withdrawal.network].name}</p>
+                                </div>
+                                <div>
+                                  <span className="text-slate-400 text-sm">Wallet Address:</span>
+                                  <p className="text-white font-mono text-sm break-all">{withdrawal.account_number}</p>
+                                </div>
+                              </div>
+                            </>
+                          )}
+
+                          {/* Common details */}
+                          <div className="grid grid-cols-1 gap-3 pt-2 border-t border-slate-700/30">
+                            <div>
+                              <span className="text-slate-400 text-sm">Token/Network:</span>
+                              <p className="text-white">{item.token_type} ({item.network})</p>
+                            </div>
+                            <div>
+                              <span className="text-slate-400 text-sm">Transaction ID:</span>
+                              <p className="text-slate-300 text-sm">{item.id}</p>
+                            </div>
+                            {item.status && withdrawal && withdrawal.updated_at && (
+                              <div>
+                                <span className="text-slate-400 text-sm">Completed:</span>
+                                <p className="text-slate-300">{formatDate(withdrawal.updated_at)}</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
