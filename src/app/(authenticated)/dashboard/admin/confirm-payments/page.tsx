@@ -227,7 +227,7 @@ const AdminTransactionsPage = () => {
       );
       cancelEditingAddedAmount();
     } catch (error) {
-      console.error('Error updating added amount:', error);
+      console.error('Error updating add amount:', error);
     }
   };
 
@@ -664,7 +664,7 @@ const AdminTransactionsPage = () => {
                     <th className="text-left p-4 text-slate-300 font-medium">User</th>
                     {activeTab === 'deposits' && <th className="text-left p-4 text-slate-300 font-medium">Wallet Type</th>}
                     <th className="text-left p-4 text-slate-300 font-medium">Amount</th>
-                    {activeTab === 'deposits' && <th className="text-left p-4 text-slate-300 font-medium">Added Amount</th>}
+                    {activeTab === 'deposits' && <th className="text-left p-4 text-slate-300 font-medium">Add Amount</th>}
                     <th className="text-left p-4 text-slate-300 font-medium">Status</th>
             
                     <th className="text-left p-4 text-slate-300 font-medium">Actions</th>
