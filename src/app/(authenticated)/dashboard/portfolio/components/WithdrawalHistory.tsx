@@ -15,8 +15,9 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
   onBackToPortfolio,
   onNewWithdrawal
 }) => {
-  const [activeTab, setActiveTab] = useState<'withdrawals' | 'deposits'>('withdrawals');
+  const [activeTab, setActiveTab] = useState<'withdrawals' | 'deposits' | 'depositsHistory'>('withdrawals');
   const [deposits, setDeposits] = useState<TransactionRequest[]>([]);
+  const [depositsHistory, setDepositsHistory] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('all');
@@ -27,6 +28,8 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
   useEffect(() => {
     if (activeTab === 'deposits') {
       fetchDeposits();
+    } else if (activeTab === 'depositsHistory') {
+      fetchDepositsHistory();
     }
   }, [activeTab]);
 
@@ -46,6 +49,27 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
       setDeposits(data || []);
     } catch (error) {
       console.error('Error fetching deposits:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchDepositsHistory = async () => {
+    try {
+      setLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from('add_new_deposit')
+        .select('*')
+        .eq('email', user.email!)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setDepositsHistory(data || []);
+    } catch (error) {
+      console.error('Error fetching deposits history:', error);
     } finally {
       setLoading(false);
     }
@@ -90,15 +114,79 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
     return matchesFilter;
   });
 
+  const filteredDepositsHistory = depositsHistory.filter(deposit => {
+    const matchesFilter = filter === 'all' || 
+      (filter === 'pending' && !deposit.status) ||
+      (filter === 'completed' && deposit.status);
+    
+    return matchesFilter;
+  });
+
   const pendingWithdrawals = withdrawals.filter(w => !w.status).length;
   const completedWithdrawals = withdrawals.filter(w => w.status).length;
   const pendingDeposits = deposits.filter(d => !d.status).length;
   const completedDeposits = deposits.filter(d => d.status).length;
+  const pendingDepositsHistory = depositsHistory.filter(d => !d.status).length;
+  const completedDepositsHistory = depositsHistory.filter(d => d.status).length;
 
-  const currentData = activeTab === 'withdrawals' ? filteredWithdrawals : filteredDeposits;
-  const totalCount = activeTab === 'withdrawals' ? withdrawals.length : deposits.length;
-  const pendingCount = activeTab === 'withdrawals' ? pendingWithdrawals : pendingDeposits;
-  const completedCount = activeTab === 'withdrawals' ? completedWithdrawals : completedDeposits;
+  const getCurrentTabData = () => {
+    switch (activeTab) {
+      case 'withdrawals': return filteredWithdrawals;
+      case 'deposits': return filteredDeposits;
+      case 'depositsHistory': return filteredDepositsHistory;
+      default: return [];
+    }
+  };
+
+  const getTotalCount = () => {
+    switch (activeTab) {
+      case 'withdrawals': return withdrawals.length;
+      case 'deposits': return deposits.length;
+      case 'depositsHistory': return depositsHistory.length;
+      default: return 0;
+    }
+  };
+
+  const getPendingCount = () => {
+    switch (activeTab) {
+      case 'withdrawals': return pendingWithdrawals;
+      case 'deposits': return pendingDeposits;
+      case 'depositsHistory': return pendingDepositsHistory;
+      default: return 0;
+    }
+  };
+
+  const getCompletedCount = () => {
+    switch (activeTab) {
+      case 'withdrawals': return completedWithdrawals;
+      case 'deposits': return completedDeposits;
+      case 'depositsHistory': return completedDepositsHistory;
+      default: return 0;
+    }
+  };
+
+  const getTotalAmount = () => {
+    switch (activeTab) {
+      case 'withdrawals': return withdrawals.reduce((sum, w) => sum + w.amount, 0);
+      case 'deposits': return deposits.reduce((sum, d) => sum + d.amount, 0);
+      case 'depositsHistory': return depositsHistory.reduce((sum, d) => sum + d.deposit, 0);
+      default: return 0;
+    }
+  };
+
+  const getTabLabel = () => {
+    switch (activeTab) {
+      case 'withdrawals': return 'Withdrawals';
+      case 'deposits': return 'Deposits';
+      case 'depositsHistory': return 'Deposits History';
+      default: return '';
+    }
+  };
+
+  const currentData = getCurrentTabData();
+  const totalCount = getTotalCount();
+  const pendingCount = getPendingCount();
+  const completedCount = getCompletedCount();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-9">
@@ -143,6 +231,16 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
           >
             Deposits
           </button>
+          <button
+            onClick={() => setActiveTab('depositsHistory')}
+            className={`flex-1 px-4 py-2 rounded-md font-medium transition-colors ${
+              activeTab === 'depositsHistory'
+                ? 'bg-blue-600 text-white'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            Deposits History
+          </button>
         </div>
 
         {/* Stats Cards */}
@@ -150,7 +248,7 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
           <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 border border-slate-700/50">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-slate-400 text-sm">Total {activeTab === 'withdrawals' ? 'Withdrawals' : 'Deposits'}</p>
+                <p className="text-slate-400 text-sm">Total {getTabLabel()}</p>
                 <p className="text-2xl font-bold text-white">{totalCount}</p>
               </div>
               <FiDollarSign className="w-8 h-8 text-blue-400" />
@@ -177,12 +275,13 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
           <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 border border-slate-700/50">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-slate-400 text-sm">{(activeTab === 'withdrawals' ? 'Total Amount withdrawn' : 'Total Amount Deposited ')}</p> 
+                <p className="text-slate-400 text-sm">
+                  {activeTab === 'withdrawals' ? 'Total Amount Withdrawn' : 
+                   activeTab === 'deposits' ? 'Total Amount Deposited' : 
+                   'Total Deposit Amount'}
+                </p> 
                 <p className="text-2xl font-bold text-white">
-                  ${(activeTab === 'withdrawals' 
-                    ? withdrawals.reduce((sum, w) => sum + w.amount, 0) 
-                    : deposits.reduce((sum, d) => sum + d.amount, 0)
-                  ).toLocaleString()}
+                  ${getTotalAmount().toLocaleString()}
                 </p>
               </div>
               <FiExternalLink className="w-8 h-8 text-purple-400" />
@@ -228,17 +327,17 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
         {loading ? (
           <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-8 border border-slate-700/50 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400 mx-auto mb-4"></div>
-            <p className="text-slate-400">Loading {activeTab}...</p>
+            <p className="text-slate-400">Loading {getTabLabel().toLowerCase()}...</p>
           </div>
         ) : currentData.length === 0 ? (
           <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50 text-center">
             <div className="text-slate-400 mb-4">
               <FiEye className="w-12 h-12 mx-auto mb-2" />
-              <p>No {activeTab} found</p>
+              <p>No {getTabLabel().toLowerCase()} found</p>
               <p className="text-sm">
-                {filter === 'pending' && `No pending ${activeTab} at the moment`}
-                {filter === 'completed' && `No completed ${activeTab} found`}
-                {filter === 'all' && `No ${activeTab} history yet`}
+                {filter === 'pending' && `No pending ${getTabLabel().toLowerCase()} at the moment`}
+                {filter === 'completed' && `No completed ${getTabLabel().toLowerCase()} found`}
+                {filter === 'all' && `No ${getTabLabel().toLowerCase()} yet`}
               </p>
             </div>
             {activeTab === 'withdrawals' && (
@@ -258,38 +357,78 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
               <table className="w-full">
                 <thead className="bg-slate-700/50">
                   <tr>
+                    {/* Deposits History columns */}
+                    {activeTab === 'depositsHistory' && (
+                      <>
+                        <th className="text-left p-4 text-slate-300 font-medium">Amount</th>
+                        <th className="text-left p-4 text-slate-300 font-medium">Status</th>
+                        <th className="text-left p-4 text-slate-300 font-medium">Date</th>
+                      </>
+                    )}
+                    {/* Regular Deposits columns */}
                     {activeTab === 'deposits' && (
                       <>
                         <th className="text-left p-4 text-slate-300 font-medium">User</th>
                         <th className="text-left p-4 text-slate-300 font-medium">Wallet Type</th>
+                        <th className="text-left p-4 text-slate-300 font-medium">Amount</th>
+                       
+                        <th className="text-left p-4 text-slate-300 font-medium">Status</th>
+                        <th className="text-left p-4 text-slate-300 font-medium">Date</th>
+                        <th className="text-left p-4 text-slate-300 font-medium"></th>
                       </>
                     )}
-                    <th className="text-left p-4 text-slate-300 font-medium">Amount</th>
-                    {activeTab === 'deposits' && (
-                      <th className="text-left p-4 text-slate-300 font-medium">Amount Gain</th>
-                    )}
+                    {/* Withdrawals columns */}
                     {activeTab === 'withdrawals' && (
                       <>
+                        <th className="text-left p-4 text-slate-300 font-medium">Amount</th>
                         <th className="text-left p-4 text-slate-300 font-medium">Token</th>
                         <th className="text-left p-4 text-slate-300 font-medium">Network</th>
                         <th className="text-left p-4 text-slate-300 font-medium">Account</th>
+                        <th className="text-left p-4 text-slate-300 font-medium">Status</th>
+                        <th className="text-left p-4 text-slate-300 font-medium">Date</th>
+                        <th className="text-left p-4 text-slate-300 font-medium"></th>
                       </>
                     )}
-                    <th className="text-left p-4 text-slate-300 font-medium">Status</th>
-                    <th className="text-left p-4 text-slate-300 font-medium">Date</th>
-                    <th className="text-left p-4 text-slate-300 font-medium"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {currentData.map((item) => {
                     const isExpanded = expandedRows.has(item.id);
                     const isDeposit = activeTab === 'deposits';
+                    const isDepositHistory = activeTab === 'depositsHistory';
                     const deposit = isDeposit ? item as TransactionRequest : null;
-                    const withdrawal = !isDeposit ? item as WithdrawalRequest : null;
+                    const withdrawal = activeTab === 'withdrawals' ? item as WithdrawalRequest : null;
+                    const depositHistory = isDepositHistory ? item as any : null;
 
                     return (
                       <React.Fragment key={item.id}>
                         <tr className="border-t border-slate-700/50 hover:bg-slate-700/25">
+                          {/* Deposits History Row */}
+                          {isDepositHistory && depositHistory && (
+                            <>
+                              <td className="p-4">
+                                <p className="text-white font-medium">${depositHistory.deposit.toLocaleString()}</p>
+                              </td>
+                              <td className="p-4">
+                                {depositHistory.status ? (
+                                  <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1 w-fit">
+                                    <FiCheck className="w-3 h-3" />
+                                    Completed
+                                  </span>
+                                ) : (
+                                  <span className="bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1 w-fit">
+                                    <FiClock className="w-3 h-3" />
+                                    Pending
+                                  </span>
+                                )}
+                              </td>
+                              <td className="p-4">
+                                <p className="text-slate-400 text-sm">{formatDate(depositHistory.created_at)}</p>
+                              </td>
+                            </>
+                          )}
+                          
+                          {/* Regular Deposits Row */}
                           {isDeposit && deposit && (
                             <>
                               <td className="p-4">
@@ -311,18 +450,47 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
                                   </div>
                                 </div>
                               </td>
+                              <td className="p-4">
+                                <p className="text-white font-medium">${deposit.amount.toLocaleString()}</p>
+                              </td>
+                          
+                              <td className="p-4">
+                                {deposit.status ? (
+                                  <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1 w-fit">
+                                    <FiCheck className="w-3 h-3" />
+                                    Completed
+                                  </span>
+                                ) : (
+                                  <span className="bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1 w-fit">
+                                    <FiClock className="w-3 h-3" />
+                                    Pending
+                                  </span>
+                                )}
+                              </td>
+                              <td className="p-4">
+                                <p className="text-slate-400 text-sm">{formatDate(deposit.created_at)}</p>
+                              </td>
+                              <td className="p-4">
+                                <button
+                                  onClick={() => toggleRowExpand(item.id)}
+                                  className="text-slate-400 hover:text-white transition-colors"
+                                >
+                                  {isExpanded ? (
+                                    <FiChevronUp className="w-4 h-4" />
+                                  ) : (
+                                    <FiChevronDown className="w-4 h-4" />
+                                  )}
+                                </button>
+                              </td>
                             </>
                           )}
-                          <td className="p-4">
-                            <p className="text-white font-medium">${item.amount.toLocaleString()}</p>
-                          </td>
-                          {isDeposit && deposit && (
-                            <td className="p-4">
-                              <p className="text-green-600 font-medium">+${deposit.added_amount?.toLocaleString()}</p>
-                            </td>
-                          )}
+
+                          {/* Withdrawals Row */}
                           {withdrawal && (
                             <>
+                              <td className="p-4">
+                                <p className="text-white font-medium">${withdrawal.amount.toLocaleString()}</p>
+                              </td>
                               <td className="p-4">
                                 <p className="text-white font-medium">{withdrawal.token_type.toUpperCase()}</p>
                               </td>
@@ -332,40 +500,42 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
                               <td className="p-4">
                                 <p className="font-mono text-slate-300 text-sm break-all">{withdrawal.account_number}</p>
                               </td>
+                              <td className="p-4">
+                                {withdrawal.status ? (
+                                  <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1 w-fit">
+                                    <FiCheck className="w-3 h-3" />
+                                    Completed
+                                  </span>
+                                ) : (
+                                  <span className="bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1 w-fit">
+                                    <FiClock className="w-3 h-3" />
+                                    Pending
+                                  </span>
+                                )}
+                              </td>
+                              <td className="p-4">
+                                <p className="text-slate-400 text-sm">{formatDate(withdrawal.created_at)}</p>
+                              </td>
+                              <td className="p-4">
+                                <button
+                                  onClick={() => toggleRowExpand(item.id)}
+                                  className="text-slate-400 hover:text-white transition-colors"
+                                >
+                                  {isExpanded ? (
+                                    <FiChevronUp className="w-4 h-4" />
+                                  ) : (
+                                    <FiChevronDown className="w-4 h-4" />
+                                  )}
+                                </button>
+                              </td>
                             </>
                           )}
-                          <td className="p-4">
-                            {item.status ? (
-                              <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1 w-fit">
-                                <FiCheck className="w-3 h-3" />
-                                Completed
-                              </span>
-                            ) : (
-                              <span className="bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1 w-fit">
-                                <FiClock className="w-3 h-3" />
-                                Pending
-                              </span>
-                            )}
-                          </td>
-                          <td className="p-4">
-                            <p className="text-slate-400 text-sm">{formatDate(item.created_at)}</p>
-                          </td>
-                          <td className="p-4">
-                            <button
-                              onClick={() => toggleRowExpand(item.id)}
-                              className="text-slate-400 hover:text-white transition-colors"
-                            >
-                              {isExpanded ? (
-                                <FiChevronUp className="w-4 h-4" />
-                              ) : (
-                                <FiChevronDown className="w-4 h-4" />
-                              )}
-                            </button>
-                          </td>
                         </tr>
-                        {isExpanded && (
+
+                        {/* Expandable Details - Only for regular deposits and withdrawals */}
+                        {isExpanded && !isDepositHistory && (
                           <tr className="bg-slate-700/10 border-b border-slate-700/30">
-                            <td colSpan={isDeposit ? 7 : 6} className="p-4">
+                            <td colSpan={isDeposit ? 7 : 7} className="p-4">
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-16">
                                 <div className="space-y-2">
                                   <h4 className="font-medium text-slate-300">
@@ -424,8 +594,10 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
               {currentData.map((item) => {
                 const isExpanded = expandedRows.has(item.id);
                 const isDeposit = activeTab === 'deposits';
+                const isDepositHistory = activeTab === 'depositsHistory';
                 const deposit = isDeposit ? item as TransactionRequest : null;
-                const withdrawal = !isDeposit ? item as WithdrawalRequest : null;
+                const withdrawal = activeTab === 'withdrawals' ? item as WithdrawalRequest : null;
+                const depositHistory = isDepositHistory ? item as any : null;
 
                 return (
                   <div key={item.id} className="border-b border-slate-700/50">
@@ -442,7 +614,10 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
                               )}
                             </div>
                             <div>
-                              <p className="text-white font-medium">${item.amount.toLocaleString()}</p>
+                              <p className="text-white font-medium">
+                                ${isDepositHistory && depositHistory ? depositHistory.deposit.toLocaleString() : 
+                                  (item as any).amount?.toLocaleString()}
+                              </p>
                               <p className="text-slate-400 text-xs">{formatDate(item.created_at)}</p>
                             </div>
                           </div>
@@ -460,23 +635,26 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
                                 </span>
                               )}
                             </div>
-                            <button
-                              onClick={() => toggleRowExpand(item.id)}
-                              className="text-slate-400 hover:text-white transition-colors p-1"
-                            >
-                              {isExpanded ? (
-                                <FiChevronUp className="w-5 h-5" />
-                              ) : (
-                                <FiChevronDown className="w-5 h-5" />
-                              )}
-                            </button>
+                            {/* Only show expand button for deposits and withdrawals, not deposits history */}
+                            {!isDepositHistory && (
+                              <button
+                                onClick={() => toggleRowExpand(item.id)}
+                                className="text-slate-400 hover:text-white transition-colors p-1"
+                              >
+                                {isExpanded ? (
+                                  <FiChevronUp className="w-5 h-5" />
+                                ) : (
+                                  <FiChevronDown className="w-5 h-5" />
+                                )}
+                              </button>
+                            )}
                           </div>
                         </div>
                       </div>
                     </div>
 
-                    {/* Expandable Details */}
-                    {isExpanded && (
+                    {/* Expandable Details - Only for regular deposits and withdrawals */}
+                    {isExpanded && !isDepositHistory && (
                       <div className="px-4 pb-4 border-t border-slate-700/30 bg-slate-700/10">
                         <div className="pt-4 space-y-4">
                           {/* Deposit specific details */}
