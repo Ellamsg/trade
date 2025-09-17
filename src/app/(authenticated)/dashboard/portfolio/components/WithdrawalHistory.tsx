@@ -407,7 +407,7 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
                           {isDepositHistory && depositHistory && (
                             <>
                               <td className="p-4">
-                                <p className="text-white font-medium">${depositHistory.deposit.toLocaleString()}</p>
+                                <p className="text-green-600 font-medium">+${depositHistory.deposit.toLocaleString()}</p>
                               </td>
                               <td className="p-4">
                                 {depositHistory.status ? (
@@ -614,8 +614,8 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
                               )}
                             </div>
                             <div>
-                              <p className="text-white font-medium">
-                                ${isDepositHistory && depositHistory ? depositHistory.deposit.toLocaleString() : 
+                              <p className="text-green-500 font-medium">
+                                +${isDepositHistory && depositHistory ? depositHistory.deposit.toLocaleString() : 
                                   (item as any).amount?.toLocaleString()}
                               </p>
                               <p className="text-slate-400 text-xs">{formatDate(item.created_at)}</p>
@@ -672,12 +672,7 @@ const WithdrawalHistory: React.FC<WithdrawalHistoryProps> = ({
                                     {TIER_CONFIG[deposit.wallet_type].name}
                                   </p>
                                 </div>
-                                {deposit.added_amount && (
-                                  <div>
-                                    <span className="text-slate-400 text-sm">Amount Gain:</span>
-                                    <p className="text-green-600 font-medium">+${deposit.added_amount.toLocaleString()}</p>
-                                  </div>
-                                )}
+                            
                                 <div>
                                   <span className="text-slate-400 text-sm">Wallet Assignment:</span>
                                   <p className="text-white font-mono text-sm break-all">
